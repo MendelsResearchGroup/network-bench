@@ -1,0 +1,17 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data and results live on the filesystem, never in the repo.
+# The dataset directory is several GB of LAMMPS trajectories; point the
+# benchmark at it with GNN_BENCH_DATA_ROOT instead of committing it.
+datasets/
+results/
+*.pt

@@ -1,0 +1,60 @@
+{
+ "dataset": "cold_wca_fixyz_n1024",
+ "graph": {
+  "edges": "bond+pair",
+  "fractional_coordinates": false,
+  "graph_cutoff": null,
+  "history": 3,
+  "node_force": false,
+  "velocity": "total"
+ },
+ "model": "gns",
+ "model_hyperparameters": {
+  "hidden_size": 32,
+  "n_layers": 4,
+  "num_mlp": 2
+ },
+ "split": {
+  "explicit": null,
+  "first_frame": 0,
+  "frame_stride": 1,
+  "limit": 30,
+  "manifest": "clean",
+  "max_frames": 60,
+  "ratios": [
+   0.6,
+   0.2,
+   0.2
+  ],
+  "seed": 42
+ },
+ "train": {
+  "accumulation_steps": 4,
+  "batch_size": 1,
+  "box_mode": "deform_x",
+  "cache_limit_mb": 4096.0,
+  "cache_windows": true,
+  "detach_rollout": false,
+  "device": "cpu",
+  "epochs": 20,
+  "freeze_input_norm_epoch": 5,
+  "gamma": 0.995,
+  "grad_clip": 1.0,
+  "learning_rate": 0.001,
+  "loss": "mse",
+  "mode": "one_step",
+  "rollout_schedule": [
+   [
+    0,
+    1
+   ]
+  ],
+  "seed": 0,
+  "target_scale_windows": null,
+  "val_rollout_steps": 20,
+  "validate_every": 10,
+  "weight_decay": 0.0,
+  "window_mode": "head",
+  "windows_per_sim": 5
+ }
+}
