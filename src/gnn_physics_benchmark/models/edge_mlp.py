@@ -27,7 +27,7 @@ __all__ = ["EdgeMLP"]
 class EdgeMLP(SimulatorModel):
     """Velocity history plus summed bond encodings `->` acceleration `[N, dim]`."""
 
-    def __init__(self, spec: InputGraphSpec, target_scale: Normalizer, *, hidden_dim: int = 32, depth: int = 1):
+    def __init__(self, spec: InputGraphSpec, target_scale: Normalizer, *, hidden_dim: int = 128, depth: int = 4):
         super().__init__(spec, target_scale, hidden_dim=hidden_dim, depth=depth)
 
         # `depth` hidden layers in each of the two MLPs.

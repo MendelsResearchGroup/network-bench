@@ -25,6 +25,8 @@ multiple models, overrides must be supported by every selected model. Without `-
 hyperparameters come from the config. Without `--seeds`, the config's training
 seed is used.
 
+The `edge_mlp` and `mlp` defaults use width 128 and depth 4.
+
 The data split stays fixed (`split.seed`); `train.seed` controls model
 initialisation and training-window sampling. Every run has its own saved config,
 weights, and metrics. Repeating the command skips completed runs. `--force`

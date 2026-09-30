@@ -34,8 +34,8 @@ class NodeMLP(SimulatorModel):
         spec: InputGraphSpec,
         target_scale: Normalizer,
         *,
-        hidden_size: int = 64,
-        num_mlp: int = 3,
+        hidden_size: int = 128,
+        num_mlp: int = 4,
     ):
         super().__init__(spec, target_scale, hidden_size=hidden_size, num_mlp=num_mlp)
 
