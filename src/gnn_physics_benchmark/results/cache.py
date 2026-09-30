@@ -1,18 +1,4 @@
-"""The results cache: one directory per benchmark cell.
-
-    results/<dataset>/<model>/<readable_name>_<hash8>/
-        config.json  split.json  metrics.json  history.json  checkpoints/  [failed.txt]
-    results/<dataset>/difficulty.json
-
-`gnn-bench export` gathers every finished run into `docs/results.json`, which
-`docs/index.html` -- the results page -- reads.
-
-`readable_name` names only what differs from the defaults, so an ordinary run
-has a short name and an unusual one announces what is unusual. `hash8` is taken
-over the whole config *including the resolved list of systems in each split*, so
-regenerating a manifest misses the cache instead of silently comparing unlike
-runs. A failure writes `failed.txt` and no `metrics.json`, so a rerun retries it.
-"""
+"""Read and write benchmark results as plain JSON files."""
 
 from __future__ import annotations
 
@@ -30,7 +16,6 @@ __all__ = [
     "results_root",
     "difficulty_path",
     "run_dir",
-    "run_exists",
     "write_result",
     "read_result",
     "load_results",
@@ -51,61 +36,15 @@ def difficulty_path(dataset: str, root: str | Path | None = None) -> Path:
     return results_root(root) / dataset / "difficulty.json"
 
 
-def _flatten(payload: dict, prefix: str = "") -> dict:
-    flat = {}
-    for key, value in payload.items():
-        name = f"{prefix}{key}"
-        if isinstance(value, dict) and value:
-            flat.update(_flatten(value, f"{name}."))
-        else:
-            flat[name] = value
-    return flat
-
-
-def _short(value) -> str:
-    if isinstance(value, (list, tuple)):
-        return "-".join(_short(item) for item in value)
-    if isinstance(value, float):
-        return f"{value:g}"
-    return str(value)
-
-
-#: Already in the directory path (`dataset`, `model`) or filled in from the dataset
-#: when a run is resolved (`dim`, `edge_width`), so naming them says nothing. They
-#: are still in the hash.
-NOT_NAMED = ("dataset", "model", "graph.dim", "graph.edge_width")
-
-
-def readable_name(config: RunConfig) -> str:
-    """`key=value` for every field that differs from the defaults, or `default`."""
-    actual = _flatten(config.to_dict())
-    default = _flatten(RunConfig(dataset=config.dataset, model=config.model).to_dict())
-    default.update({f"model_hyperparameters.{k}": v for k, v in models.defaults(config.model).items()})
-    changed = [
-        f"{name.rsplit('.', 1)[-1]}={_short(value)}"
-        for name, value in sorted(actual.items())
-        if name not in NOT_NAMED and default.get(name, object()) != value
-    ]
-    name = "_".join(changed) or "default"
-    return "".join(c if c.isalnum() or c in "=-._" else "-" for c in name)[:120]
-
-
 def run_hash(config: RunConfig, split: dict[str, list[str]]) -> str:
     payload = json.dumps({"config": config.to_dict(), "split": split}, sort_keys=True)
     return hashlib.sha256(payload.encode()).hexdigest()[:8]
 
 
 def run_dir(config: RunConfig, split: dict[str, list[str]], root: str | Path | None = None) -> Path:
-    return (
-        results_root(root)
-        / config.dataset
-        / config.model
-        / f"{readable_name(config)}_{run_hash(config, split)}"
-    )
-
-
-def run_exists(config: RunConfig, split: dict[str, list[str]], root: str | Path | None = None) -> bool:
-    return (run_dir(config, split, root) / "metrics.json").is_file()
+    base = results_root(root) / config.dataset / config.model
+    digest = run_hash(config, split)
+    return base / f"seed-{config.train.seed}_{digest}"
 
 
 def write_result(
@@ -122,6 +61,7 @@ def write_result(
     config.to_json(directory / "config.json")
     (directory / "split.json").write_text(json.dumps(split, indent=1))
     if traceback_text is not None:
+        (directory / "metrics.json").unlink(missing_ok=True)
         (directory / "failed.txt").write_text(traceback_text)
         return
     (directory / "failed.txt").unlink(missing_ok=True)
@@ -148,7 +88,7 @@ def load_results(dataset: str, root: str | Path | None = None) -> list[dict]:
     base = results_root(root) / dataset
     if not base.is_dir():
         return []
-    return [read_result(path.parent) for path in sorted(base.glob("*/*/config.json"))]
+    return [read_result(path.parent) for path in sorted(base.glob("*/seed-*/config.json"))]
 
 
 def export_results(root: str | Path | None = None) -> dict:
@@ -158,13 +98,14 @@ def export_results(root: str | Path | None = None) -> dict:
     since JSON has no NaN.
     """
     runs = []
-    for path in sorted(results_root(root).glob("*/*/*/metrics.json")):
+    for path in sorted(results_root(root).glob("*/*/seed-*/metrics.json")):
         result = read_result(path.parent)
         config, measured = result["config"], result["metrics"]
         train = config["train"]
         runs.append({
             "dataset": config["dataset"],
             "model": config["model"],
+            "seed": train["seed"],
             "name": result["name"],
             "hyperparameters": {**models.defaults(config["model"]), **config["model_hyperparameters"]},
             "parameters": measured.get("parameters"),

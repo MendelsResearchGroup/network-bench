@@ -52,16 +52,6 @@ def target_positions(trajectory: list[Data], index: int, device: str) -> Tensor:
     return trajectory[index].x.to(device)
 
 
-def _to_device(graph: Data, device: str) -> Data:
-    """A new `Data` holding this graph's tensors on `device`."""
-    return Data(
-        **{
-            key: value.to(device) if isinstance(value, Tensor) else value
-            for key, value in graph.stores[0].items()
-        }
-    )
-
-
 class WindowCache:
     """Prepared input windows, kept between epochs.
 
@@ -78,7 +68,7 @@ class WindowCache:
     def _prepare(self, trajectory: list[Data], start: int) -> list[Data]:
         frames = trajectory[start : start + self.spec.window_length]
         prepared = prepare_window(frames, self.spec, self.potential)
-        return [_to_device(graph, self.device) for graph in prepared]
+        return [graph.to(self.device) for graph in prepared]
 
     def get(self, key: tuple, trajectory: list[Data], start: int) -> list[Data]:
         """The prepared window starting at `start`.

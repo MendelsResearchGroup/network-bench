@@ -47,7 +47,7 @@ def _step_optimizer(model, optimizer, spec: TrainSpec) -> None:
 def _freeze_input_normalizers(model, epoch: int, spec: TrainSpec) -> None:
     if epoch != spec.freeze_input_norm_epoch:
         return
-    for normalizer in getattr(model, "input_normalizers", list)():
+    for normalizer in model.input_normalizers():
         normalizer.freeze()
 
 
@@ -70,6 +70,7 @@ def validate_one_step(model, trajectories, graph_spec, potential, spec: TrainSpe
             for start in window_starts(len(trajectory), span, spec.windows_per_sim, spec.window_mode, rng):
                 window = trajectory[start : start + graph_spec.window_length]
                 graph = build_input_graph(prepare_window(window, graph_spec, potential), graph_spec, potential)
+                graph = graph.to(spec.device)
                 target = target_positions(trajectory, start + graph_spec.window_length, spec.device)
                 total += float(
                     prediction_loss(model, model(graph), graph, target, scale, kind=spec.loss, accumulate=False)
@@ -211,7 +212,7 @@ def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, s
         return loss, 1, False
 
     box_delta_x = graph.box_tensor[0] - window[-2].box_tensor[0]
-    raw = [g for g in trajectory[start : start + graph_spec.window_length]]
+    raw = [g.clone().to(spec.device) for g in trajectory[start : start + graph_spec.window_length]]
     taken = 1
     for step in range(1, steps):
         frame = advance_box(frame, box_delta_x, spec.box_mode)
@@ -245,5 +246,5 @@ def save_checkpoint(model, config: RunConfig, scale, path: str | Path) -> None:
 
 def load_checkpoint(path: str | Path):
     """`(state_dict, target_scale_state, RunConfig)` from a saved checkpoint."""
-    payload = torch.load(path, weights_only=False)
+    payload = torch.load(path, weights_only=False, map_location="cpu")
     return payload["model"], payload["target_scale"], RunConfig.from_dict(payload["config"])
