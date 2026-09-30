@@ -86,6 +86,47 @@ class DatasetEntry:
         return sorted(path.stem for path in self.root().glob("*.pt"))
 
 
+#: The GNNInverseDesign spring networks: `node_optimized`, `stiff_optimized` and
+#: `noisy_dump200` store one layout, and it is the same four columns as
+#: `dePablo_random`. What differs between them is what the stiffness column
+#: *holds*, which is why every entry declares it read from the column and never
+#: reconstructs it from the rest length -- see each entry's notes.
+_INVERSE_DESIGN_SCHEMA = FrameSchema(
+    edge_columns=("dx", "dy", "r", "stiffness", "rest_length"),
+    derived_columns=("rest_length",),
+    stored_fields=(),
+    pickle_module="network",
+    column_docs={
+        "rest_length": (
+            "the bond's length in the first stored frame, the undeformed reference state "
+            "after LAMMPS' box/relax minimisation. Computed at load time, not stored"
+        ),
+        "stiffness": (
+            "per-bond spring constant: the LAMMPS `bond_coeff` K, constant in time. How it "
+            "relates to the rest length differs by dataset (1/l0, 1/l0 with noise, or "
+            "optimised and unrelated), so it is always read from this column"
+        ),
+    },
+)
+
+#: The LAMMPS decks behind the GNNInverseDesign sets: `fix langevin` + `fix nph`
+#: on y, `fix deform` on x at erate 1e-5 with dt 0.01, dumped every 200 steps.
+_INVERSE_DESIGN_POTENTIAL = {
+    "kind": "harmonic",
+    "stiffness_from": "column",
+    "stiffness_column": "stiffness",
+    "rest_length_from": "first_frame",
+}
+
+_INVERSE_DESIGN_NOTES = (
+    " LAMMPS' `bond_style harmonic` is E = K (r - l0)^2 with no 1/2, so its bond force "
+    "is 2K(r - l0); the benchmark's harmonic potential uses k(r - l0). Every absolute "
+    "force and stress here is therefore half of LAMMPS'. Nothing scored depends on it: "
+    "ground-truth and predicted stress go through the same virial, and R^2 and "
+    "relative MSE are scale free. Positions are float32 and there is no thermo log."
+)
+
+
 DATASETS: dict[str, DatasetEntry] = {
     "cold_wca_fixyz_n1024": DatasetEntry(
         key="cold_wca_fixyz_n1024",
@@ -197,6 +238,93 @@ DATASETS: dict[str, DatasetEntry] = {
             "one-step target is order 6e-7, so the quantisation ceiling bites: r2_ceiling "
             "runs 0.78 to 0.94 here against 0.997 on the Kremer-Grest set. There is no "
             "pair interaction and no thermo log."
+        ),
+    ),
+    "node_optimized": DatasetEntry(
+        key="node_optimized",
+        directory="node_optimized",
+        description=(
+            "1998 two-dimensional spring networks whose node positions were optimised for a "
+            "target Poisson's ratio, compressed along x to 1% strain with the transverse box "
+            "barostatted to zero stress. 100-196 nodes (median 148), about 2.9 bonds per "
+            "node, 500 frames per system 200 MD steps apart, 2e-5 strain per frame. Poisson's "
+            "ratio -0.45 to 0.37, median -0.03. Overdamped: the net force points along the "
+            "next displacement rather than along the acceleration."
+        ),
+        schema=_INVERSE_DESIGN_SCHEMA,
+        interval=200,
+        frames=500,
+        driven_axis=0,
+        free_axes=(1,),
+        potential=_INVERSE_DESIGN_POTENTIAL,
+        field_notes=(
+            "The stiffness column is exactly 1/l0 on every bond (k * l0 = 1 to float32 "
+            "precision), so reading the column and `inverse_rest_length` coincide here; "
+            "the column is declared anyway so all three inverse-design sets are read the "
+            "same way. Shorter than the other two: 500 frames, 1% total strain."
+            + _INVERSE_DESIGN_NOTES
+        ),
+    ),
+    "stiff_optimized": DatasetEntry(
+        key="stiff_optimized",
+        directory="stiff_optimized",
+        description=(
+            "1085 two-dimensional spring networks whose per-bond stiffnesses were optimised "
+            "for a target Poisson's ratio, compressed along x to 3% strain with the "
+            "transverse box barostatted to zero stress. 100-400 nodes (median 248), about "
+            "2.9 bonds per node, 1500 frames per system 200 MD steps apart, 2e-5 strain per "
+            "frame. Two families: 930 `chunk_<n>` (Poisson's ratio median -0.18, down to "
+            "-0.77) and 155 `chunk_highP_<n>` (median +0.12). Overdamped."
+        ),
+        schema=_INVERSE_DESIGN_SCHEMA,
+        interval=200,
+        frames=1500,
+        driven_axis=0,
+        free_axes=(1,),
+        potential=_INVERSE_DESIGN_POTENTIAL,
+        field_notes=(
+            "The per-bond stiffnesses are the optimisation variable, so they bear no "
+            "relation to the rest length any more: k runs from 1e-7 to 1.5. The optimiser "
+            "keeps each bond between cut and its 1/l0 value -- k * l0 lies strictly inside "
+            "(0, 1), with about 8% of bonds below 0.01, i.e. all but cut. Not even the unoptimised members follow 1/l0: 70 systems "
+            "(54 plain, 16 highP) are the optimiser's starting point, k = 0.5 / l0 exactly, "
+            "Poisson's ratio 0.33-0.40, and they are kept in the set. "
+            "Reconstructing the stiffness as 1/l0 is wrong here, not approximate. The "
+            "dynamics are overdamped, so the non-affine displacement should follow the net "
+            "force: early in the compression the column's bond forces explain about 0.97 of "
+            "it and 1/l0 0.0-0.5, no better than giving every bond the same stiffness. The "
+            "fit weakens further along a trajectory for any stiffness -- over the whole "
+            "run the column gives 0.68-0.91 on sampled systems against 0.27-0.48. "
+            "Anything that uses the force field (the `node_force` feature, the stress "
+            "metrics) must read the column, which is what the potential declares."
+            + _INVERSE_DESIGN_NOTES
+        ),
+    ),
+    "noisy_dump200": DatasetEntry(
+        key="noisy_dump200",
+        directory="noisy_dump200",
+        description=(
+            "401 two-dimensional spring networks with noisy per-bond stiffnesses, compressed "
+            "along x to 3% strain with the transverse box barostatted to zero stress. 82-113 "
+            "nodes (median 96), about 2.0 bonds per node, 1500 frames per system 200 MD "
+            "steps apart, 2e-5 strain per frame. Poisson's ratio -0.80 to 0.95, median "
+            "0.14 -- the widest spread of the three inverse-design sets. Overdamped."
+        ),
+        schema=_INVERSE_DESIGN_SCHEMA,
+        interval=200,
+        frames=1500,
+        driven_axis=0,
+        free_axes=(1,),
+        potential=_INVERSE_DESIGN_POTENTIAL,
+        field_notes=(
+            "The stiffness is 1/l0 with noise on part of the bonds: about 55% of them "
+            "(47-63% per system) sit exactly on 1/l0 and the rest are scattered over "
+            "k * l0 = 0.45-1.6, for 1.01 +- 0.13 overall. Like `stiff_optimized` it must be "
+            "read from the column. The noise is what "
+            "sets the mechanics: on sampled trajectories the column's bond forces explain "
+            "0.45-0.97 of the non-affine displacement and 1/l0 explains 0.01-0.10, worse "
+            "than uniform springs. Sparser than the other sets, about two bonds per node."
+            + _INVERSE_DESIGN_NOTES
         ),
     ),
 }

@@ -34,11 +34,17 @@ def measure_difficulty(
     """Per-system difficulty rows for a dataset, plus their medians.
 
     Reads positions and boxes only, so no force field and no graph is built.
+
+    `systems` are spread evenly over the sorted stems rather than taken from the
+    front: stems follow generation order, the ensembles drift along it, and a
+    lexicographic sort of `chunk_<n>` would bunch the first few into one stretch.
     """
     entry = registry.get(dataset)
     stems = sorted(entry.manifest(manifest)) if manifest else entry.systems()
     present = set(entry.systems())
-    stems = [stem for stem in stems if stem in present][: systems or None]
+    stems = [stem for stem in stems if stem in present]
+    if systems and systems < len(stems):
+        stems = stems[:: len(stems) // systems][:systems]
 
     rows = []
     for stem in stems:

@@ -12,6 +12,6 @@ wheels/
 # Data and results live on the filesystem, never in the repo.
 # The dataset directory is several GB of LAMMPS trajectories; point the
 # benchmark at it with GNN_BENCH_DATA_ROOT instead of committing it.
-datasets/
-results/
+/datasets/
+/results/
 *.pt

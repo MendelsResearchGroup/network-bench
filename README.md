@@ -39,6 +39,30 @@ Two datasets ship registered:
 | transverse box | clamped | relaxed to zero transverse stress |
 | dynamics | inertial | overdamped |
 
+Three more 2D spring-network sets from the inverse-design project share the
+`dePablo_random` layout: `node_optimized` (node positions optimised for a target
+Poisson's ratio), `stiff_optimized` (per-bond stiffnesses optimised) and
+`noisy_dump200` (stiffnesses 1/l0 with noise). They differ in what the stiffness
+column holds -- exactly 1/l0, optimised and unrelated to l0, or 1/l0 with 13%
+noise -- so every harmonic set reads it from the column and none reconstructs it
+from the rest length. `gnn-bench datasets` has the details.
+
+| median of 60 systems | `node_optimized` | `stiff_optimized` | `noisy_dump200` | `cold_wca_fixyz_n1024` |
+|---|---|---|---|---|
+| `floor_model` | 0.707 | 0.792 | 0.134 | 0.476 |
+| `r2_ceiling` | 0.954 | 0.937 | 0.968 | 0.998 |
+| `affine_target_share` | 0.661 | 0.692 | 0.510 | 0.000 |
+| `noise_over_signal` | 0.214 | 0.251 | 0.178 | 0.044 |
+
+(`gnn-bench difficulty <key> --systems 60 --history 3 --count 20 --max-frames 28`,
+with `--manifest ""` for the 2D sets and `clean` for the Kremer-Grest one.)
+
+`notebooks/dataset_metrics.ipynb` puts every measured dataset side by side --
+tables, one distribution panel per metric, the floor against its ceiling -- from
+the cached `difficulty.json` files alone. Open it in VS Code with this project's
+`.venv` as the kernel, or run
+`uv run --extra analysis --group dev --with jupyterlab jupyter lab`.
+
 Nothing derived is stored: velocities, forces, stress, strain and Poisson's ratio
 are all computed.
 

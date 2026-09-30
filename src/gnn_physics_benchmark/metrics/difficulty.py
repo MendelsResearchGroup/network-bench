@@ -146,7 +146,7 @@ def persistence_from_positions(positions: Tensor, boxes: Tensor, *, first: int =
 def alpha_from_positions(
     positions: Tensor, boxes: Tensor, *, first: int = 0, count: int = 18, residual: bool = False
 ) -> dict:
-    """The dynamics-complexity parameter of Shteingolts et al., JCP 163, 124115.
+    """The dynamics-complexity parameter alpha.
 
         alpha = (1 / (N L)) sum_i sum_t | v_{t+1,i} - v_{t,i} |
 
