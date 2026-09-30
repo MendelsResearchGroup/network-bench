@@ -504,6 +504,41 @@
   {
    "dataset": "node_optimized",
    "model": "mlp",
+   "name": "edges=bond_history=3_hidden_size=128_num_mlp=4_manifest=None_max_frames=104_sizes=50-50-70_select_by=poisson_r2_100_val__6dc48d20",
+   "hyperparameters": {
+    "hidden_size": 128,
+    "num_mlp": 4
+   },
+   "parameters": 132738,
+   "split": {
+    "train": 50,
+    "val": 50,
+    "test": 70
+   },
+   "epochs": 40,
+   "select_by": "poisson_r2_100",
+   "selected_epoch": 36,
+   "val_score": 0.8348748165642228,
+   "rollout_steps": 100,
+   "relative_mse": 0.19721726067583797,
+   "position_mse": 6.410928660573388e-06,
+   "diverged": 0,
+   "poisson_r2": {
+    "10": 0.6664276055424483,
+    "20": 0.7525717661153587,
+    "30": 0.7691765682234133,
+    "40": 0.7695519515849097,
+    "50": 0.7642882338825374,
+    "60": 0.755617449483303,
+    "70": 0.744203533422364,
+    "80": 0.7298071160105883,
+    "90": 0.7115441894029142,
+    "100": 0.6888369192177207
+   }
+  },
+  {
+   "dataset": "node_optimized",
+   "model": "mlp",
    "name": "edges=bond_history=3_hidden_size=256_manifest=None_max_frames=104_sizes=50-50-70_select_by=poisson_r2_100_val_rollout_st_a1a7cadb",
    "hyperparameters": {
     "hidden_size": 256,
@@ -1441,6 +1476,41 @@
   {
    "dataset": "stiff_optimized",
    "model": "mlp",
+   "name": "edges=bond_history=3_hidden_size=128_num_mlp=4_manifest=None_max_frames=104_sizes=50-50-70_select_by=poisson_r2_100_val__5f5d8994",
+   "hyperparameters": {
+    "hidden_size": 128,
+    "num_mlp": 4
+   },
+   "parameters": 132738,
+   "split": {
+    "train": 50,
+    "val": 50,
+    "test": 70
+   },
+   "epochs": 40,
+   "select_by": "poisson_r2_100",
+   "selected_epoch": 22,
+   "val_score": 0.7545638461590847,
+   "rollout_steps": 100,
+   "relative_mse": 0.3233299767903457,
+   "position_mse": 1.6924409439005624e-05,
+   "diverged": 0,
+   "poisson_r2": {
+    "10": 0.7191877782464635,
+    "20": 0.7216447801312653,
+    "30": 0.742028357715067,
+    "40": 0.7544600474226798,
+    "50": 0.7612184994930724,
+    "60": 0.7649800121949679,
+    "70": 0.7670852682005636,
+    "80": 0.7681280167590897,
+    "90": 0.7686119800933449,
+    "100": 0.7687703491125155
+   }
+  },
+  {
+   "dataset": "stiff_optimized",
+   "model": "mlp",
    "name": "edges=bond_history=3_hidden_size=256_manifest=None_max_frames=104_sizes=50-50-70_select_by=poisson_r2_100_val_rollout_st_d491933e",
    "hyperparameters": {
     "hidden_size": 256,
@@ -1875,5 +1945,5 @@
    }
   }
  ],
- "generated": "2026-09-30T15:03:13+00:00"
+ "generated": "2026-09-30T15:24:01+00:00"
 }
