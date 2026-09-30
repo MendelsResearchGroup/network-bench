@@ -30,6 +30,7 @@ from .frozen import Frozen
 from .gns import GNS
 from .linear_floor import LinearFloor
 from .mlp import NodeMLP
+from .tiny_model import TinyVelocityMLP
 
 __all__ = ["MODELS", "register", "build", "keys", "defaults"]
 
@@ -40,6 +41,7 @@ MODELS: dict[str, Factory] = {
     "mlp": NodeMLP,
     "frozen": Frozen,
     "linear_floor": LinearFloor,
+    "tiny_mlp": TinyVelocityMLP,
 }
 
 

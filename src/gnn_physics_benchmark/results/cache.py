@@ -62,6 +62,12 @@ def _short(value) -> str:
     return str(value)
 
 
+#: Already in the directory path (`dataset`, `model`) or filled in from the dataset
+#: when a run is resolved (`dim`, `edge_width`), so naming them says nothing. They
+#: are still in the hash.
+NOT_NAMED = ("dataset", "model", "graph.dim", "graph.edge_width")
+
+
 def readable_name(config: RunConfig) -> str:
     """`key=value` for every field that differs from the defaults, or `default`."""
     actual = _flatten(config.to_dict())
@@ -70,7 +76,7 @@ def readable_name(config: RunConfig) -> str:
     changed = [
         f"{name.rsplit('.', 1)[-1]}={_short(value)}"
         for name, value in sorted(actual.items())
-        if name not in ("dataset", "model") and default.get(name, object()) != value
+        if name not in NOT_NAMED and default.get(name, object()) != value
     ]
     name = "_".join(changed) or "default"
     return "".join(c if c.isalnum() or c in "=-._" else "-" for c in name)[:120]
