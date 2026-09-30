@@ -124,17 +124,6 @@ class HarmonicPotential:
     rest_length_column: str = "rest_length"
     graph_cutoff: float | None = None
 
-    def __post_init__(self) -> None:
-        if self.stiffness_from not in ("column", "inverse_rest_length"):
-            raise ValueError(
-                f"stiffness_from must be 'column' or 'inverse_rest_length', got {self.stiffness_from!r}."
-            )
-        for name in {self.rest_length_column} | (
-            {self.stiffness_column} if self.stiffness_from == "column" else set()
-        ):
-            if name not in self.columns:
-                raise ValueError(f"edge column {name!r} is not among {self.columns}.")
-
     @classmethod
     def from_dataset(cls, entry, *, graph_cutoff: float | None = None, skin: float = 0.0) -> "HarmonicPotential":
         declared = dict(entry.potential or {})

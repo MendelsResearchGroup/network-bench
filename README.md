@@ -19,6 +19,17 @@ gnn-bench train configs/smoke_gns.json
 gnn-bench report cold_wca_fixyz_n1024
 ```
 
+On the cluster, `train.pbs` runs one `gnn-bench train` as a job on `mendels_q`.
+`--dataset` and `--model` (or `DATASET`/`MODEL` for the job) override the
+config's, so one config serves a whole comparison:
+
+```
+gnn-bench train configs/networks.json --dataset stiff_optimized --model gns   # here
+for d in node_optimized stiff_optimized; do for m in gns tiny_mlp; do
+  qsub -v CONFIG=configs/networks.json,DATASET=$d,MODEL=$m train.pbs         # in parallel
+done; done
+```
+
 ## The data
 
 A dataset is a directory of `.pt` files, one per simulated system, each a plain
@@ -47,15 +58,25 @@ column holds -- exactly 1/l0, optimised and unrelated to l0, or 1/l0 with 13%
 noise -- so every harmonic set reads it from the column and none reconstructs it
 from the rest length. `gnn-bench datasets` has the details.
 
+`node_optimized` and `stiff_optimized` are registered against the mini release on
+Zenodo ([doi:10.5281/zenodo.20181262](https://doi.org/10.5281/zenodo.20181262)):
+extract `data_mini.tar.gz` with `tar xzf data_mini.tar.gz -C $GNN_BENCH_DATA_ROOT
+--strip-components=2` and its `node_optimized/` (381 systems) and
+`stiff_optimized/` (288) land where the registry looks. The legacy `network.Box`
+pickles load as they are; no conversion step. The full `data.tar.gz` (1998 and
+1085 systems) uses the same layout, and since a run's cache hash covers its
+resolved system list, results on the two never collide.
+
 | median of 60 systems | `node_optimized` | `stiff_optimized` | `noisy_dump200` | `cold_wca_fixyz_n1024` |
 |---|---|---|---|---|
-| `floor_model` | 0.707 | 0.792 | 0.134 | 0.476 |
-| `r2_ceiling` | 0.954 | 0.937 | 0.968 | 0.998 |
-| `affine_target_share` | 0.661 | 0.692 | 0.510 | 0.000 |
-| `noise_over_signal` | 0.214 | 0.251 | 0.178 | 0.044 |
+| `floor_model` | 0.729 | 0.734 | 0.134 | 0.476 |
+| `r2_ceiling` | 0.951 | 0.934 | 0.968 | 0.998 |
+| `affine_target_share` | 0.653 | 0.674 | 0.510 | 0.000 |
+| `noise_over_signal` | 0.221 | 0.257 | 0.178 | 0.044 |
 
 (`gnn-bench difficulty <key> --systems 60 --history 3 --count 20 --max-frames 28`,
-with `--manifest ""` for the 2D sets and `clean` for the Kremer-Grest one.)
+with `--manifest ""` for the 2D sets and `clean` for the Kremer-Grest one. The
+`node_optimized` and `stiff_optimized` columns are measured on the mini release.)
 
 `notebooks/dataset_metrics.ipynb` puts every measured dataset side by side --
 tables, one distribution panel per metric, the floor against its ceiling -- from
@@ -136,36 +157,43 @@ training loss essentially unchanged and diverged the rollout after 6 of 15 steps
 
 ## Writing a model
 
+Subclass `SimulatorModel` and implement one method:
+
 ```python
 import torch
-from gnn_physics_benchmark.interfaces import InputGraphSpec
-from gnn_physics_benchmark.interfaces.model import integrate_acceleration
+from gnn_physics_benchmark.interfaces import SimulatorModel
 from gnn_physics_benchmark.models import register
 
-class MyModel(torch.nn.Module):
-    def __init__(self, spec: InputGraphSpec, target_scale, *, hidden_size: int = 64):
-        super().__init__()
-        self.hyperparameters = {"hidden_size": hidden_size}   # goes into the cache key
-        self.target_scale = target_scale
-        self.net = torch.nn.Linear(spec.node_feature_width, 3)
+class MyModel(SimulatorModel):
+    def __init__(self, spec, target_scale, *, hidden_size: int = 64):
+        super().__init__(spec, target_scale, hidden_size=hidden_size)   # -> self.hyperparameters
+        self.net = torch.nn.Linear(spec.node_feature_width, spec.dim)
 
-    def forward(self, graph):
-        acceleration = self.target_scale.inverse(self.net(graph.x))
-        return integrate_acceleration(graph, acceleration)
+    def predict_acceleration(self, graph):
+        return self.target_scale.inverse(self.net(graph.x))           # [N, dim]
 
 register("my_model", MyModel)
 ```
 
-That is the whole contract. `model(graph) -> Data` returns the **next frame in
-the raw dataset schema**, so a rollout feeds it straight back in with no special
-casing — `validate_raw_frame` will confirm it.
+`predict_acceleration` gets the input graph and returns every node's
+acceleration. The base class's `forward` turns it into the **next frame in the
+raw dataset schema** (`x_{t+1} = x_t + (x_t - x_{t-1}) + a`), so a rollout feeds
+it straight back in. The acceleration is stashed on that frame, so the loss never
+recovers it by differencing float32 positions.
 
-`target_scale` is the acceleration normaliser the benchmark fitted for this run.
-Your decoder works in standardised space and `inverse` puts the result back into
-physical units; that is what makes one model's loss comparable with another's.
-`integrate_acceleration` applies `x_{t+1} = x_t + (x_t - x_{t-1}) + a` and stashes
-the acceleration on the frame, so the loss never has to recover it by
-differencing float32 positions.
+`self.spec` is the run's `InputGraphSpec`: `node_feature_width`, `edge_width` and
+`dim` size the layers. `self.target_scale` is the acceleration normaliser the
+benchmark fitted for this run: decode in standardised space and apply `inverse`.
+That is what makes one model's loss comparable with another's. A model with its
+own input `Normalizer`s returns them from `input_normalizers()`, so training
+freezes them at `freeze_input_norm_epoch`.
+
+The contract is checked three times:
+- by a type checker, since the package ships type information: a class that is
+  not a `SimulatorModel`, or one without `predict_acceleration`, is flagged;
+- by Python, which refuses to create a subclass without `predict_acceleration`,
+  and by `register`, which refuses anything that is not a `SimulatorModel`;
+- by every run, on the model's first prediction, before training starts.
 
 If your model's idea *is* a different target normalisation, define
 `normalize_target(acceleration, *, accumulate)` and the benchmark will score you
@@ -178,6 +206,8 @@ through it instead — deliberately off the shared scale.
 | `frozen` | nothing moves. It **is** the `relative_mse` denominator, so it must score exactly 1.0 — the harness's own self-test |
 | `linear_floor` | one weight per history step, shared across axes: the best linear predictor from the velocity history. A model that does not beat this is reproducing velocity persistence, not learning the material |
 | `mlp` | the same node features, no message passing. The control for whether the graph is doing anything |
+| `tiny_mlp` | 6 -> 4 -> 2 over the velocity history alone, 46 parameters |
+| `edge_mlp` | the velocity history plus the sum of the node's own bond encodings: one hop, no message passing |
 | `gns` | encode / message-passing / decode, with an axis-shared node encoder |
 
 ## Metrics
@@ -196,20 +226,29 @@ target; `r2_ceiling` is the best R² any predictor could reach.
 - `relative_mse` — their ratio. 1.0 is no better than standing still. This is the
   number that survives a change of system size or dimensionality; the raw MSE is
   kept beside it so the ratio can be audited rather than trusted.
-- `poisson_r2` — from the box alone, so it is NaN wherever the transverse box is
-  clamped.
+- `poisson_r2_10`, `poisson_r2_20`, ... — R² across systems of Poisson's ratio
+  10, 20, ... rollout steps past the seed. It is fitted to the node positions (the
+  affine transverse stretch), because a rollout does not predict the box. NaN
+  wherever the transverse box is clamped.
 - `ratio_r2`, `sxx_slope_r2`, `stress_rel_mse` — the stress response, from the
-  force field's own virial on a neighbour list rebuilt at the full cutoff.
+  force field's own virial on a neighbour list rebuilt at the full cutoff. Off
+  unless `train.stress_metrics` is set, since it costs a virial per sampled frame.
 
 The two are complementary, and which one carries Poisson's ratio depends on how
 the dataset was generated. With the transverse box **clamped** the stress ratio is
-`nu/(1-nu)`, so `ratio_r2` scores it and `poisson_r2` is NaN. With the transverse
+`nu/(1-nu)`, so `ratio_r2` scores it and `poisson_r2_<k>` is NaN. With the transverse
 box **relaxed to zero transverse stress** the transverse stress is zero by
-construction, so the ratio says nothing and `poisson_r2` is the real measurement.
+construction, so the ratio says nothing and `poisson_r2_<k>` is the real measurement.
 
 Three R² conventions coexist and are deliberately kept distinct: uncentred for
 the acceleration floors (the target's mean is physically zero), centred for
 per-system scalars, and `relative_mse` which is a ratio of means, not an R² at all.
+
+**Choosing the epoch.** By default the test scores the last epoch. With
+`train.select_by` set to a validation metric, e.g. `"poisson_r2_100"`, it scores
+the checkpoint of the validation epoch that did best on it instead; the test split
+plays no part in the choice. `metrics.json` then records `selected_epoch` and the
+validation score it was chosen on.
 
 ## Results cache
 

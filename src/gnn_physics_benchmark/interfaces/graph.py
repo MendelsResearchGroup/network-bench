@@ -34,10 +34,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
-from torch_geometric.data import Data
-
-
-__all__ = ["InputGraphSpec", "INPUT_GRAPH_SCHEMA", "VELOCITY_MODES", "EDGE_MODES", "validate_input_graph"]
+__all__ = ["InputGraphSpec", "INPUT_GRAPH_SCHEMA", "VELOCITY_MODES", "EDGE_MODES"]
 
 VELOCITY_MODES = ("total", "residual", "affine")
 EDGE_MODES = ("bond+pair", "bond")
@@ -112,19 +109,6 @@ class InputGraphSpec:
     already the Lennard-Jones minimum at about 1.12 sigma, so `None` is the
     natural setting and there is little room to pull in further."""
 
-    def __post_init__(self) -> None:
-        if self.history < 1:
-            raise ValueError(f"history must be at least 1, got {self.history}.")
-        if self.velocity not in VELOCITY_MODES:
-            raise ValueError(f"velocity must be one of {VELOCITY_MODES}, got {self.velocity!r}.")
-        if self.edges not in EDGE_MODES:
-            raise ValueError(f"edges must be one of {EDGE_MODES}, got {self.edges!r}.")
-        if self.edges == "bond" and self.graph_cutoff is not None:
-            raise ValueError(
-                "edges='bond' builds no pair neighbour list, so graph_cutoff has nothing to "
-                "act on; set it to None."
-            )
-
     @property
     def window_length(self) -> int:
         """Frames needed to build one input graph."""
@@ -174,25 +158,3 @@ INPUT_GRAPH_SCHEMA = (
     ("atom_types", "[N]", "carried through unchanged"),
     ("molecule_ids", "[N]", "carried through unchanged"),
 )
-
-
-def validate_input_graph(graph: Data, spec: InputGraphSpec, *, name: str = "input graph") -> None:
-    """Raise `ValueError` if `graph` does not match what `spec` asks for."""
-    num_nodes = graph.pos.shape[0]
-    expected = spec.node_feature_width
-    if graph.x.shape != (num_nodes, expected):
-        raise ValueError(f"{name}: expected x of shape [{num_nodes}, {expected}], got {tuple(graph.x.shape)}.")
-    if graph.prev_pos.shape != (num_nodes, spec.dim):
-        raise ValueError(
-            f"{name}: expected prev_pos of shape [{num_nodes}, {spec.dim}], got {tuple(graph.prev_pos.shape)}."
-        )
-
-    if spec.edges == "bond+pair" and graph.edge_attr.shape[1] != spec.dim + 5:
-        raise ValueError(
-            f"{name}: edges='bond+pair' implies the typed edge_attr width of {spec.dim + 5}, "
-            f"got {graph.edge_attr.shape[1]}."
-        )
-    for field, wanted in (("fractional_coordinates", spec.fractional_coordinates), ("node_force", spec.node_force)):
-        present = getattr(graph, field, None) is not None
-        if present != wanted:
-            raise ValueError(f"{name}: spec asks for {field}={wanted} but the graph {'has' if present else 'lacks'} it.")

@@ -35,6 +35,9 @@ class SplitSpec:
 
     manifest: str | None = "clean"
     ratios: tuple[float, float, float] = (0.6, 0.2, 0.2)
+    sizes: tuple[int, int, int] | None = None
+    """Train, val and test *counts* instead of `ratios`, e.g. (50, 50, 70): the
+    first that many of the shuffled systems go to each part; the rest are unused."""
     seed: int = 42
     limit: int | None = None
     """Keep only the first `limit` systems before splitting. For smoke runs."""
@@ -64,12 +67,9 @@ class TrainSpec:
     weight_decay: float = 0.0
     grad_clip: float = 1.0
 
-    batch_size: int = 1
     accumulation_steps: int = 10
-    """Optimizer steps are taken every `accumulation_steps` batches. Batches are
-    formed inside one trajectory and never across two, so the bead count is
-    constant within a batch and its mean loss is exactly the mean of its
-    windows' losses."""
+    """Windows are trained one at a time; the optimizer steps every
+    `accumulation_steps` windows, and at the end of each trajectory."""
 
     windows_per_sim: int = 15
     window_mode: str = "head"
@@ -91,6 +91,15 @@ class TrainSpec:
 
     validate_every: int = 5
     val_rollout_steps: int = 50
+    select_by: str | None = None
+    """A validation metric, e.g. `"poisson_r2_100"`: test with the checkpoint of the
+    validation epoch that scored best on it (highest, or lowest for a `loss` or
+    `mse`). `None` tests the last epoch. Only validation epochs have checkpoints,
+    so `validate_every` sets how finely this can choose."""
+    stress_metrics: bool = False
+    """Also score the stress response on the test rollout (`sxx_slope_r2`,
+    `ratio_r2`, `stress_rel_mse`). Needs the dataset's force field. Useful where the
+    transverse box is clamped, so Poisson's ratio can only be read off the stress."""
     rollout_schedule: tuple[tuple[int, int], ...] = ((0, 1),)
     """`(first_epoch, steps)` ladder for multi-step training."""
     detach_rollout: bool = False
@@ -106,15 +115,6 @@ class TrainSpec:
     device: str = "cpu"
     seed: int = 0
     cache_windows: bool = True
-    cache_limit_mb: float = 4096.0
-
-    def __post_init__(self) -> None:
-        if self.mode not in ("one_step", "multi_step"):
-            raise ValueError(f"mode must be 'one_step' or 'multi_step', got {self.mode!r}.")
-        if self.window_mode not in ("head", "spread", "random"):
-            raise ValueError(f"window_mode must be head, spread or random, got {self.window_mode!r}.")
-        if self.box_mode not in ("none", "deform_x"):
-            raise ValueError(f"box_mode must be 'none' or 'deform_x', got {self.box_mode!r}.")
 
     @property
     def max_rollout_steps(self) -> int:
@@ -142,7 +142,7 @@ class RunConfig:
     def from_dict(cls, payload: dict) -> "RunConfig":
         payload = dict(payload)
         graph = InputGraphSpec(**payload.pop("graph", {}) or {})
-        split = SplitSpec(**_tuples(payload.pop("split", {}) or {}, ("ratios",)))
+        split = SplitSpec(**_tuples(payload.pop("split", {}) or {}, ("ratios", "sizes")))
         train = TrainSpec(**_schedule(_tuples(payload.pop("train", {}) or {}, ())))
         return cls(graph=graph, split=split, train=train, **payload)
 

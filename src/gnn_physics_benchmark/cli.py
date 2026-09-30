@@ -17,6 +17,7 @@ from pathlib import Path
 
 import torch
 
+from . import difficulty
 from . import evaluate as evaluation
 from . import models
 from .data import registry
@@ -34,7 +35,9 @@ REPORT_COLUMNS = (
     ("frozen_mse", "frozen", "{:.3e}"),
     ("steps_completed", "steps", "{:.0f}"),
     ("diverged", "div", "{:.0f}"),
-    ("poisson_r2", "nu R2", "{:.3f}"),
+    ("poisson_r2_10", "nu R2@10", "{:.3f}"),
+    ("poisson_r2_50", "nu R2@50", "{:.3f}"),
+    ("poisson_r2_100", "nu R2@100", "{:.3f}"),
     ("ratio_r2", "ratio R2", "{:.3f}"),
     ("sxx_slope_r2", "sxx R2", "{:.3f}"),
     ("stress_rel_mse", "str.relMSE", "{:.3e}"),
@@ -103,7 +106,7 @@ def cmd_models(args) -> None:
 
 
 def cmd_difficulty(args) -> None:
-    result = evaluation.measure_difficulty(
+    result = difficulty.measure_difficulty(
         args.dataset,
         systems=args.systems,
         manifest=args.manifest,
@@ -131,6 +134,25 @@ def cmd_difficulty(args) -> None:
 
 def cmd_train(args) -> None:
     config = RunConfig.from_json(args.config)
+    # One config can serve every dataset and model: these swap them in. A model
+    # swapped in runs with its own default hyperparameters.
+    if args.dataset:
+        config = config.replace(dataset=args.dataset)
+    if args.model:
+        config = config.replace(model=args.model, model_hyperparameters={})
+    # `--set model_hyperparameters.hidden_dim=64` changes one field of the config.
+    payload = config.to_dict()
+    for item in args.set:
+        key, value = item.split("=", 1)
+        *path, last = key.split(".")
+        node = payload
+        for part in path:
+            node = node[part]
+        try:
+            node[last] = json.loads(value)
+        except json.JSONDecodeError:
+            node[last] = value
+    config = RunConfig.from_dict(payload)
     torch.set_num_threads(args.threads)
     result = evaluation.run(config, root=args.root, resume=not args.force, split=args.split)
     print()
@@ -199,6 +221,10 @@ def main(argv: list[str] | None = None) -> None:
     train = sub.add_parser("train", help="train, evaluate and cache one run")
     train.add_argument("config")
     train.add_argument("--split", default="test")
+    train.add_argument("--dataset", help="override the config's dataset")
+    train.add_argument("--model", help="override the config's model (with its default hyperparameters)")
+    train.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                       help="change one config field, e.g. train.epochs=80; repeatable")
     train.add_argument("--force", action="store_true", help="rerun even if already cached")
     train.set_defaults(func=cmd_train)
 

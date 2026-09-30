@@ -29,7 +29,7 @@ from torch_geometric.data import Data
 from torch_geometric.nn import MessagePassing
 
 from ..interfaces.graph import InputGraphSpec
-from ..interfaces.model import integrate_acceleration
+from ..interfaces.model import SimulatorModel
 from ..normalization import Normalizer
 from .blocks import AxisSharedEncoder, build_mlp, node_extras
 
@@ -54,7 +54,7 @@ class _Processor(MessagePassing):
         return self.propagate(edge_index=edge_index, x=x, edge_attr=edge_attr)
 
 
-class GNS(torch.nn.Module):
+class GNS(SimulatorModel):
     """Graph network simulator predicting one-step acceleration."""
 
     def __init__(
@@ -66,10 +66,7 @@ class GNS(torch.nn.Module):
         n_layers: int = 10,
         num_mlp: int = 3,
     ):
-        super().__init__()
-        self.spec = spec
-        self.target_scale = target_scale
-        self.hyperparameters = {"hidden_size": hidden_size, "n_layers": n_layers, "num_mlp": num_mlp}
+        super().__init__(spec, target_scale, hidden_size=hidden_size, n_layers=n_layers, num_mlp=num_mlp)
 
         edge_width = spec.edge_width
         self.node_encoder = AxisSharedEncoder(
@@ -95,7 +92,7 @@ class GNS(torch.nn.Module):
         normalized.node_force = self.force_normalizer(graph.node_force, accumulate=self.training)
         return node_extras(normalized, self.spec)
 
-    def forward(self, graph: Data) -> Data:
+    def predict_acceleration(self, graph: Data) -> Tensor:
         x = self.node_normalizer(graph.x, accumulate=self.training)
         edge_attr = self.edge_normalizer(graph.edge_attr, accumulate=self.training)
 
@@ -105,4 +102,4 @@ class GNS(torch.nn.Module):
         for processor in self.processors:
             x = x + processor(x, graph.edge_index, edge_attr)
 
-        return integrate_acceleration(graph, self.target_scale.inverse(self.decoder(x)))
+        return self.target_scale.inverse(self.decoder(x))

@@ -2,9 +2,6 @@
 
 from .build import (
     IS_BOND,
-    IS_PAIR,
-    TYPED_EDGE_COLUMNS,
-    bond_width,
     typed_width,
     append_pair_interactions,
     minimum_image,
@@ -20,11 +17,8 @@ __all__ = [
     "build_input_graph",
     "potential_for",
     "prepare_window",
-    "bond_width",
     "typed_width",
     "IS_BOND",
-    "IS_PAIR",
-    "TYPED_EDGE_COLUMNS",
     "append_pair_interactions",
     "minimum_image",
     "prepare_frames",

@@ -15,3 +15,6 @@ wheels/
 /datasets/
 /results/
 *.pt
+
+# PBS job logs from train.pbs
+gnn-bench.o*

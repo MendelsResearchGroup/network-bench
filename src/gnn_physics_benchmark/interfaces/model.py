@@ -1,55 +1,45 @@
-"""The contract a model satisfies to be benchmarked.
+"""The model interface: subclass `SimulatorModel` to be benchmarked.
 
-A model is handed one input graph (see `interfaces.graph`) and returns the next
-state of the trajectory, as a frame in the raw dataset schema. Nothing else is
-required of it: the benchmark builds the input, owns the loss, runs the rollout
-and computes the metrics.
+    from gnn_physics_benchmark.interfaces import SimulatorModel
 
-    class MyModel(torch.nn.Module):
-        hyperparameters = {"hidden_size": 64}
+    class MyModel(SimulatorModel):
+        def __init__(self, spec, target_scale, *, hidden_size: int = 64):
+            super().__init__(spec, target_scale, hidden_size=hidden_size)
+            self.net = torch.nn.Linear(spec.node_feature_width, spec.dim)
 
-        def forward(self, graph):
-            acceleration = self.net(graph.x)          # [N, 3]
-            return integrate_acceleration(graph, acceleration)
+        def predict_acceleration(self, graph):
+            return self.target_scale.inverse(self.net(graph.x))   # [N, dim]
 
-Why the output is a *state* and not a tensor
---------------------------------------------
-Returning the next frame makes the model self-describing: a rollout can feed the
-output straight back in as the newest frame of the next window, and nothing
-outside the model needs to know what parameterisation it predicted in. The cost
-is that the acceleration a loss wants has to be recovered from the positions --
-and positions are O(3) sigma while the acceleration is O(3e-5), so differencing
-them in float32 throws away about two decimal digits. `integrate_acceleration`
-therefore stashes the acceleration it was given on the frame it builds, and
-`predicted_acceleration` prefers the stash, falling back to differencing for a
-model that assembles its output by hand. A model that uses the helper loses
-nothing to rounding.
+A model is handed one input graph (see `interfaces.graph`) and predicts the
+acceleration of every node. `forward` turns that into the next state of the
+trajectory -- a frame in the raw dataset schema -- so a rollout can feed it
+straight back in. The benchmark builds the input, owns the loss, runs the
+rollout and computes the metrics.
+
+`integrate_acceleration` stashes the acceleration on the frame it builds, and the
+loss reads it back from there: positions are O(3) sigma while the acceleration is
+O(1e-6), so recovering it by differencing float32 positions would lose digits.
 
 The box is not predicted. Compression is imposed externally, so the next frame
 carries the input frame's box and the rollout advances it.
 
-The optional loss hook
-----------------------
-By default the benchmark z-scores the acceleration target with statistics it
-accumulates itself, which is what makes one model's loss comparable with
-another's. A model whose whole idea is a different target normalisation -- a
-per-system rescaling, say -- may define
-
-    def normalize_target(self, acceleration: Tensor, *, accumulate: bool) -> Tensor
-
-and the benchmark will score it through that instead. Its loss is then no longer
-on the shared scale, which is the point, and the reported rollout metrics are
-unaffected either way.
+A model whose whole idea is a different target normalisation may also define
+`normalize_target(acceleration, *, accumulate) -> Tensor`; the loss is then taken
+through it instead of the shared scale.
 """
 
 from __future__ import annotations
 
-from typing import Any, Protocol, runtime_checkable
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Any
 
 import torch
 from torch import Tensor
 from torch_geometric.data import Data
 
+if TYPE_CHECKING:
+    from ..normalization import Normalizer
+    from .graph import InputGraphSpec
 
 __all__ = ["SimulatorModel", "integrate_acceleration", "predicted_acceleration", "current_velocity"]
 
@@ -57,21 +47,38 @@ __all__ = ["SimulatorModel", "integrate_acceleration", "predicted_acceleration",
 _CARRIED = ("box", "box_tensor", "atom_ids", "atom_types", "molecule_ids")
 
 
-@runtime_checkable
-class SimulatorModel(Protocol):
-    """What the benchmark requires of a model.
+class SimulatorModel(torch.nn.Module, ABC):
+    """Base class of every benchmarked model.
 
-    `hyperparameters` is the dict that goes into the result cache key, so it must
-    name every choice that changes the model's behaviour and nothing that does
-    not. Anything about the *input* -- history length, which features, the graph
-    radius -- belongs to the run's `InputGraphSpec`, not here.
+    Subclasses implement `predict_acceleration`, and pass their hyperparameters
+    to this constructor by keyword: they become `self.hyperparameters`, which
+    names the model's choices in the results. Anything about the *input* --
+    history length, which features, the graph radius -- belongs to the run's
+    `InputGraphSpec` in `self.spec`, not here.
+
+    `target_scale` is the acceleration normaliser the benchmark fitted for this
+    run. A model decodes in standardised space and applies
+    `self.target_scale.inverse` to return physical units, which is what makes
+    one model's loss comparable with another's.
     """
 
-    hyperparameters: dict[str, Any]
+    def __init__(self, spec: InputGraphSpec, target_scale: Normalizer, **hyperparameters: Any):
+        super().__init__()
+        self.spec = spec
+        self.target_scale = target_scale
+        self.hyperparameters = hyperparameters
 
-    def __call__(self, graph: Data) -> Data:
-        """Predict the next frame from one input graph."""
-        ...
+    @abstractmethod
+    def predict_acceleration(self, graph: Data) -> Tensor:
+        """The acceleration of every node, `[N, dim]`, in physical units."""
+
+    def forward(self, graph: Data) -> Data:
+        """The next frame, in the raw dataset schema."""
+        return integrate_acceleration(graph, self.predict_acceleration(graph))
+
+    def input_normalizers(self) -> list[Normalizer]:
+        """Normalisers the training loop freezes at `freeze_input_norm_epoch`."""
+        return []
 
 
 def current_velocity(graph: Data) -> Tensor:

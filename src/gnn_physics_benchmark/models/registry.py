@@ -5,13 +5,12 @@ are cached under and what a comparison table is indexed by, so it should name th
 *idea* -- "gns", "mlp" -- and leave the hyperparameters to `hyperparameters`,
 which is hashed separately.
 
-A registered factory is called as
+A registered model is a subclass of `interfaces.SimulatorModel`, built as
 
     build(key, spec, target_scale, **hyperparameters) -> SimulatorModel
 
 where `spec` is the run's `InputGraphSpec` and `target_scale` is the acceleration
-normaliser the benchmark fitted for this dataset. A model that needs neither may
-ignore them, but must accept them.
+normaliser the benchmark fitted for this dataset.
 
 A model does not have to live in this repository. Register one from anywhere:
 
@@ -21,11 +20,10 @@ A model does not have to live in this repository. Register one from anywhere:
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Any
-
 from ..interfaces.graph import InputGraphSpec
+from ..interfaces.model import SimulatorModel
 from ..normalization import Normalizer
+from .edge_mlp import EdgeMLP
 from .frozen import Frozen
 from .gns import GNS
 from .linear_floor import LinearFloor
@@ -34,29 +32,30 @@ from .tiny_model import TinyVelocityMLP
 
 __all__ = ["MODELS", "register", "build", "keys", "defaults"]
 
-Factory = Callable[..., Any]
-
-MODELS: dict[str, Factory] = {
+MODELS: dict[str, type[SimulatorModel]] = {
     "gns": GNS,
     "mlp": NodeMLP,
     "frozen": Frozen,
     "linear_floor": LinearFloor,
     "tiny_mlp": TinyVelocityMLP,
+    "edge_mlp": EdgeMLP,
 }
 
 
-def register(key: str, factory: Factory, *, overwrite: bool = False) -> None:
+def register(key: str, model: type[SimulatorModel], *, overwrite: bool = False) -> None:
     """Make a model available under `key`."""
+    if not (isinstance(model, type) and issubclass(model, SimulatorModel)):
+        raise TypeError(f"{model!r} is not a subclass of gnn_physics_benchmark.interfaces.SimulatorModel.")
     if key in MODELS and not overwrite:
         raise KeyError(f"model key {key!r} is already registered; pass overwrite=True to replace it.")
-    MODELS[key] = factory
+    MODELS[key] = model
 
 
 def keys() -> list[str]:
     return sorted(MODELS)
 
 
-def build(key: str, spec: InputGraphSpec, target_scale: Normalizer, **hyperparameters):
+def build(key: str, spec: InputGraphSpec, target_scale: Normalizer, **hyperparameters) -> SimulatorModel:
     """Instantiate a registered model."""
     if key not in MODELS:
         raise KeyError(f"unknown model key {key!r}; registered: {keys()}.")
@@ -66,7 +65,7 @@ def build(key: str, spec: InputGraphSpec, target_scale: Normalizer, **hyperparam
 def defaults(key: str) -> dict:
     """The hyperparameters `key` would be built with if none were given.
 
-    Read off the factory's signature, so a model declares its defaults in one
+    Read off the model's constructor, so a model declares its defaults in one
     place -- its own constructor -- rather than repeating them in the registry.
     """
     import inspect

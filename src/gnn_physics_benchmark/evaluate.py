@@ -1,6 +1,5 @@
-"""Running a benchmark: dataset difficulty, and one model's full metric set.
+"""Running a benchmark: one model's full metric set.
 
-`measure_difficulty` describes a dataset before any model touches it.
 `evaluate_model` rolls a trained model out on a split and returns everything the
 results table reports. `run` ties a `RunConfig` to the cache: train, evaluate,
 write, and skip a cell that is already done.
@@ -8,61 +7,16 @@ write, and skip a cell that is already done.
 
 from __future__ import annotations
 
-import statistics
 import traceback
 from pathlib import Path
 
-import torch
-
 from . import metrics
-from .data import loading, registry
+from .data import registry
 from .results import cache
 from .training import RunConfig, build, rollout, train
+from .training.loop import load_checkpoint
 
-__all__ = ["measure_difficulty", "evaluate_model", "run"]
-
-
-def measure_difficulty(
-    dataset: str,
-    *,
-    systems: int | None = 20,
-    manifest: str | None = "clean",
-    history: int = 3,
-    count: int = 15,
-    max_frames: int | None = None,
-) -> dict:
-    """Per-system difficulty rows for a dataset, plus their medians.
-
-    Reads positions and boxes only, so no force field and no graph is built.
-
-    `systems` are spread evenly over the sorted stems rather than taken from the
-    front: stems follow generation order, the ensembles drift along it, and a
-    lexicographic sort of `chunk_<n>` would bunch the first few into one stretch.
-    """
-    entry = registry.get(dataset)
-    stems = sorted(entry.manifest(manifest)) if manifest else entry.systems()
-    present = set(entry.systems())
-    stems = [stem for stem in stems if stem in present]
-    if systems and systems < len(stems):
-        stems = stems[:: len(stems) // systems][:systems]
-
-    rows = []
-    for stem in stems:
-        trajectory = loading.load_trajectory(entry, stem, max_frames=max_frames)
-        row = metrics.describe(*metrics.trajectory_arrays(trajectory), history=history, count=count)
-        rows.append({"system": stem, **row})
-
-    numeric = [key for key, value in rows[0].items() if isinstance(value, (int, float))]
-    median = {key: statistics.median(row[key] for row in rows) for key in numeric}
-    return {
-        "dataset": dataset,
-        "manifest": manifest,
-        "systems": len(rows),
-        "history": history,
-        "count": count,
-        "median": median,
-        "rows": rows,
-    }
+__all__ = ["evaluate_model", "select_epoch", "run"]
 
 
 def evaluate_model(prepared, *, split: str = "test", steps: int | None = None, sample_stride: int = 5) -> dict:
@@ -70,7 +24,8 @@ def evaluate_model(prepared, *, split: str = "test", steps: int | None = None, s
 
     Returns the rollout metrics -- raw position MSE at the last frame reached,
     the frozen baseline it is read against, and their ratio -- together with the
-    Poisson's ratio R^2 and the stress response scores.
+    Poisson's ratio R^2 along the rollout, and the stress response scores when
+    `train.stress_metrics` is on.
     """
     config = prepared.config
     graph_spec = config.graph
@@ -96,9 +51,9 @@ def evaluate_model(prepared, *, split: str = "test", steps: int | None = None, s
                 predicted, trajectory, graph_spec.history, driven_axis=prepared.entry.driven_axis
             )
         )
-        # The stress metrics need a force field to sum a virial over. A dataset
-        # that declares none, or a run on a bond-only graph, simply omits them.
-        if prepared.potential is not None:
+        # Off unless asked for: they need the dataset's force field and cost a
+        # virial per sampled frame.
+        if config.train.stress_metrics and prepared.potential is not None:
             entries.append(
                 metrics.stress_entry(
                     predicted,
@@ -116,6 +71,13 @@ def evaluate_model(prepared, *, split: str = "test", steps: int | None = None, s
     summary.update(metrics.summarise_stress(entries))
     summary["parameters"] = sum(p.numel() for p in prepared.model.parameters())
     return summary
+
+
+def select_epoch(history: dict, key: str) -> dict:
+    """The validation entry of `history` that scored best on `key`."""
+    scored = [entry for entry in history["epochs"] if entry.get(key, float("nan")) == entry.get(key)]
+    lower = "loss" in key or "mse" in key
+    return (min if lower else max)(scored, key=lambda entry: entry[key])
 
 
 def run(
@@ -154,7 +116,14 @@ def run(
             save_dir=directory / "checkpoints",
             verbose=verbose,
         )
+        if config.train.select_by is not None:
+            selected = select_epoch(history, config.train.select_by)
+            state, _, _ = load_checkpoint(directory / "checkpoints" / f"epoch_{selected['epoch']:04d}.pt")
+            prepared.model.load_state_dict(state)
         measured = evaluate_model(prepared, split=split)
+        if config.train.select_by is not None:
+            measured["selected_epoch"] = selected["epoch"]
+            measured[f"val_{config.train.select_by}"] = selected[config.train.select_by]
         measured["target_sigma"] = prepared.scale.std().flatten().tolist()
     except Exception:
         cache.write_result(directory, config, resolved, traceback_text=traceback.format_exc())

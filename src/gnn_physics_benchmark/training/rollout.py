@@ -65,9 +65,6 @@ def rollout(
     result indexes like the ground-truth trajectory it is compared against. A
     short return means the rollout diverged and was stopped.
     """
-    if len(seed) < spec.window_length:
-        raise ValueError(f"a history of {spec.history} needs {spec.window_length} seed frames, got {len(seed)}.")
-
     trajectory = [frame.clone() for frame in seed]
     window = trajectory[-spec.window_length :]
     box_delta_x = window[-1].box_tensor[0] - window[-2].box_tensor[0]

@@ -1,18 +1,14 @@
-"""Choosing training windows, and not paying for them twice.
+"""Choosing training windows, and preparing each one only once.
 
 A window is `history + 1` consecutive frames the model reads plus the frames it
-is scored against. Preparing one -- symmetrising the bonds and building a pair
-neighbour list -- costs about as much as a small model's forward and backward
-pass, and none of it depends on the weights. With the `"head"` or `"spread"`
-window modes the frame indices are identical every epoch, so the whole cost is
-paid in the first epoch and the cache serves every epoch after it.
+is scored against. Preparing one does not depend on the weights, so the cache
+prepares it in the first epoch and serves it from then on.
 """
 
 from __future__ import annotations
 
 import random
 
-import torch
 from torch import Tensor
 from torch_geometric.data import Data
 
@@ -69,100 +65,32 @@ def _to_device(graph: Data, device: str) -> Data:
 class WindowCache:
     """Prepared input windows, kept between epochs.
 
-    `limit_mb` bounds the store. Once it is reached the cache stops taking new
-    entries and the rest are prepared on demand, so an unbounded `"random"`
-    window mode degrades in speed rather than in memory.
+    With `enabled=False` every window is prepared on demand instead.
     """
 
-    def __init__(
-        self,
-        spec: InputGraphSpec,
-        potential: KGPotential | None,
-        *,
-        device: str = "cpu",
-        limit_mb: float = 4096.0,
-        enabled: bool = True,
-    ):
+    def __init__(self, spec: InputGraphSpec, potential: KGPotential | None, *, device: str = "cpu", enabled: bool = True):
         self.spec = spec
         self.potential = potential
         self.device = device
-        self.limit_bytes = limit_mb * 1024**2
         self.enabled = enabled
         self._entries: dict[tuple, list[Data]] = {}
-        self._storages: set[int] = set()
-        self.bytes = 0
-        self.hits = 0
-        self.misses = 0
-        self.full = False
 
     def _prepare(self, trajectory: list[Data], start: int) -> list[Data]:
         frames = trajectory[start : start + self.spec.window_length]
         prepared = prepare_window(frames, self.spec, self.potential)
         return [_to_device(graph, self.device) for graph in prepared]
 
-    def _cost(self, window: list[Data]) -> tuple[int, set[int]]:
-        """Bytes this window would add, and the storages that would be new.
-
-        Counted per underlying storage, not per tensor. The frames of one window
-        share `atom_ids`, `atom_types`, `molecule_ids` and the whole bond
-        topology, and overlapping windows share them too, so summing tensor
-        sizes naively charges the same allocation many times over and the cache
-        would stop well short of its limit.
-
-        The pointers are returned rather than recorded, and the caller commits
-        them only if it keeps the window: recording them here would leak, since
-        a rejected window is freed straight away and its addresses can be handed
-        out again to tensors that would then be counted as free.
-        """
-        total, seen = 0, set()
-        for graph in window:
-            for value in graph.stores[0].values():
-                if not isinstance(value, Tensor):
-                    continue
-                pointer = value.untyped_storage().data_ptr()
-                if pointer in self._storages or pointer in seen:
-                    continue
-                seen.add(pointer)
-                total += value.numel() * value.element_size()
-        return total, seen
-
     def get(self, key: tuple, trajectory: list[Data], start: int) -> list[Data]:
-        """The prepared window starting at `start`, from the cache when possible.
+        """The prepared window starting at `start`.
 
-        A fresh list is returned every time, because multi-step training shifts
-        its window in place. The graphs inside are shared and read-only: every
-        consumer either reads them or builds a new `Data`.
+        A fresh list every time, because multi-step training shifts its window
+        in place; the graphs inside are shared and read-only.
         """
         if not self.enabled:
             return self._prepare(trajectory, start)
-
-        cached = self._entries.get(key)
-        if cached is not None:
-            self.hits += 1
-            return list(cached)
-
-        self.misses += 1
-        window = self._prepare(trajectory, start)
-        size, storages = self._cost(window)
-        if self.bytes + size <= self.limit_bytes:
-            self._entries[key] = window
-            self._storages |= storages
-            self.bytes += size
-        else:
-            self.full = True
-        return list(window)
-
-    def clear(self) -> None:
-        self._entries.clear()
-        self._storages.clear()
-        self.bytes = 0
-        self.full = False
+        if key not in self._entries:
+            self._entries[key] = self._prepare(trajectory, start)
+        return list(self._entries[key])
 
     def __repr__(self) -> str:
-        total = self.hits + self.misses
-        rate = 100 * self.hits / total if total else 0.0
-        state = " (limit reached)" if self.full else ""
-        return (
-            f"WindowCache: {len(self._entries)} windows, {self.bytes / 1024**2:.0f} MiB, "
-            f"{rate:.0f}% hit rate{state}"
-        )
+        return f"WindowCache: {len(self._entries)} windows"

@@ -10,7 +10,8 @@ import torch
 
 from .. import models
 from ..data import loading, registry
-from ..graph.features import potential_for
+from ..graph.features import build_input_graph, potential_for, prepare_window
+from ..interfaces.raw import validate_raw_frame
 from .config import RunConfig
 from .loss import fit_target_scale
 
@@ -25,7 +26,6 @@ class Prepared:
         # The spatial dimension is the dataset's, not the run's, so a config need
         # not state it; resolving here means the saved config records what was used.
         self.config = config = config.replace(graph=config.graph.resolved(self.entry.schema))
-        self.config = config
         self.potential = potential_for(config.graph, self.entry)
         self.split = resolve_split(config)
         self.data = load_split(config, self.split)
@@ -40,6 +40,16 @@ class Prepared:
         self.model = models.build(
             config.model, config.graph, self.scale, **config.model_hyperparameters
         ).to(config.train.device)
+        self.check_model()
+
+    def check_model(self) -> None:
+        """The one interface check: the model's prediction is a frame in the dataset's schema."""
+        window = self.data["train"][0][: self.config.graph.window_length]
+        graph = build_input_graph(prepare_window(window, self.config.graph, self.potential), self.config.graph, self.potential)
+        self.model.eval()
+        with torch.no_grad():
+            validate_raw_frame(self.model(graph), self.entry.schema, name=f"{self.config.model} output")
+        self.model.train()
 
     def summary(self) -> str:
         sizes = {name: len(stems) for name, stems in self.split.items()}
@@ -59,6 +69,7 @@ def resolve_split(config: RunConfig) -> dict[str, list[str]]:
         explicit=spec.explicit,
         manifest=spec.manifest,
         ratios=spec.ratios,
+        sizes=spec.sizes,
         seed=spec.seed,
         limit=spec.limit,
     )

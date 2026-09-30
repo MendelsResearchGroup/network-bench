@@ -23,7 +23,6 @@ from .graph import (
     INPUT_GRAPH_SCHEMA,
     VELOCITY_MODES,
     InputGraphSpec,
-    validate_input_graph,
 )
 from .model import (
     SimulatorModel,
@@ -51,7 +50,6 @@ __all__ = [
     "INPUT_GRAPH_SCHEMA",
     "VELOCITY_MODES",
     "EDGE_MODES",
-    "validate_input_graph",
     # the raw schema
     "FrameSchema",
     "FieldSpec",

@@ -79,10 +79,6 @@ def prepare_window(
     frames: list[Data], spec: InputGraphSpec, potential: KGPotential | None
 ) -> list[Data]:
     """Symmetrise a window of raw frames and give the newest one its pair edges."""
-    if len(frames) != spec.window_length:
-        raise ValueError(
-            f"spec.history={spec.history} needs a window of {spec.window_length} frames, got {len(frames)}."
-        )
     return prepare_frames(frames, potential, pair_edges_on="last")
 
 
@@ -95,10 +91,6 @@ def build_input_graph(
     structure, the positions and the box, and the whole window supplies the
     velocity history.
     """
-    if len(window) != spec.window_length:
-        raise ValueError(
-            f"spec.history={spec.history} needs a window of {spec.window_length} frames, got {len(window)}."
-        )
 
     base = window[-1]
 
