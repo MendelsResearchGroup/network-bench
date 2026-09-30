@@ -480,6 +480,42 @@
   },
   {
    "dataset": "node_optimized",
+   "model": "gns",
+   "name": "edges=bond_history=3_n_layers=3_manifest=None_max_frames=104_sizes=50-50-70_select_by=poisson_r2_100_val_rollout_steps=1_76593004",
+   "hyperparameters": {
+    "hidden_size": 64,
+    "n_layers": 3,
+    "num_mlp": 3
+   },
+   "parameters": 196802,
+   "split": {
+    "train": 50,
+    "val": 50,
+    "test": 70
+   },
+   "epochs": 40,
+   "select_by": "poisson_r2_100",
+   "selected_epoch": 28,
+   "val_score": 0.9002886034273552,
+   "rollout_steps": 100,
+   "relative_mse": 0.12247199219630887,
+   "position_mse": 3.981189081514458e-06,
+   "diverged": 0,
+   "poisson_r2": {
+    "10": 0.9452563295625084,
+    "20": 0.8988881043704138,
+    "30": 0.9024420004298928,
+    "40": 0.9100252784641485,
+    "50": 0.8954268648039478,
+    "60": 0.8760556374104556,
+    "70": 0.8585033913027769,
+    "80": 0.8419721210248431,
+    "90": 0.8280990566313279,
+    "100": 0.817157137345579
+   }
+  },
+  {
+   "dataset": "node_optimized",
    "model": "linear_floor",
    "name": "edges=bond_history=3_limit=30_manifest=None_max_frames=60_accumulation_steps=4_epochs=20_val_rollout_steps=20_validate_e_ff6c4363",
    "hyperparameters": {
@@ -1452,6 +1488,42 @@
   },
   {
    "dataset": "stiff_optimized",
+   "model": "gns",
+   "name": "edges=bond_history=3_n_layers=3_manifest=None_max_frames=104_sizes=50-50-70_select_by=poisson_r2_100_val_rollout_steps=1_362809c1",
+   "hyperparameters": {
+    "hidden_size": 64,
+    "n_layers": 3,
+    "num_mlp": 3
+   },
+   "parameters": 196802,
+   "split": {
+    "train": 50,
+    "val": 50,
+    "test": 70
+   },
+   "epochs": 40,
+   "select_by": "poisson_r2_100",
+   "selected_epoch": 30,
+   "val_score": 0.9426758148989691,
+   "rollout_steps": 100,
+   "relative_mse": 0.07491007634198943,
+   "position_mse": 3.921098859141889e-06,
+   "diverged": 0,
+   "poisson_r2": {
+    "10": 0.9657699767305763,
+    "20": 0.9653782280798925,
+    "30": 0.9632799554460598,
+    "40": 0.9502809692578125,
+    "50": 0.9225739258403809,
+    "60": 0.8931892359239468,
+    "70": 0.8820803571301854,
+    "80": 0.8903801552084634,
+    "90": 0.9067950674908907,
+    "100": 0.9238566660330998
+   }
+  },
+  {
+   "dataset": "stiff_optimized",
    "model": "linear_floor",
    "name": "edges=bond_history=3_limit=30_manifest=None_max_frames=60_accumulation_steps=4_epochs=20_val_rollout_steps=20_validate_e_3607dabd",
    "hyperparameters": {
@@ -1945,5 +2017,5 @@
    }
   }
  ],
- "generated": "2026-09-30T15:24:01+00:00"
+ "generated": "2026-09-30T17:06:08+00:00"
 }
