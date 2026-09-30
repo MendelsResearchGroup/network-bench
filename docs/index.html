@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Network Bench Results</title>
+<!--
+  The results page. It reads results.json, which `gnn-bench export` writes from
+  the results cache; nothing else is needed to serve it (GitHub Pages serves docs/).
+-->
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.10);
+  --highlight: rgba(42, 120, 214, 0.08);
+  --series-1: #2a78d6; --series-2: #eb6834; --series-3: #1baf7a; --series-4: #eda100;
+  --series-5: #e87ba4; --series-6: #008300; --series-7: #4a3aa7; --series-8: #e34948;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --text-primary: #ffffff; --text-secondary: #c3c2b7;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255, 255, 255, 0.10);
+    --highlight: rgba(57, 135, 229, 0.14);
+    --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+    --series-5: #d55181; --series-6: #008300; --series-7: #9085e9; --series-8: #e66767;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --text-primary: #ffffff; --text-secondary: #c3c2b7;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255, 255, 255, 0.10);
+  --highlight: rgba(57, 135, 229, 0.14);
+  --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70; --series-4: #c98500;
+  --series-5: #d55181; --series-6: #008300; --series-7: #9085e9; --series-8: #e66767;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--page); color: var(--text-primary);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 1040px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 24px; font-weight: 600; margin: 0 0 4px; }
+h2 { font-size: 17px; font-weight: 600; margin: 0 0 4px; }
+p { margin: 0; }
+.secondary { color: var(--text-secondary); }
+.muted { color: var(--muted); font-size: 13px; }
+.filters { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 24px 0 16px; }
+.filters label { display: flex; gap: 8px; align-items: center; color: var(--text-secondary); font-size: 14px; }
+select {
+  font: inherit; color: var(--text-primary); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
+}
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; margin-bottom: 20px;
+}
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 12px 0 4px; font-size: 13px; color: var(--text-secondary); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.key { display: inline-block; width: 14px; height: 2px; border-radius: 1px; }
+.chart { position: relative; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.tooltip {
+  position: absolute; pointer-events: none; background: var(--surface); color: var(--text-primary);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 13px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); min-width: 180px; display: none; z-index: 1;
+}
+.tooltip .row { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.tooltip .row b { font-weight: 600; font-variant-numeric: tabular-nums; min-width: 42px; }
+.tooltip .row span { color: var(--text-secondary); }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+th { font-weight: 600; color: var(--text-secondary); cursor: pointer; user-select: none; }
+th[aria-sort="descending"]::after { content: " \2193"; }
+th[aria-sort="ascending"]::after { content: " \2191"; }
+td { font-variant-numeric: tabular-nums; }
+tr.best td { background: var(--highlight); }
+.swatch { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; vertical-align: 1px; }
+.empty { padding: 32px 0; text-align: center; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Network bench results</h1>
+  <p class="secondary">Autoregressive simulators on graph datasets: every model trained and scored the same way.</p>
+  <p class="muted" id="generated"></p>
+
+  <div class="filters">
+    <label>Dataset <select id="dataset"></select></label>
+    <label>Runs <select id="runs">
+      <option value="selected">Epoch chosen on validation</option>
+      <option value="all">All runs</option>
+    </select></label>
+  </div>
+
+  <section class="card">
+    <h2>Poisson's ratio R² along the rollout</h2>
+    <p class="muted">Each line is one model's best settings, chosen by the validation score. R² is across the test systems; values below &minus;1 are drawn at the axis floor.</p>
+    <div class="legend" id="legend"></div>
+    <div class="chart" id="chart"></div>
+  </section>
+
+  <section class="card">
+    <h2>Every run</h2>
+    <p class="muted">Click a column to sort. Highlighted rows are the lines in the chart. rel. MSE is the final position error over that of standing still.</p>
+    <div class="table-wrap"><table id="table"></table></div>
+  </section>
+</main>
+
+<script>
+// Model -> categorical slot. Fixed, so a model keeps its color whatever is filtered.
+const SLOTS = ["gns", "edge_mlp", "mlp", "tiny_mlp", "linear_floor", "frozen"];
+const color = model => {
+  const slot = SLOTS.indexOf(model);
+  return slot >= 0 && slot < 8 ? `var(--series-${slot + 1})` : "var(--muted)";
+};
+
+const COLUMNS = [
+  { key: "model", label: "model", value: run => run.model },
+  { key: "settings", label: "settings", value: run => settings(run) },
+  { key: "parameters", label: "params", value: run => run.parameters, format: v => v == null ? "–" : v.toLocaleString() },
+  { key: "epoch", label: "epoch", value: run => run.selected_epoch ?? run.epochs, format: (v, run) => run.selected_epoch == null ? `${v} (last)` : v },
+  { key: "val", label: "val R²@100", value: run => run.val_score, format: number },
+  { key: "rel", label: "rel. MSE", value: run => run.relative_mse, format: v => v == null ? "–" : v.toFixed(3) },
+  { key: "r10", label: "R²@10", value: run => run.poisson_r2[10], format: number },
+  { key: "r50", label: "R²@50", value: run => run.poisson_r2[50], format: number },
+  { key: "r100", label: "R²@100", value: run => run.poisson_r2[100], format: number },
+];
+let sort = { key: "r100", descending: true };
+let data = { runs: [] };
+
+function number(value) { return value == null ? "–" : (Math.abs(value) < 0.005 ? 0 : value).toFixed(2); }
+function settings(run) {
+  return Object.entries(run.hyperparameters).map(([k, v]) => `${k}=${v}`).join(" ") || "–";
+}
+
+// The chart's lines: per model, the run with the best validation score.
+function bestPerModel(runs) {
+  const best = new Map();
+  for (const run of runs) {
+    if (run.val_score == null) continue;
+    const current = best.get(run.model);
+    if (!current || run.val_score > current.val_score) best.set(run.model, run);
+  }
+  return [...best.values()].sort((a, b) => SLOTS.indexOf(a.model) - SLOTS.indexOf(b.model));
+}
+
+function render() {
+  const dataset = document.getElementById("dataset").value;
+  const onlySelected = document.getElementById("runs").value === "selected";
+  const runs = data.runs.filter(run => run.dataset === dataset && (!onlySelected || run.select_by));
+  const lines = bestPerModel(runs);
+  renderChart(lines);
+  renderTable(runs, new Set(lines));
+}
+
+function renderChart(lines) {
+  const chart = document.getElementById("chart");
+  const legend = document.getElementById("legend");
+  chart.replaceChildren();
+  legend.replaceChildren();
+  if (!lines.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = "No runs with an epoch chosen on validation for this dataset.";
+    chart.append(empty);
+    return;
+  }
+  for (const run of lines) {
+    const item = document.createElement("span");
+    const key = document.createElement("i");
+    key.className = "key";
+    key.style.background = color(run.model);
+    item.append(key, document.createTextNode(`${run.model} (${settings(run)})`));
+    legend.append(item);
+  }
+
+  const steps = [...new Set(lines.flatMap(run => Object.keys(run.poisson_r2).map(Number)))].sort((a, b) => a - b);
+  // Drawn at the container's own width, so text stays legible on a phone.
+  const width = Math.max(chart.clientWidth, 280), height = width < 600 ? 260 : 360;
+  const left = 44, right = 12, top = 12, bottom = 44;
+  const values = lines.flatMap(run => Object.values(run.poisson_r2)).filter(v => v != null);
+  const low = Math.max(-1, Math.floor(Math.min(0, ...values) * 4) / 4);
+  const x = step => left + (step - steps[0]) / (steps[steps.length - 1] - steps[0]) * (width - left - right);
+  const y = value => top + (1 - (Math.max(value, low) - low) / (1 - low)) * (height - top - bottom);
+
+  const svg = element("svg", { viewBox: `0 0 ${width} ${height}`, role: "img",
+    "aria-label": "Poisson's ratio R squared against rollout step, one line per model" });
+  const tickStep = 1 - low > 1 ? 0.5 : 0.25;
+  for (let value = low; value <= 1.0001; value += tickStep) {
+    svg.append(element("line", { x1: left, x2: width - right, y1: y(value), y2: y(value),
+      stroke: Math.abs(value) < 1e-9 ? "var(--axis)" : "var(--grid)", "stroke-width": 1 }));
+    const label = element("text", { x: left - 8, y: y(value) + 4, "text-anchor": "end" });
+    label.textContent = value.toFixed(2);
+    svg.append(label);
+  }
+  const every = width < 600 ? 2 : 1;
+  for (const [index, step] of steps.entries()) {
+    if (index % every) continue;
+    const label = element("text", { x: x(step), y: height - bottom + 20, "text-anchor": "middle" });
+    label.textContent = step;
+    svg.append(label);
+  }
+  const axisLabel = element("text", { x: (left + width - right) / 2, y: height - 4, "text-anchor": "middle" });
+  axisLabel.textContent = "rollout step";
+  svg.append(axisLabel);
+
+  for (const run of lines) {
+    const points = steps.filter(step => run.poisson_r2[step] != null).map(step => [x(step), y(run.poisson_r2[step])]);
+    svg.append(element("polyline", { points: points.map(p => p.join(",")).join(" "), fill: "none",
+      stroke: color(run.model), "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+    const [endX, endY] = points[points.length - 1];
+    svg.append(element("circle", { cx: endX, cy: endY, r: 4, fill: color(run.model),
+      stroke: "var(--surface)", "stroke-width": 2 }));
+  }
+
+  // Crosshair: snaps to the nearest step and lists every model there.
+  const crosshair = element("line", { y1: top, y2: height - bottom, stroke: "var(--axis)", "stroke-width": 1, visibility: "hidden" });
+  const hit = element("rect", { x: left, y: top, width: width - left - right, height: height - top - bottom, fill: "transparent" });
+  svg.append(crosshair, hit);
+  const tooltip = document.createElement("div");
+  tooltip.className = "tooltip";
+  chart.append(svg, tooltip);
+
+  hit.addEventListener("pointermove", event => {
+    const box = svg.getBoundingClientRect();
+    const pointer = (event.clientX - box.left) / box.width * width;
+    const step = steps.reduce((a, b) => Math.abs(x(b) - pointer) < Math.abs(x(a) - pointer) ? b : a);
+    crosshair.setAttribute("x1", x(step));
+    crosshair.setAttribute("x2", x(step));
+    crosshair.setAttribute("visibility", "visible");
+    const title = document.createElement("div");
+    title.className = "muted";
+    title.textContent = `step ${step}`;
+    tooltip.replaceChildren(title);
+    for (const run of [...lines].sort((a, b) => (b.poisson_r2[step] ?? -Infinity) - (a.poisson_r2[step] ?? -Infinity))) {
+      const row = document.createElement("div");
+      row.className = "row";
+      const key = document.createElement("i");
+      key.className = "key";
+      key.style.background = color(run.model);
+      const value = document.createElement("b");
+      value.textContent = number(run.poisson_r2[step]);
+      const name = document.createElement("span");
+      name.textContent = run.model;
+      row.append(key, value, name);
+      tooltip.append(row);
+    }
+    tooltip.style.display = "block";
+    const px = x(step) / width * box.width;
+    const flip = px > box.width / 2;
+    tooltip.style.left = flip ? "" : `${px + 12}px`;
+    tooltip.style.right = flip ? `${box.width - px + 12}px` : "";
+    tooltip.style.top = "8px";
+  });
+  hit.addEventListener("pointerleave", () => {
+    crosshair.setAttribute("visibility", "hidden");
+    tooltip.style.display = "none";
+  });
+}
+
+function renderTable(runs, best) {
+  const table = document.getElementById("table");
+  table.replaceChildren();
+  const head = table.createTHead().insertRow();
+  for (const column of COLUMNS) {
+    const th = document.createElement("th");
+    th.textContent = column.label;
+    th.scope = "col";
+    if (column.key === sort.key) th.setAttribute("aria-sort", sort.descending ? "descending" : "ascending");
+    th.addEventListener("click", () => {
+      sort = { key: column.key, descending: column.key === sort.key ? !sort.descending : true };
+      render();
+    });
+    head.append(th);
+  }
+  const column = COLUMNS.find(c => c.key === sort.key);
+  const sorted = [...runs].sort((a, b) => {
+    const va = column.value(a), vb = column.value(b);
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    const order = typeof va === "string" ? va.localeCompare(vb) : va - vb;
+    return sort.descending ? -order : order;
+  });
+  const body = table.createTBody();
+  for (const run of sorted) {
+    const row = body.insertRow();
+    if (best.has(run)) row.className = "best";
+    for (const column of COLUMNS) {
+      const cell = row.insertCell();
+      const value = column.value(run);
+      if (column.key === "model") {
+        const swatch = document.createElement("i");
+        swatch.className = "swatch";
+        swatch.style.background = color(run.model);
+        cell.append(swatch);
+      }
+      cell.append(document.createTextNode(column.format ? column.format(value, run) : value));
+    }
+  }
+  if (!runs.length) {
+    const cell = body.insertRow().insertCell();
+    cell.colSpan = COLUMNS.length;
+    cell.className = "empty";
+    cell.textContent = "No runs for this dataset.";
+  }
+}
+
+function element(name, attributes) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", name);
+  for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+  return node;
+}
+
+fetch("results.json")
+  .then(response => response.json())
+  .then(payload => {
+    data = payload;
+    document.getElementById("generated").textContent = `${payload.runs.length} runs, exported ${new Date(payload.generated).toLocaleString()}`;
+    const picker = document.getElementById("dataset");
+    for (const dataset of [...new Set(payload.runs.map(run => run.dataset))].sort()) {
+      picker.append(new Option(dataset, dataset));
+    }
+    picker.addEventListener("change", render);
+    window.addEventListener("resize", render);
+    document.getElementById("runs").addEventListener("change", render);
+    render();
+  })
+  .catch(() => {
+    document.getElementById("generated").textContent = "Could not load results.json; run `gnn-bench export` next to this page.";
+  });
+</script>
+</body>
+</html>

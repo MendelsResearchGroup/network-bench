@@ -30,6 +30,22 @@ for d in node_optimized stiff_optimized; do for m in gns tiny_mlp; do
 done; done
 ```
 
+## The results page
+
+`docs/index.html` is a static page that reads `docs/results.json`: per dataset, a
+chart of Poisson's ratio R² along the rollout for each model's best settings
+(chosen by the validation score) and a sortable table of every run.
+`gnn-bench export` writes the JSON from the results cache, and every `train.pbs`
+job runs it when it finishes. To look at it locally:
+
+```
+python -m http.server --directory docs 8000     # then open http://localhost:8000
+```
+
+To publish it, commit `docs/results.json` and turn on GitHub Pages for the `docs/`
+folder of the default branch (Settings -> Pages). A Pages site is public, even
+for a private repository, unless the organisation has GitHub Enterprise.
+
 ## The data
 
 A dataset is a directory of `.pt` files, one per simulated system, each a plain

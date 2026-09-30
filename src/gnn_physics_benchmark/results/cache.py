@@ -4,6 +4,9 @@
         config.json  split.json  metrics.json  history.json  checkpoints/  [failed.txt]
     results/<dataset>/difficulty.json
 
+`gnn-bench export` gathers every finished run into `docs/results.json`, which
+`docs/index.html` -- the results page -- reads.
+
 `readable_name` names only what differs from the defaults, so an ordinary run
 has a short name and an unusual one announces what is unusual. `hash8` is taken
 over the whole config *including the resolved list of systems in each split*, so
@@ -15,6 +18,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
+import os
+from datetime import datetime, timezone
 from pathlib import Path
 
 from .. import models
@@ -28,6 +34,8 @@ __all__ = [
     "write_result",
     "read_result",
     "load_results",
+    "export_results",
+    "write_export",
 ]
 
 
@@ -141,3 +149,60 @@ def load_results(dataset: str, root: str | Path | None = None) -> list[dict]:
     if not base.is_dir():
         return []
     return [read_result(path.parent) for path in sorted(base.glob("*/*/config.json"))]
+
+
+def export_results(root: str | Path | None = None) -> dict:
+    """Every finished run, across datasets, in the shape `docs/index.html` reads.
+
+    Failed and unfinished runs are left out. Non-finite numbers become `None`,
+    since JSON has no NaN.
+    """
+    runs = []
+    for path in sorted(results_root(root).glob("*/*/*/metrics.json")):
+        result = read_result(path.parent)
+        config, measured = result["config"], result["metrics"]
+        train = config["train"]
+        runs.append({
+            "dataset": config["dataset"],
+            "model": config["model"],
+            "name": result["name"],
+            "hyperparameters": {**models.defaults(config["model"]), **config["model_hyperparameters"]},
+            "parameters": measured.get("parameters"),
+            "split": {part: len(systems) for part, systems in result["split"].items()},
+            "epochs": train["epochs"],
+            "select_by": train.get("select_by"),
+            "selected_epoch": measured.get("selected_epoch"),
+            "val_score": measured.get(f"val_{train.get('select_by')}"),
+            "rollout_steps": measured.get("requested_steps"),
+            "relative_mse": measured.get("relative_mse"),
+            "position_mse": measured.get("position_mse"),
+            "diverged": measured.get("diverged"),
+            "poisson_r2": {
+                int(key.rsplit("_", 1)[1]): value
+                for key, value in measured.items()
+                if key.startswith("poisson_r2_")
+            },
+        })
+    return {"runs": _finite(runs)}
+
+
+def write_export(path: str | Path, root: str | Path | None = None) -> int:
+    """Write `export_results` to `path`, atomically, so parallel jobs never leave half a file."""
+    path = Path(path)
+    payload = export_results(root)
+    payload["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(f".{os.getpid()}.tmp")
+    temporary.write_text(json.dumps(payload, indent=1))
+    os.replace(temporary, path)
+    return len(payload["runs"])
+
+
+def _finite(value):
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    if isinstance(value, dict):
+        return {key: _finite(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_finite(item) for item in value]
+    return value

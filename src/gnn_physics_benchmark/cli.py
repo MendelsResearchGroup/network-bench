@@ -7,6 +7,7 @@
     gnn-bench train <config.json>          train, evaluate and cache one run
     gnn-bench evaluate <run_dir>           re-evaluate a cached run from its checkpoint
     gnn-bench report <dataset>             compare every cached run, side by side
+    gnn-bench export                       write every run to docs/results.json for the results page
 """
 
 from __future__ import annotations
@@ -197,6 +198,11 @@ def cmd_report(args) -> None:
     print("Poisson's ratio, which is measurable there.")
 
 
+def cmd_export(args) -> None:
+    count = cache.write_export(args.out, args.root)
+    print(f"{count} runs -> {args.out}")
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="gnn-bench", description=__doc__.splitlines()[0])
     parser.add_argument("--root", default=None, help="results directory (default: results/ beside the repo)")
@@ -232,6 +238,10 @@ def main(argv: list[str] | None = None) -> None:
     evaluate.add_argument("run_dir")
     evaluate.add_argument("--split", default="test")
     evaluate.set_defaults(func=cmd_evaluate)
+
+    export = sub.add_parser("export", help="write every finished run to the results page's JSON")
+    export.add_argument("--out", default=str(Path(__file__).resolve().parents[2] / "docs" / "results.json"))
+    export.set_defaults(func=cmd_export)
 
     report = sub.add_parser("report", help="compare cached runs for one dataset")
     report.add_argument("dataset")
