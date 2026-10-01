@@ -89,6 +89,9 @@ network split** lists every train/validation/test and unused network. Normal use
 randomly assigned networks, so its sample counts differ from OOD. R² is computed
 within each mode's own test population. Parameter counts appear beside model
 names, in model comparison cards, and in the Runs table.
+The plot initially shows the top three models by mean test R² at the selected
+horizon. Click model names to toggle other lines, or use **Show all models** /
+**Show top 3**. Rankings and the Runs table include every model.
 
 The data split stays fixed (`split.seed`); `train.seed` controls model
 initialisation and training-window sampling. Every run has its own saved config,

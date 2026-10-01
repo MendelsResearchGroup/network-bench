@@ -752,6 +752,7 @@ footer a {
   display:flex;
   gap:18px;
   flex-wrap:wrap;
+  align-items:center;
   margin-top:18px;
   font-size:10px;
   color:var(--muted);
@@ -763,6 +764,18 @@ footer a {
 }
 .plot-filters select {
   font-size:10px;
+}
+.plot-filters .mode-toggle {
+  width:auto;
+  padding:2px;
+  gap:2px;
+  border-radius:6px;
+}
+.plot-filters .mode-toggle button {
+  flex:none;
+  padding:4px 9px;
+  font-size:10px;
+  border-radius:4px;
 }
 .plot {
   width:100%;

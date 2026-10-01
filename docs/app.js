@@ -5,7 +5,7 @@ const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness 
 const DESCRIPTIONS = {gns: 'Graph message passing', edge_mlp: 'Local bond encodings', mlp: 'Node features only', tiny_mlp: 'Single hidden layer', linear_floor: 'Linear velocity predictor', frozen: 'Frozen-position baseline'};
 DESCRIPTIONS.edge_mlp_delta = 'Edge MLP with latest velocity and velocity differences; same parameter count';
 DESCRIPTIONS.edge_mlp_attention = 'Velocity-difference edge MLP with a 32-channel attention-pooled global context';
-let data, dataset = 'node_optimized', mode = 'normal', cohorts = {}, enabled = new Set(), horizon = 100;
+let data, dataset = 'node_optimized', mode = 'normal', cohorts = {}, enabled = new Set(), horizon = 100, topModels = true;
 let tableSort = {key: 'r2', descending: true};
 const finite = x => typeof x === 'number' && Number.isFinite(x);
 const number = (v, digits = 3) => finite(v) ? v.toFixed(digits) : '—';
@@ -30,7 +30,7 @@ function stats(values) {
   return {mean, sd, n: values.length};
 }
 function selectedRuns() {
-  return modeRuns().filter(run => run.comparison_id === cohorts[cohortKey()] && enabled.has(run.model)
+  return modeRuns().filter(run => run.comparison_id === cohorts[cohortKey()]
     && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value));
 }
 function groups(runs) {
@@ -48,6 +48,7 @@ function groups(runs) {
 function setDataset(value) {
   const changed = dataset !== value;
   dataset = value;
+  topModels = true;
   for (const button of $('datasets').children) button.setAttribute('aria-pressed', String(button.dataset.value === dataset));
   const comparisons = [...new Set(modeRuns().map(run => run.comparison_id))];
   cohorts[cohortKey()] ??= comparisons[0];
@@ -104,6 +105,7 @@ function render(animate = false) {
   $('horizon-value').textContent = `${horizon} steps`;
   $('first-step').textContent = steps.length ? `${steps[0]} steps` : '—';
   $('last-step').textContent = steps.length ? `${steps.at(-1)} steps` : '—';
+  if (topModels) enabled = new Set(rankedGroups(grouped).filter(group => finite(group.score.mean)).slice(0, 3).map(group => group.model));
   renderRanking(grouped);
   renderChart(animate === true);
   renderTable();
@@ -118,9 +120,12 @@ function render(animate = false) {
     button.querySelector('.swatch').style.background = color(model);
   }
 }
-function renderRanking(grouped) {
-  const ranking = grouped.map(group => ({...group, score: group.points[horizon] ?? stats([])}))
+function rankedGroups(grouped) {
+  return grouped.map(group => ({...group, score: group.points[horizon] ?? stats([])}))
     .sort((a, b) => (b.score.mean ?? -Infinity) - (a.score.mean ?? -Infinity));
+}
+function renderRanking(grouped) {
+  const ranking = rankedGroups(grouped);
   $('ranking').replaceChildren();
   ranking.forEach((group, index) => {
     const item = node('li'), line = node('div', undefined, 'rank-line'), name = node('span', undefined, 'rank-name');
@@ -289,13 +294,14 @@ fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${re
   for (const button of $('modes').children) button.onclick=()=>{mode=button.dataset.mode;setDataset(dataset);};
   for(const model of [...enabled].sort((a,b)=>MODELS.indexOf(a)-MODELS.indexOf(b))){
     const button=node('button'),dot=node('i',undefined,'swatch');dot.style.background=color(model);button.dataset.model=model;button.title=DESCRIPTIONS[model] ?? model;
-    button.append(dot,node('span',model),node('span',undefined,'model-parameters'));button.onclick=()=>{enabled.has(model)?enabled.delete(model):enabled.add(model);render();};$('legend').append(button);
+    button.append(dot,node('span',model),node('span',undefined,'model-parameters'));button.onclick=()=>{topModels=false;enabled.has(model)?enabled.delete(model):enabled.add(model);render();};$('legend').append(button);
   }
   for(const seed of [...new Set(data.runs.map(run=>run.seed))].sort((a,b)=>a-b)) for(const id of ['plot-seed','seed']) $(id).append(new Option(`Seed ${seed}`,String(seed)));
-  $('cohort').onchange=()=>{cohorts[cohortKey()]=$('cohort').value;render();};
+  $('cohort').onchange=()=>{cohorts[cohortKey()]=$('cohort').value;topModels=true;render();};
   for(const id of ['bands','plot-seed','line-mode'])$(id).onchange=render;
   $('horizon').oninput=()=>{horizon=JSON.parse($('horizon').dataset.steps)[$('horizon').value];render();};
-  $('reset-models').onclick=()=>{enabled=new Set(data.runs.map(run=>run.model));render();};
+  $('top-models').onclick=()=>{topModels=true;render();};
+  $('reset-models').onclick=()=>{topModels=false;enabled=new Set(data.runs.map(run=>run.model));render();};
   $('search').oninput=renderTable;$('seed').onchange=renderTable;$('download').onclick=downloadCSV;
   $('notice').hidden=true;$('dashboard').hidden=false;setDataset(datasets()[0]);
 }).catch(error=>{$('notice').hidden=false;$('notice').textContent=`Results could not be loaded (${error.message}). Please reload, or download the JSON from the link above.`;});
