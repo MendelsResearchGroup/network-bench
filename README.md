@@ -26,6 +26,15 @@ hyperparameters come from the config. Without `--seeds`, the config's training
 seed is used.
 
 The `edge_mlp` and `mlp` defaults use width 128 and depth 4.
+`edge_mlp_delta` uses the same edge-MLP architecture and parameter count, replacing
+raw velocity history with the latest velocity and successive differences before
+normalization. Run it with `--model edge_mlp_delta`; `edge_mlp` remains the original
+baseline for comparison. Both use width 128 and depth 4.
+
+`edge_mlp_attention` adds one attention pool to `edge_mlp_delta`: a learned weight
+per node pools its local features into a 32-channel global context, which is
+projected back and added before the node MLP. It shares context only within the
+current system, uses no future frames, and adds no message-passing rounds.
 
 `configs/networks.json` trains on the first **20 frames per training trajectory**:
 four input frames and 16 one-step targets. Validation and test use separate

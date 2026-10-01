@@ -23,7 +23,8 @@ from __future__ import annotations
 from ..interfaces.graph import InputGraphSpec
 from ..interfaces.model import SimulatorModel
 from ..normalization import Normalizer
-from .edge_mlp import EdgeMLP
+from .edge_mlp import EdgeMLP, DeltaEdgeMLP
+from .attention_mlp import AttentionEdgeMLP
 from .frozen import Frozen
 from .gns import GNS
 from .linear_floor import LinearFloor
@@ -39,6 +40,8 @@ MODELS: dict[str, type[SimulatorModel]] = {
     "linear_floor": LinearFloor,
     "tiny_mlp": TinyVelocityMLP,
     "edge_mlp": EdgeMLP,
+    "edge_mlp_delta": DeltaEdgeMLP,
+    "edge_mlp_attention": AttentionEdgeMLP,
 }
 
 

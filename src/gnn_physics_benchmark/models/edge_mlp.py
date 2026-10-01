@@ -13,6 +13,7 @@ model predicts zero acceleration -- pure velocity persistence.
 
 from __future__ import annotations
 
+import copy
 import torch
 from torch import Tensor, nn
 from torch_geometric.data import Data
@@ -21,7 +22,7 @@ from ..interfaces.graph import InputGraphSpec
 from ..interfaces.model import SimulatorModel
 from ..normalization import Normalizer
 
-__all__ = ["EdgeMLP"]
+__all__ = ["EdgeMLP", "DeltaEdgeMLP"]
 
 
 class EdgeMLP(SimulatorModel):
@@ -57,3 +58,13 @@ class EdgeMLP(SimulatorModel):
         bonds = torch.zeros(x.size(0), edges.size(1), dtype=edges.dtype, device=edges.device)
         bonds.index_add_(0, graph.edge_index[1], edges)
         return self.target_scale.inverse(self.node_network(torch.cat([x, bonds], dim=1)))
+
+
+class DeltaEdgeMLP(EdgeMLP):
+    """Same edge MLP, with latest velocity and successive velocity differences."""
+
+    def predict_acceleration(self, graph: Data) -> Tensor:
+        graph = copy.copy(graph)
+        velocity = graph.x.reshape(-1, self.spec.history, self.spec.dim)
+        graph.x = torch.cat((velocity[:, :1], velocity[:, :-1] - velocity[:, 1:]), dim=1).flatten(1)
+        return super().predict_acceleration(graph)
