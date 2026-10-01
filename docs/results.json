@@ -3,6 +3,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp",
    "seed": 0,
@@ -52,6 +60,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp",
    "seed": 0,
@@ -101,6 +117,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp",
    "seed": 1,
@@ -150,6 +174,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp",
    "seed": 1,
@@ -199,6 +231,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp",
    "seed": 2,
@@ -248,6 +288,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp",
    "seed": 2,
@@ -297,6 +345,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp_attention",
    "seed": 0,
@@ -347,6 +403,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp_attention",
    "seed": 0,
@@ -397,6 +461,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp_attention",
    "seed": 1,
@@ -447,6 +519,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp_attention",
    "seed": 1,
@@ -497,6 +577,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp_attention",
    "seed": 2,
@@ -547,6 +635,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp_attention",
    "seed": 2,
@@ -597,6 +693,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp_delta",
    "seed": 0,
@@ -646,6 +750,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp_delta",
    "seed": 0,
@@ -695,6 +807,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp_delta",
    "seed": 1,
@@ -744,6 +864,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp_delta",
    "seed": 1,
@@ -793,6 +921,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "edge_mlp_delta",
    "seed": 2,
@@ -842,6 +978,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "edge_mlp_delta",
    "seed": 2,
@@ -891,6 +1035,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "frozen",
    "seed": 0,
@@ -937,6 +1089,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "frozen",
    "seed": 0,
@@ -983,6 +1143,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "frozen",
    "seed": 1,
@@ -1029,6 +1197,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "frozen",
    "seed": 1,
@@ -1075,6 +1251,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "frozen",
    "seed": 2,
@@ -1121,6 +1305,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "frozen",
    "seed": 2,
@@ -1167,6 +1359,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "gns",
    "seed": 0,
@@ -1217,6 +1417,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "gns",
    "seed": 0,
@@ -1267,6 +1475,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "gns",
    "seed": 1,
@@ -1317,6 +1533,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "gns",
    "seed": 1,
@@ -1367,6 +1591,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "gns",
    "seed": 2,
@@ -1417,6 +1649,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "gns",
    "seed": 2,
@@ -1467,6 +1707,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "linear_floor",
    "seed": 0,
@@ -1515,6 +1763,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "linear_floor",
    "seed": 0,
@@ -1563,6 +1819,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "linear_floor",
    "seed": 1,
@@ -1611,6 +1875,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "linear_floor",
    "seed": 1,
@@ -1659,6 +1931,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "linear_floor",
    "seed": 2,
@@ -1707,6 +1987,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "linear_floor",
    "seed": 2,
@@ -1755,6 +2043,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "mlp",
    "seed": 0,
@@ -1804,6 +2100,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "mlp",
    "seed": 0,
@@ -1853,6 +2157,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "mlp",
    "seed": 1,
@@ -1902,6 +2214,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "mlp",
    "seed": 1,
@@ -1951,6 +2271,14 @@
   {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "29950e1d",
    "model": "mlp",
    "seed": 2,
@@ -2000,6 +2328,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "mlp",
    "seed": 2,
@@ -2049,6 +2385,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "tiny_mlp",
    "seed": 0,
@@ -2097,6 +2441,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "tiny_mlp",
    "seed": 1,
@@ -2145,6 +2497,14 @@
   {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "7bb51917",
    "model": "tiny_mlp",
    "seed": 2,
@@ -2193,6 +2553,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp",
    "seed": 0,
@@ -2242,6 +2610,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp",
    "seed": 0,
@@ -2291,6 +2667,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp",
    "seed": 1,
@@ -2340,6 +2724,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp",
    "seed": 1,
@@ -2389,6 +2781,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp",
    "seed": 2,
@@ -2438,6 +2838,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp",
    "seed": 2,
@@ -2487,6 +2895,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp_attention",
    "seed": 0,
@@ -2537,6 +2953,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp_attention",
    "seed": 0,
@@ -2587,6 +3011,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp_attention",
    "seed": 1,
@@ -2637,6 +3069,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp_attention",
    "seed": 1,
@@ -2687,6 +3127,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp_attention",
    "seed": 2,
@@ -2737,6 +3185,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp_attention",
    "seed": 2,
@@ -2787,6 +3243,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp_delta",
    "seed": 0,
@@ -2836,6 +3300,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp_delta",
    "seed": 0,
@@ -2885,6 +3357,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp_delta",
    "seed": 1,
@@ -2934,6 +3414,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp_delta",
    "seed": 1,
@@ -2983,6 +3471,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "edge_mlp_delta",
    "seed": 2,
@@ -3032,6 +3528,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "edge_mlp_delta",
    "seed": 2,
@@ -3081,6 +3585,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "frozen",
    "seed": 0,
@@ -3127,6 +3639,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "frozen",
    "seed": 0,
@@ -3173,6 +3693,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "frozen",
    "seed": 1,
@@ -3219,6 +3747,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "frozen",
    "seed": 1,
@@ -3265,6 +3801,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "frozen",
    "seed": 2,
@@ -3311,6 +3855,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "frozen",
    "seed": 2,
@@ -3357,6 +3909,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "gns",
    "seed": 0,
@@ -3407,6 +3967,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "gns",
    "seed": 0,
@@ -3457,6 +4025,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "gns",
    "seed": 1,
@@ -3507,6 +4083,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "gns",
    "seed": 1,
@@ -3557,6 +4141,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "gns",
    "seed": 2,
@@ -3607,6 +4199,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "gns",
    "seed": 2,
@@ -3657,6 +4257,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "linear_floor",
    "seed": 0,
@@ -3705,6 +4313,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "linear_floor",
    "seed": 0,
@@ -3753,6 +4369,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "linear_floor",
    "seed": 1,
@@ -3801,6 +4425,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "linear_floor",
    "seed": 1,
@@ -3849,6 +4481,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "linear_floor",
    "seed": 2,
@@ -3897,6 +4537,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "linear_floor",
    "seed": 2,
@@ -3945,6 +4593,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "mlp",
    "seed": 0,
@@ -3994,6 +4650,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "mlp",
    "seed": 0,
@@ -4043,6 +4707,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "mlp",
    "seed": 1,
@@ -4092,6 +4764,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "mlp",
    "seed": 1,
@@ -4141,6 +4821,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "3d589186",
    "model": "mlp",
    "seed": 2,
@@ -4190,6 +4878,14 @@
   {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "d289aa28",
    "model": "mlp",
    "seed": 2,
@@ -4239,6 +4935,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp",
    "seed": 0,
@@ -4288,6 +4992,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp",
    "seed": 0,
@@ -4337,6 +5049,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp",
    "seed": 1,
@@ -4386,6 +5106,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp",
    "seed": 1,
@@ -4435,6 +5163,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp",
    "seed": 2,
@@ -4484,6 +5220,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp",
    "seed": 2,
@@ -4533,6 +5277,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp_attention",
    "seed": 0,
@@ -4583,6 +5335,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp_attention",
    "seed": 0,
@@ -4633,6 +5393,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp_attention",
    "seed": 1,
@@ -4683,6 +5451,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp_attention",
    "seed": 1,
@@ -4733,6 +5509,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp_attention",
    "seed": 2,
@@ -4783,6 +5567,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp_attention",
    "seed": 2,
@@ -4833,6 +5625,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp_delta",
    "seed": 0,
@@ -4882,6 +5682,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp_delta",
    "seed": 0,
@@ -4931,6 +5739,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp_delta",
    "seed": 1,
@@ -4980,6 +5796,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp_delta",
    "seed": 1,
@@ -5029,6 +5853,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "edge_mlp_delta",
    "seed": 2,
@@ -5078,6 +5910,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "edge_mlp_delta",
    "seed": 2,
@@ -5127,6 +5967,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "frozen",
    "seed": 0,
@@ -5173,6 +6021,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "frozen",
    "seed": 0,
@@ -5219,6 +6075,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "frozen",
    "seed": 1,
@@ -5265,6 +6129,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "frozen",
    "seed": 1,
@@ -5311,6 +6183,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "frozen",
    "seed": 2,
@@ -5357,6 +6237,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "frozen",
    "seed": 2,
@@ -5403,6 +6291,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "gns",
    "seed": 0,
@@ -5453,6 +6349,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "gns",
    "seed": 0,
@@ -5503,6 +6407,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "gns",
    "seed": 1,
@@ -5553,6 +6465,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "gns",
    "seed": 1,
@@ -5603,6 +6523,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "gns",
    "seed": 2,
@@ -5653,6 +6581,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "gns",
    "seed": 2,
@@ -5703,6 +6639,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "linear_floor",
    "seed": 0,
@@ -5751,6 +6695,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "linear_floor",
    "seed": 0,
@@ -5799,6 +6751,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "linear_floor",
    "seed": 1,
@@ -5847,6 +6807,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "linear_floor",
    "seed": 1,
@@ -5895,6 +6863,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "linear_floor",
    "seed": 2,
@@ -5943,6 +6919,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "linear_floor",
    "seed": 2,
@@ -5991,6 +6975,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "mlp",
    "seed": 0,
@@ -6040,6 +7032,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "mlp",
    "seed": 0,
@@ -6089,6 +7089,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "mlp",
    "seed": 1,
@@ -6138,6 +7146,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "mlp",
    "seed": 1,
@@ -6187,6 +7203,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "fa1283bb",
    "model": "mlp",
    "seed": 2,
@@ -6236,6 +7260,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "mlp",
    "seed": 2,
@@ -6285,6 +7317,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "tiny_mlp",
    "seed": 0,
@@ -6333,6 +7373,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "tiny_mlp",
    "seed": 1,
@@ -6381,6 +7429,14 @@
   {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
+   "rollout_schedule": [
+    [
+     0,
+     1
+    ]
+   ],
+   "detach_rollout": false,
    "comparison_id": "1c3554bd",
    "model": "tiny_mlp",
    "seed": 2,
@@ -6431,6 +7487,7 @@
   "7bb51917": {
    "dataset": "node_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
    "seed": 42,
    "systems": {
     "test": [
@@ -6827,6 +7884,7 @@
   "29950e1d": {
    "dataset": "node_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
    "seed": 42,
    "systems": {
     "test": [
@@ -7223,6 +8281,7 @@
   "3d589186": {
    "dataset": "noisy_lj",
    "mode": "ood",
+   "training_mode": "one_step",
    "seed": 42,
    "systems": {
     "test": [
@@ -7438,6 +8497,7 @@
   "d289aa28": {
    "dataset": "noisy_lj",
    "mode": "normal",
+   "training_mode": "one_step",
    "seed": 42,
    "systems": {
     "train": [
@@ -7653,6 +8713,7 @@
   "fa1283bb": {
    "dataset": "stiff_optimized",
    "mode": "ood",
+   "training_mode": "one_step",
    "seed": 42,
    "systems": {
     "test": [
@@ -7956,6 +9017,7 @@
   "1c3554bd": {
    "dataset": "stiff_optimized",
    "mode": "normal",
+   "training_mode": "one_step",
    "seed": 42,
    "systems": {
     "test": [
@@ -8257,5 +9319,5 @@
    ]
   }
  },
- "generated": "2026-10-01T09:20:25+00:00"
+ "generated": "2026-10-01T09:55:36+00:00"
 }

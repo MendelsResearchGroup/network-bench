@@ -119,11 +119,15 @@ def export_results(root: str | Path | None = None) -> dict:
             available[dataset] = registry.get(dataset).systems()
         used = {stem for stems in result["split"].values() for stem in stems}
         splits[comparison_id] = {"dataset": dataset, "mode": "ood" if spec.split.ood else "normal",
+                                 "training_mode": spec.train.mode,
                                  "seed": spec.split.seed, "systems": result["split"],
                                  "unused": [stem for stem in available[dataset] if stem not in used]}
         runs.append({
             "dataset": config["dataset"],
             "mode": "ood" if spec.split.ood else "normal",
+            "training_mode": spec.train.mode,
+            "rollout_schedule": spec.train.rollout_schedule,
+            "detach_rollout": spec.train.detach_rollout,
             "comparison_id": comparison_id,
             "model": config["model"],
             "seed": train["seed"],

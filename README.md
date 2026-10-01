@@ -52,6 +52,26 @@ Set `train.early_stopping_patience` to `null` to disable stopping. Existing
 saved runs without this setting retain their original fixed-epoch behavior.
 Results record actual trained epochs separately from the best checkpoint epoch.
 
+Multi-step training (MST) feeds predictions back into the model and averages the
+loss over every rollout step, with gradients through the entire rollout.
+`configs/mst/normal.json` uses the same network split as the normal benchmark;
+`configs/mst/*_ood.json` keep the exact OOD memberships. The curriculum uses
+1 step in epochs 1–2, 2 in 3–4, 3 in 5–6, 5 in 7–8, and 10 from epoch 9.
+With 16 starting windows and four input frames, MST consumes the first **29
+frames** per training trajectory. Validation and test still predict 100 steps.
+Early stopping uses five validation checks without improvement, with a 40-epoch
+cap. The frozen-position baseline has no learned dynamics and is included for
+reference in both training modes.
+
+```bash
+gnn-bench train configs/mst/normal.json --dataset node_optimized \
+  --model gns mlp edge_mlp edge_mlp_delta edge_mlp_attention linear_floor frozen \
+  --seeds 0 1 2
+gnn-bench train configs/mst/node_optimized_ood.json \
+  --model gns mlp edge_mlp edge_mlp_delta edge_mlp_attention linear_floor frozen \
+  --seeds 0 1 2
+```
+
 For the 200 Noisy LJ chunks (1500 frames each) under `~/work/data/noisy-lj`:
 
 ```bash
@@ -102,6 +122,10 @@ names, in model comparison cards, and in the Runs table.
 The plot initially shows the top three models by mean test R² at the selected
 horizon. Click model names to toggle other lines, or use **Show all models** /
 **Show top 3**. Rankings and the Runs table include every model.
+The separate **One-step / MST** toggle selects the training objective for the
+plot, rankings, table and CSV. The protocol line shows the rollout curriculum
+and training-frame count. Empty combinations say that results are pending;
+historical results without a training-mode field count as one-step runs.
 
 The data split stays fixed (`split.seed`); `train.seed` controls model
 initialisation and training-window sampling. Every run has its own saved config,

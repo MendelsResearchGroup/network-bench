@@ -5,7 +5,7 @@ const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness 
 const DESCRIPTIONS = {gns: 'Graph message passing', edge_mlp: 'Local bond encodings', mlp: 'Node features only', tiny_mlp: 'Single hidden layer', linear_floor: 'Linear velocity predictor', frozen: 'Frozen-position baseline'};
 DESCRIPTIONS.edge_mlp_delta = 'Edge MLP with latest velocity and velocity differences; same parameter count';
 DESCRIPTIONS.edge_mlp_attention = 'Velocity-difference edge MLP with a 32-channel attention-pooled global context';
-let data, dataset = 'node_optimized', mode = 'normal', cohorts = {}, enabled = new Set(), horizon = 100, topModels = true;
+let data, dataset = 'node_optimized', mode = 'normal', trainingMode = 'one_step', cohorts = {}, enabled = new Set(), horizon = 100, topModels = true;
 let tableSort = {key: 'r2', descending: true};
 const finite = x => typeof x === 'number' && Number.isFinite(x);
 const number = (v, digits = 3) => finite(v) ? v.toFixed(digits) : '—';
@@ -14,8 +14,9 @@ const css = key => getComputedStyle(document.documentElement).getPropertyValue(k
 const color = model => css(`--s${Math.max(0, MODELS.indexOf(model)) + 1}`);
 const settings = run => Object.entries(run.hyperparameters).map(([key, value]) => `${key}=${value}`).join(', ') || 'No hyperparameters';
 const datasets = () => [...new Set(data.runs.map(run => run.dataset))].sort();
-const cohortKey = (key = dataset) => `${key}:${mode}`;
-const modeRuns = (key = dataset) => data.runs.filter(run => run.dataset === key && (run.mode ?? 'normal') === mode);
+const cohortKey = (key = dataset) => `${key}:${mode}:${trainingMode}`;
+const matchesMode = run => (run.mode ?? 'normal') === mode && (run.training_mode ?? 'one_step') === trainingMode;
+const modeRuns = (key = dataset) => data.runs.filter(run => run.dataset === key && matchesMode(run));
 function node(tag, text, className) {
   const element = document.createElement(tag);
   if (text !== undefined) element.textContent = text;
@@ -56,6 +57,7 @@ function setDataset(value) {
   $('cohort').replaceChildren(...comparisons.map(id => new Option(id, id)));
   $('cohort').value = cohorts[cohortKey()] ?? '';
   for (const button of $('modes').children) button.setAttribute('aria-pressed', String(button.dataset.mode === mode));
+  for (const button of $('training-modes').children) button.setAttribute('aria-pressed', String(button.dataset.training === trainingMode));
   render(changed);
 }
 function renderSplit() {
@@ -91,9 +93,12 @@ function render(animate = false) {
     const training = p.training_frames !== null && p.first_frame === 0 && p.frame_stride === 1
       ? `Train: first ${p.training_frames} frames per trajectory`
       : `Train: ${p.window_mode} windows · start frame ${p.first_frame} · stride ${p.frame_stride}`;
-    return `${training} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames (${run.rollout_steps + p.history_frames} frames total)`;
+    const objective = (run.training_mode ?? 'one_step') === 'multi_step'
+      ? `MST: ${run.rollout_schedule.map(([epoch, steps]) => `${steps} steps from epoch ${epoch + 1}`).join(', ')}; ${run.detach_rollout ? 'detached predictions' : 'gradients through rollout'}`
+      : 'One-step training';
+    return `${training} · ${objective} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames (${run.rollout_steps + p.history_frames} frames total)`;
   }))];
-  $('protocol').textContent = protocols.join(' / ');
+  $('protocol').textContent = protocols.join(' / ') || `Awaiting completed ${trainingMode === 'multi_step' ? 'MST' : 'one-step'} results for this dataset and split.`;
   $('protocol').title = 'Training, validation and test use separate trajectories. Checkpoints are selected on validation rollouts. Graph models use bond edges only, including on Noisy LJ.';
   const steps = [...new Set(runs.flatMap(run => Object.keys(run.poisson_r2).map(Number)))].sort((a, b) => a - b);
   const previous = horizon;
@@ -112,7 +117,7 @@ function render(animate = false) {
   for (const button of $('legend').children) {
     const model = button.dataset.model;
     const counts = [...new Set(data.runs.filter(run => run.dataset === dataset
-      && (run.mode ?? 'normal') === mode && run.comparison_id === cohorts[cohortKey()] && run.model === model).map(run => run.parameters))];
+      && matchesMode(run) && run.comparison_id === cohorts[cohortKey()] && run.model === model).map(run => run.parameters))];
     button.hidden = !counts.length;
     button.querySelector('.model-parameters').textContent = counts.map(count => count.toLocaleString()).join(' / ');
     button.title = `${DESCRIPTIONS[model] ?? model} · ${counts.map(count => count.toLocaleString()).join(' / ')} parameters`;
@@ -150,7 +155,7 @@ function renderChart(animate) {
   const plot = $('plot'), traces = [];
   const individual = $('line-mode').value === 'individual';
   const plottedScore = value => finite(value) ? Math.max(0, value) : null;
-  const all = groups(data.runs.filter(run => (run.mode ?? 'normal') === mode && run.comparison_id === cohorts[cohortKey(run.dataset)]
+  const all = groups(data.runs.filter(run => matchesMode(run) && run.comparison_id === cohorts[cohortKey(run.dataset)]
     && enabled.has(run.model) && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)));
   const identity = group => JSON.stringify([group.model, Object.entries(group.hyperparameters).sort()]);
   const slots = [...new Map(all.map(group => [identity(group), group])).entries()].sort((a,b) => a[0].localeCompare(b[0]));
@@ -198,7 +203,7 @@ function renderChart(animate) {
     shapes:[{type:'line',x0:horizon,x1:horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
     annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:'No results for these filters.',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
-  plot.setAttribute('aria-label', `${label(dataset)}, ${mode === 'ood' ? 'OOD' : 'normal'}: Poisson’s ratio R squared against rollout steps. Values are available in the runs table.`);
+  plot.setAttribute('aria-label', `${label(dataset)}, ${mode === 'ood' ? 'OOD' : 'normal'}, ${trainingMode === 'multi_step' ? 'multi-step training' : 'one-step training'}: Poisson’s ratio R squared against rollout steps. Values are available in the runs table.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
   if (animate && sameTraces && plot.data.some(trace => trace.y.some(finite)) && traces.some(trace => trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     Plotly.animate(plot,{data:traces,traces:traces.map((_,i) => i)},
@@ -257,7 +262,7 @@ function renderTable() {
         const details=node('details'), summary=node('summary'), swatch=node('i',undefined,'swatch'); swatch.style.background=color(run.model);
         summary.append(swatch,node('span',run.model)); details.append(summary);
         const dl=node('dl');
-        for (const [key,value] of Object.entries({...run.hyperparameters,selection:run.select_by ?? 'last epoch',epoch_limit:run.epochs,early_stopping:run.early_stopping_patience == null ? 'disabled' : `${run.early_stopping_patience} validation checks`,early_stopped:run.early_stopped ?? false,run:run.name})) dl.append(node('dt',key),node('dd',String(value)));
+        for (const [key,value] of Object.entries({...run.hyperparameters,training:run.training_mode ?? 'one_step',rollout_schedule:JSON.stringify(run.rollout_schedule ?? [[0,1]]),detach_rollout:run.detach_rollout ?? false,selection:run.select_by ?? 'last epoch',epoch_limit:run.epochs,early_stopping:run.early_stopping_patience == null ? 'disabled' : `${run.early_stopping_patience} validation checks`,early_stopped:run.early_stopped ?? false,run:run.name})) dl.append(node('dt',key),node('dd',String(value)));
         details.append(dl); cell.append(details);
       } else if (column.key==='seed') cell.append(node('span',String(value),'seed-pill'));
       else if (column.key==='parameters') cell.textContent=value.toLocaleString();
@@ -272,9 +277,9 @@ function renderTable() {
   if (!runs.length) {const row=node('tr'),cell=node('td','No runs match these filters.','empty');cell.colSpan=COLUMNS.length;row.append(cell);$('table-body').append(row);}
 }
 function downloadCSV() {
-  const columns=['dataset','mode','comparison_id','model','seed','hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`];
+  const columns=['dataset','mode','training_mode','rollout_schedule','detach_rollout','comparison_id','model','seed','hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`];
   const quote=value=>'"'+String(value ?? '').replaceAll('"','""')+'"';
-  const rows=tableRuns().map(run=>columns.map(key=>quote(key==='hyperparameters'?JSON.stringify(run.hyperparameters):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:run[key])).join(','));
+  const rows=tableRuns().map(run=>columns.map(key=>quote(['hyperparameters','rollout_schedule'].includes(key)?JSON.stringify(run[key]):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:run[key])).join(','));
   const url=URL.createObjectURL(new Blob([[columns.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'}));
   const link=node('a');link.href=url;link.download='network-bench-results.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
@@ -292,9 +297,10 @@ fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${re
   enabled=new Set(data.runs.map(run=>run.model));
   for(const key of datasets()){const button=node('button',label(key));button.dataset.value=key;button.onclick=()=>setDataset(key);$('datasets').append(button);}
   for(const key of datasets()){
-    for (const distribution of ['normal', 'ood']) cohorts[`${key}:${distribution}`]=data.runs.find(run=>run.dataset===key && (run.mode ?? 'normal') === distribution)?.comparison_id;
+    for (const distribution of ['normal', 'ood']) for (const training of ['one_step', 'multi_step']) cohorts[`${key}:${distribution}:${training}`]=data.runs.find(run=>run.dataset===key && (run.mode ?? 'normal') === distribution && (run.training_mode ?? 'one_step') === training)?.comparison_id;
   }
   for (const button of $('modes').children) button.onclick=()=>{mode=button.dataset.mode;setDataset(dataset);};
+  for (const button of $('training-modes').children) button.onclick=()=>{trainingMode=button.dataset.training;setDataset(dataset);};
   for(const model of [...enabled].sort((a,b)=>MODELS.indexOf(a)-MODELS.indexOf(b))){
     const button=node('button'),dot=node('i',undefined,'swatch');dot.style.background=color(model);button.dataset.model=model;button.title=DESCRIPTIONS[model] ?? model;
     button.append(dot,node('span',model),node('span',undefined,'model-parameters'));button.onclick=()=>{topModels=false;enabled.has(model)?enabled.delete(model):enabled.add(model);render();};$('legend').append(button);
