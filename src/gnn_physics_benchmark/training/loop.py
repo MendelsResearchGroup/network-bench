@@ -14,6 +14,7 @@ Neither injects input noise; that is deliberately out of this version.
 from __future__ import annotations
 
 import random
+import math
 import time
 from pathlib import Path
 
@@ -146,7 +147,10 @@ def train(
 
     multi_step = spec.mode == "multi_step"
     span = graph_spec.window_length + spec.max_rollout_steps
-    history: dict = {"train_loss": [], "epochs": []}
+    history: dict = {"train_loss": [], "epochs": [], "early_stopped": False}
+    best_score, stale_checks = None, 0
+    selection = spec.selection_metric
+    lower = selection is not None and ("loss" in selection or "mse" in selection)
 
     model.train()
     optimizer.zero_grad()
@@ -184,6 +188,14 @@ def train(
             if save_dir is not None:
                 Path(save_dir).mkdir(parents=True, exist_ok=True)
                 save_checkpoint(model, config, scale, Path(save_dir) / f"epoch_{epoch + 1:04d}.pt")
+            if spec.early_stopping_patience is not None:
+                score = metrics[selection]
+                improved = best_score is None or (score < best_score if lower else score > best_score)
+                if math.isfinite(score) and improved:
+                    best_score, stale_checks = score, 0
+                else:
+                    stale_checks += 1
+                history["early_stopped"] = stale_checks >= spec.early_stopping_patience and epoch + 1 < spec.epochs
         metrics["epoch"] = epoch + 1
         metrics["train_loss"] = train_loss
         if multi_step:
@@ -196,6 +208,10 @@ def train(
             print(_report(epoch, spec, train_loss, metrics, time.perf_counter() - started), flush=True)
             if epoch == 0 and spec.cache_windows:
                 print(f"  {cache}", flush=True)
+        if history["early_stopped"]:
+            if verbose:
+                print(f"Early stopping: {selection} did not improve for {stale_checks} validation checks", flush=True)
+            break
 
     history["cache"] = repr(cache)
     return history

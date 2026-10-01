@@ -222,6 +222,7 @@
   "validate_every": 2,
   "weight_decay": 0.0,
   "window_mode": "head",
-  "windows_per_sim": 16
+  "windows_per_sim": 16,
+  "early_stopping_patience": 5
  }
 }

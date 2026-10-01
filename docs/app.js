@@ -220,7 +220,8 @@ const COLUMNS = [
   {key:'dataset',label:'Dataset',value:run=>label(run.dataset)},
   {key:'seed',label:'Seed',value:run=>run.seed},
   {key:'parameters',label:'Parameters',value:run=>run.parameters},
-  {key:'epoch',label:'Epoch',value:run=>run.selected_epoch ?? run.epochs},
+  {key:'epoch',label:'Best epoch',value:run=>run.selected_epoch ?? run.trained_epochs ?? run.epochs},
+  {key:'trained',label:'Trained epochs',value:run=>run.trained_epochs ?? run.epochs},
   {key:'val',label:'Validation score',value:run=>run.val_score},
   {key:'relative',label:'Relative MSE ↓',value:run=>run.relative_mse},
   {key:'r2',label:'Test R² ↑',value:run=>run.poisson_r2[horizon]},
@@ -254,7 +255,7 @@ function renderTable() {
         const details=node('details'), summary=node('summary'), swatch=node('i',undefined,'swatch'); swatch.style.background=color(run.model);
         summary.append(swatch,node('span',run.model)); details.append(summary);
         const dl=node('dl');
-        for (const [key,value] of Object.entries({...run.hyperparameters,selection:run.select_by ?? 'last epoch',run:run.name})) dl.append(node('dt',key),node('dd',String(value)));
+        for (const [key,value] of Object.entries({...run.hyperparameters,selection:run.select_by ?? 'last epoch',epoch_limit:run.epochs,early_stopping:run.early_stopping_patience == null ? 'disabled' : `${run.early_stopping_patience} validation checks`,early_stopped:run.early_stopped ?? false,run:run.name})) dl.append(node('dt',key),node('dd',String(value)));
         details.append(dl); cell.append(details);
       } else if (column.key==='seed') cell.append(node('span',String(value),'seed-pill'));
       else if (column.key==='parameters') cell.textContent=value.toLocaleString();
@@ -269,7 +270,7 @@ function renderTable() {
   if (!runs.length) {const row=node('tr'),cell=node('td','No runs match these filters.','empty');cell.colSpan=COLUMNS.length;row.append(cell);$('table-body').append(row);}
 }
 function downloadCSV() {
-  const columns=['dataset','mode','comparison_id','model','seed','hyperparameters','parameters','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`];
+  const columns=['dataset','mode','comparison_id','model','seed','hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`];
   const quote=value=>'"'+String(value ?? '').replaceAll('"','""')+'"';
   const rows=tableRuns().map(run=>columns.map(key=>quote(key==='hyperparameters'?JSON.stringify(run.hyperparameters):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:run[key])).join(','));
   const url=URL.createObjectURL(new Blob([[columns.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'}));

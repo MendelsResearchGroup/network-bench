@@ -42,6 +42,16 @@ trajectories, with **100 predicted steps starting from their first four frames**
 (104 frames total). The split contains 50 training, 50 validation and 70 test
 trajectories; validation rollouts select the checkpoint.
 
+All supplied training configs enable early stopping after **five validation
+checks without improvement**. `train.epochs` is the maximum, currently 40 in the
+benchmark configs. With validation every two epochs, patience spans ten epochs.
+Stopping follows `train.select_by` (the benchmark uses `poisson_r2_100`); without
+an explicit selection metric, it follows validation loss. Evaluation restores
+the best validation checkpoint, including when training reaches the epoch cap.
+Set `train.early_stopping_patience` to `null` to disable stopping. Existing
+saved runs without this setting retain their original fixed-epoch behavior.
+Results record actual trained epochs separately from the best checkpoint epoch.
+
 For the 200 Noisy LJ chunks (1500 frames each) under `~/work/data/noisy-lj`:
 
 ```bash

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import traceback
+import math
 from dataclasses import replace
 from pathlib import Path
 
@@ -23,7 +24,7 @@ __all__ = ["run", "select_epoch"]
 
 def select_epoch(history: dict, key: str) -> dict:
     """The validation entry of `history` that scored best on `key`."""
-    scored = [entry for entry in history["epochs"] if entry.get(key, float("nan")) == entry.get(key)]
+    scored = [entry for entry in history["epochs"] if math.isfinite(entry.get(key, float("nan")))]
     lower = "loss" in key or "mse" in key
     return (min if lower else max)(scored, key=lambda entry: entry[key])
 
@@ -70,14 +71,17 @@ def run(
         with torch.no_grad():
             validate_raw_frame(model(graph.to(config.train.device)), entry.schema, name=f"{config.model} output")
         history = train(model, data, config, scale, save_dir=directory / "checkpoints", verbose=verbose)
-        if config.train.select_by is not None:
-            selected = select_epoch(history, config.train.select_by)
+        selection = config.train.selection_metric
+        if selection is not None:
+            selected = select_epoch(history, selection)
             state, _, _ = load_checkpoint(directory / "checkpoints" / f"epoch_{selected['epoch']:04d}.pt")
             model.load_state_dict(state)
         measured = evaluate_model(model, data[split], config, split=split)
-        if config.train.select_by is not None:
+        measured["trained_epochs"] = len(history["epochs"])
+        measured["early_stopped"] = history["early_stopped"]
+        if selection is not None:
             measured["selected_epoch"] = selected["epoch"]
-            measured[f"val_{config.train.select_by}"] = selected[config.train.select_by]
+            measured[f"val_{selection}"] = selected[selection]
         measured["target_sigma"] = scale.std().flatten().tolist()
     except Exception:
         cache.write_result(directory, config, resolved, traceback_text=traceback.format_exc())

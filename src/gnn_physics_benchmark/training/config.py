@@ -44,7 +44,8 @@ class TrainSpec:
     target_scale_windows: int | None = None  # None uses every training window.
     validate_every: int = 5
     val_rollout_steps: int = 50
-    select_by: str | None = None  # Best validation metric; None uses last epoch.
+    select_by: str | None = None  # None uses val_loss with early stopping, otherwise the last epoch.
+    early_stopping_patience: int | None = None  # Validation checks without improvement; None disables stopping.
     stress_metrics: bool = False
     mode: str = "one_step"  # one_step, multi_step
     rollout_schedule: tuple[tuple[int, int], ...] = ((0, 1),)  # (first epoch, steps)
@@ -57,6 +58,10 @@ class TrainSpec:
     @property
     def max_rollout_steps(self) -> int:
         return max(steps for _, steps in self.rollout_schedule) if self.mode == "multi_step" else 1
+
+    @property
+    def selection_metric(self) -> str | None:
+        return self.select_by or ("val_loss" if self.early_stopping_patience is not None else None)
 
 
 @dataclass(frozen=True)
@@ -75,6 +80,8 @@ class RunConfig:
         # Preserve the cache keys of existing normal runs.
         if not self.split.ood:
             payload["split"].pop("ood")
+        if self.train.early_stopping_patience is None:
+            payload["train"].pop("early_stopping_patience")
         return payload
 
     def to_json(self, path: str | Path) -> None:

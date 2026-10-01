@@ -49,6 +49,7 @@
   "validate_every": 10,
   "weight_decay": 0.0,
   "window_mode": "head",
-  "windows_per_sim": 5
+  "windows_per_sim": 5,
+  "early_stopping_patience": 5
  }
 }
