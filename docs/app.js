@@ -149,6 +149,7 @@ function renderChart(animate) {
   if (!window.Plotly) { $('chart').textContent = 'The plot could not load. Results are available below.'; return; }
   const plot = $('plot'), traces = [];
   const individual = $('line-mode').value === 'individual';
+  const plottedScore = value => finite(value) ? Math.max(0, value) : null;
   const all = groups(data.runs.filter(run => (run.mode ?? 'normal') === mode && run.comparison_id === cohorts[cohortKey(run.dataset)]
     && enabled.has(run.model) && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)));
   const identity = group => JSON.stringify([group.model, Object.entries(group.hyperparameters).sort()]);
@@ -164,19 +165,20 @@ function renderChart(animate) {
       const seeds = [...new Set(data.runs.filter(run => identity(run) === id).map(run => run.seed))].sort((a,b) => a-b);
       for (const seed of seeds) {
         const run = group?.runs.find(run => run.seed === seed);
-        traces.push({...base, uid:`${uid}-${seed}`, y:x.map(step => run?.poisson_r2[step] ?? null),
+        const scores = x.map(step => run?.poisson_r2[step] ?? null);
+        traces.push({...base, uid:`${uid}-${seed}`, y:scores.map(plottedScore), customdata:scores,
           mode:'lines+markers', name:`${template.model} · seed ${seed}`,
           line:{color:c,width:2,dash:['solid','dash','dot'][seed % 3],simplify:false},marker:{size:4},
-          hovertemplate:'%{y:.3f}<extra>%{fullData.name}</extra>'});
+          hovertemplate:'%{customdata:.3f}<extra>%{fullData.name}</extra>'});
       }
     } else {
       const points = x.map(step => group?.points[step] ?? stats([]));
-      const band = sign => points.map(point => $('bands').checked && point.n > 1 ? point.mean + sign * point.sd : null);
+      const band = sign => points.map(point => $('bands').checked && point.n > 1 ? plottedScore(point.mean + sign * point.sd) : null);
       traces.push({...base,uid:`${uid}-lower`,y:band(-1),mode:'lines',line:{width:0,simplify:false},hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-upper`,y:band(1),mode:'lines',line:{width:0,simplify:false},fill:'tonexty',fillcolor:rgba(c,.12),hoverinfo:'skip',showlegend:false},
-        {...base,uid:`${uid}-mean`,y:points.map(point => point.mean),mode:'lines+markers',name:template.model,
-          line:{color:c,width:2.6,simplify:false},marker:{size:4},customdata:points.map(point => [number(point.sd),point.n]),
-          hovertemplate:'%{y:.3f} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>'});
+        {...base,uid:`${uid}-mean`,y:points.map(point => plottedScore(point.mean)),mode:'lines+markers',name:template.model,
+          line:{color:c,width:2.6,simplify:false},marker:{size:4},customdata:points.map(point => [number(point.sd),point.n,point.mean]),
+          hovertemplate:'%{customdata[2]:.3f} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>'});
     }
   }
   // Shared axes and stable trace slots let each model morph into itself.
@@ -207,8 +209,8 @@ function renderChart(animate) {
       toImageButtonOptions:{format:'svg',filename:'network-bench',width:1100,height:550}});
   }
   $('range-note').textContent = individual
-    ? 'Individual seeds · Plot starts at 0; negative scores remain in the table.'
-    : 'Mean ± sample SD across seeds · Plot starts at 0; negative scores remain in the table.';
+    ? 'Individual seeds · Negative scores are drawn at 0; hover and table show actual values.'
+    : 'Mean ± sample SD across seeds · Negative scores are drawn at 0; hover and table show actual values.';
 }
 
 function tableRuns() {
