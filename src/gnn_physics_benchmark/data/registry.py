@@ -128,6 +128,26 @@ _INVERSE_DESIGN_NOTES = (
 
 
 DATASETS: dict[str, DatasetEntry] = {
+    "noisy_lj": DatasetEntry(
+        key="noisy_lj",
+        directory="noisy-lj",
+        description="200 noisy spring-network trajectories with LJ interactions, 1500 stored frames each.",
+        schema=FrameSchema(
+            edge_columns=("dx", "dy", "r", "stiffness"),
+            stored_fields=(),
+            pickle_module="network",
+        ),
+        interval=1,
+        frames=1500,
+        driven_axis=0,
+        free_axes=(1,),
+        field_notes=(
+            "Source: data/noisy-lj/chunk_*.pt. Time is counted in stored frames; "
+            "the files do not record the MD dump interval. Benchmark inputs use "
+            "the stored bond graph only. No rest lengths or LJ force parameters "
+            "are inferred, and force/stress metrics are unavailable."
+        ),
+    ),
     "cold_wca_fixyz_n1024": DatasetEntry(
         key="cold_wca_fixyz_n1024",
         directory="graphs_cold_m1_d10_wca_fixyz_n1024_i200_inst",

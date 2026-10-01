@@ -1,7 +1,7 @@
 /* A static explorer: all aggregation and filtering happens in the browser. */
 const $ = id => document.getElementById(id);
 const MODELS = ['gns', 'edge_mlp', 'mlp', 'tiny_mlp', 'linear_floor', 'frozen'];
-const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness optimized'};
+const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness optimized', noisy_lj: 'Noisy LJ'};
 const DESCRIPTIONS = {gns: 'Graph message passing', edge_mlp: 'Local bond encodings', mlp: 'Node features only', tiny_mlp: 'Single hidden layer', linear_floor: 'Linear velocity predictor', frozen: 'Frozen-position baseline'};
 let data, dataset = 'all', cohorts = {}, enabled = new Set(), horizon = 100;
 let tableSort = {key: 'r2', descending: true};
@@ -55,6 +55,15 @@ function setDataset(value) {
 }
 function render() {
   const runs = selectedRuns(), grouped = groups(runs);
+  const protocols = [...new Set(runs.map(run => {
+    const p = run.protocol;
+    const training = p.training_frames !== null && p.first_frame === 0 && p.frame_stride === 1
+      ? `Train: first ${p.training_frames} frames per trajectory`
+      : `Train: ${p.window_mode} windows · start frame ${p.first_frame} · stride ${p.frame_stride}`;
+    return `${training} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames`;
+  }))];
+  $('protocol').textContent = protocols.join(' / ');
+  $('protocol').title = 'Training, validation and test use separate trajectories. Checkpoints are selected on validation rollouts. Graph models use bond edges only, including on Noisy LJ.';
   const steps = [...new Set(runs.flatMap(run => Object.keys(run.poisson_r2).map(Number)))].sort((a, b) => a - b);
   const previous = horizon;
   if (steps.length) horizon = steps.reduce((best, step) => Math.abs(step - previous) < Math.abs(best - previous) ? step : best);

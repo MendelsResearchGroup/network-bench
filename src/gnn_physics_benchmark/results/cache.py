@@ -102,6 +102,11 @@ def export_results(root: str | Path | None = None) -> dict:
         result = read_result(path.parent)
         config, measured = result["config"], result["metrics"]
         train = config["train"]
+        spec = RunConfig.from_dict(config)
+        training_frames = (spec.train.windows_per_sim + spec.graph.window_length
+                           + spec.train.max_rollout_steps - 1)
+        if spec.split.max_frames is not None:
+            training_frames = min(training_frames, spec.split.max_frames)
         comparison = {key: value for key, value in config.items() if key not in ("model", "model_hyperparameters")}
         comparison["train"] = {key: value for key, value in train.items() if key != "seed"}
         comparison["systems"] = result["split"]
@@ -120,6 +125,14 @@ def export_results(root: str | Path | None = None) -> dict:
             "selected_epoch": measured.get("selected_epoch"),
             "val_score": measured.get(f"val_{train.get('select_by')}"),
             "rollout_steps": measured.get("requested_steps"),
+            "protocol": {
+                "training_frames": training_frames if train["window_mode"] == "head" else None,
+                "window_mode": train["window_mode"],
+                "history_frames": spec.graph.window_length,
+                "first_frame": spec.split.first_frame,
+                "frame_stride": spec.split.frame_stride,
+                "evaluation_split": measured["split"],
+            },
             "relative_mse": measured.get("relative_mse"),
             "position_mse": measured.get("position_mse"),
             "diverged": measured.get("diverged"),

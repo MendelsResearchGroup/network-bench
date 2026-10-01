@@ -14,7 +14,7 @@ table are comparable by construction rather than by care.
 pip install -e .
 export GNN_BENCH_DATA_ROOT=/path/to/datasets
 
-gnn-bench train configs/networks.json --model gns mlp tiny_mlp --seeds 0 1 2
+gnn-bench train configs/networks.json --model gns mlp edge_mlp linear_floor frozen --seeds 0 1 2
 gnn-bench report node_optimized --seeds
 ```
 
@@ -26,6 +26,22 @@ hyperparameters come from the config. Without `--seeds`, the config's training
 seed is used.
 
 The `edge_mlp` and `mlp` defaults use width 128 and depth 4.
+
+`configs/networks.json` trains on the first **20 frames per training trajectory**:
+four input frames and 16 one-step targets. Validation and test use separate
+trajectories, with **100 predicted steps starting from their first four frames**
+(104 frames total). The split contains 50 training, 50 validation and 70 test
+trajectories; validation rollouts select the checkpoint.
+
+For the 200 Noisy LJ chunks (1500 frames each) under `~/work/data/noisy-lj`:
+
+```bash
+GNN_BENCH_DATA_ROOT=~/work/data gnn-bench train configs/networks.json \
+  --dataset noisy_lj --model gns mlp edge_mlp linear_floor frozen --seeds 0 1 2
+```
+
+Noisy LJ uses the stored bond edges and stiffnesses. The benchmark does not infer
+missing rest lengths or LJ parameters; force and stress analysis is unavailable.
 
 The data split stays fixed (`split.seed`); `train.seed` controls model
 initialisation and training-window sampling. Every run has its own saved config,
@@ -47,7 +63,7 @@ gnn-bench train configs/networks.json --model gns --seeds 0 1 2 --set train.devi
 On the CPU PBS cluster, submit one job per model and seed:
 
 ```bash
-for model in gns mlp tiny_mlp; do
+for model in gns mlp edge_mlp linear_floor frozen; do
   for seed in 0 1 2; do
     qsub -v CONFIG=configs/networks.json,MODEL=$model,SET=train.seed=$seed train.pbs
   done
