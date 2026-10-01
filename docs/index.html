@@ -29,12 +29,12 @@
         <div class="panel-heading"><h2>Poisson’s ratio R²</h2><span class="direction">Higher is better ↗</span></div>
         <div class="plot-filters"><label>Training seed <select id="plot-seed"><option value="all">All seeds</option></select></label><label>Lines <select id="line-mode"><option value="mean">Mean across seeds</option><option value="individual">Individual seeds</option></select></label></div>
         <div id="legend" class="legend" role="group" aria-label="Show models"></div>
-        <div id="chart" class="chart"></div>
+        <div id="chart" class="chart"><div id="plot" class="plot" role="img"></div></div>
         <div class="chart-controls"><label><input id="bands" type="checkbox" checked> ±1 SD</label><button id="reset-models" class="text-button">Show all models</button></div>
         <p id="range-note" class="footnote"></p>
       </div>
       <aside class="panel ranking-panel" aria-labelledby="ranking-title">
-        <h2 id="ranking-title">Model comparison</h2><label class="rank-dataset-label">Dataset <select id="rank-dataset"></select></label><div class="horizon-label"><label for="horizon">Rollout horizon</label><output id="horizon-value" for="horizon"></output></div><input id="horizon" type="range" min="0" max="9" value="9"><div class="range-labels"><span id="first-step"></span><span id="last-step"></span></div>
+        <h2 id="ranking-title">Model comparison</h2><div class="horizon-label"><label for="horizon">Rollout horizon</label><output id="horizon-value" for="horizon"></output></div><input id="horizon" type="range" min="0" max="9" value="9"><div class="range-labels"><span id="first-step"></span><span id="last-step"></span></div>
         <div class="ranking-caption"><span>MODEL</span><span>MEAN R² ± SD</span></div><ol id="ranking" class="ranking"></ol>
       </aside>
     </section>

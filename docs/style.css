@@ -161,6 +161,7 @@ button,select {
   border-radius:6px;
   font-size:13px;
   color:var(--muted);
+  transition:background .25s ease,color .25s ease,box-shadow .25s ease;
 }
 .segmented button[aria-pressed=true] {
   background:var(--surface);
@@ -725,30 +726,12 @@ footer a {
 .plot-filters select {
   font-size:10px;
 }
-.chart-block h3 {
-  font:500 11px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  margin:15px 0 4px;
-  color:var(--ink);
-}
-.chart-block+.chart-block {
-  border-top:1px solid var(--line);
-  padding-top:8px;
-  margin-top:8px;
-}
 .plot {
   width:100%;
   min-height:290px;
 }
 .chart .plot svg {
   overflow:hidden;
-}
-.rank-dataset-label {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  font-size:10px;
-  color:var(--muted);
-  margin-top:18px;
 }
 .ranking-panel {
   align-self:start;
@@ -809,10 +792,11 @@ thead {
 .results-grid { grid-template-columns: 1fr; }
 .ranking-panel { position: static; }
 .ranking-panel .ranking { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; }
-.ranking-panel .rank-dataset-label { max-width: 300px; }
 .ranking-panel .horizon-label, .ranking-panel input[type=range], .ranking-panel .range-labels { max-width: 400px; }
 .ranking-caption { display: none; }
 footer { margin-top: 24px !important; }
 @media (max-width: 1000px) { .ranking-panel .ranking { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .ranking-panel .ranking { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 390px) { .ranking-panel .ranking { grid-template-columns: 1fr; } }
+
+@media (prefers-reduced-motion: reduce) { .segmented button { transition: none; } }
