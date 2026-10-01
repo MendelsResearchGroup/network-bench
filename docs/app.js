@@ -5,7 +5,7 @@ const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness 
 const DESCRIPTIONS = {gns: 'Graph message passing', edge_mlp: 'Local bond encodings', mlp: 'Node features only', tiny_mlp: 'Single hidden layer', linear_floor: 'Linear velocity predictor', frozen: 'Frozen-position baseline'};
 DESCRIPTIONS.edge_mlp_delta = 'Edge MLP with latest velocity and velocity differences; same parameter count';
 DESCRIPTIONS.edge_mlp_attention = 'Velocity-difference edge MLP with a 32-channel attention-pooled global context';
-let data, dataset = 'node_optimized', cohorts = {}, enabled = new Set(), horizon = 100;
+let data, dataset = 'node_optimized', mode = 'normal', cohorts = {}, enabled = new Set(), horizon = 100;
 let tableSort = {key: 'r2', descending: true};
 const finite = x => typeof x === 'number' && Number.isFinite(x);
 const number = (v, digits = 3) => finite(v) ? v.toFixed(digits) : '—';
@@ -14,6 +14,8 @@ const css = key => getComputedStyle(document.documentElement).getPropertyValue(k
 const color = model => css(`--s${Math.max(0, MODELS.indexOf(model)) + 1}`);
 const settings = run => Object.entries(run.hyperparameters).map(([key, value]) => `${key}=${value}`).join(', ') || 'No hyperparameters';
 const datasets = () => [...new Set(data.runs.map(run => run.dataset))].sort();
+const cohortKey = (key = dataset) => `${key}:${mode}`;
+const modeRuns = (key = dataset) => data.runs.filter(run => run.dataset === key && (run.mode ?? 'normal') === mode);
 function node(tag, text, className) {
   const element = document.createElement(tag);
   if (text !== undefined) element.textContent = text;
@@ -28,8 +30,7 @@ function stats(values) {
   return {mean, sd, n: values.length};
 }
 function selectedRuns() {
-  return data.runs.filter(run => run.dataset === dataset
-    && run.comparison_id === cohorts[run.dataset] && enabled.has(run.model)
+  return modeRuns().filter(run => run.comparison_id === cohorts[cohortKey()] && enabled.has(run.model)
     && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value));
 }
 function groups(runs) {
@@ -48,20 +49,48 @@ function setDataset(value) {
   const changed = dataset !== value;
   dataset = value;
   for (const button of $('datasets').children) button.setAttribute('aria-pressed', String(button.dataset.value === dataset));
-  const comparisons = [...new Set(data.runs.filter(run => run.dataset === dataset).map(run => run.comparison_id))];
+  const comparisons = [...new Set(modeRuns().map(run => run.comparison_id))];
+  cohorts[cohortKey()] ??= comparisons[0];
   $('cohort-label').hidden = comparisons.length < 2;
   $('cohort').replaceChildren(...comparisons.map(id => new Option(id, id)));
-  $('cohort').value = cohorts[dataset] ?? '';
+  $('cohort').value = cohorts[cohortKey()] ?? '';
+  for (const button of $('modes').children) button.setAttribute('aria-pressed', String(button.dataset.mode === mode));
   render(changed);
+}
+function renderSplit() {
+  const split = data.splits[cohorts[cohortKey()]];
+  $('ranking-audit').hidden = mode !== 'ood';
+  $('ranking-audit').href = `https://github.com/MendelsResearchGroup/network-bench/blob/main/configs/ood/${dataset}.ranking.json`;
+  $('split-rule').textContent = mode === 'ood'
+    ? 'OOD: rank networks by ground-truth Poisson’s ratio at 100 steps. Train and validate within the highest 30%; test on up to 100 networks from the lower 70%.'
+    : 'Normal: shuffle networks with a fixed data-split seed, then assign separate training, validation and test networks.';
+  $('split-counts').textContent = split
+    ? `· ${split.systems.train.length} train / ${split.systems.val.length} validation / ${split.systems.test.length} test / ${split.unused.length} unused`
+    : '· awaiting completed runs';
+  $('split-note').textContent = split
+    ? mode === 'ood'
+      ? `The upper 30% is rounded up, then shuffled with seed ${split.seed}. Its first ${split.systems.train.length} networks are training; the remaining ${split.systems.val.length} are validation. The lower 70% is shuffled using the same generator; its first ${split.systems.test.length} networks are test, and the rest are unused. Ranking uses the benchmark’s position-based ratio from initial frame 3 to frame 103; equal ratios are ordered by network ID. Checkpoints are selected only on high-ratio validation networks. Sample counts differ from Normal; R² uses this mode’s own test population. Network IDs below match the saved run exactly.`
+      : `Data-split seed ${split.seed}: ${split.systems.train.length} training, ${split.systems.val.length} validation and ${split.systems.test.length} test networks; remaining networks are unused. Training seeds change model initialization, while these network assignments stay fixed. Network IDs below match the saved run exactly.`
+    : 'No completed results have been published for this split yet.';
+  $('split-membership').replaceChildren();
+  if (split) for (const [part, title] of [['train', 'Training'], ['val', 'Validation'], ['test', 'Test'], ['unused', 'Unused']]) {
+    const ids = part === 'unused' ? split.unused : split.systems[part];
+    if (!ids.length) continue;
+    const section = node('section'), list = node('ol');
+    section.append(node('h3', `${title} · ${ids.length} networks`));
+    for (const id of [...ids].sort()) list.append(node('li', id));
+    section.append(list); $('split-membership').append(section);
+  }
 }
 function render(animate = false) {
   const runs = selectedRuns(), grouped = groups(runs);
+  renderSplit();
   const protocols = [...new Set(runs.map(run => {
     const p = run.protocol;
     const training = p.training_frames !== null && p.first_frame === 0 && p.frame_stride === 1
       ? `Train: first ${p.training_frames} frames per trajectory`
       : `Train: ${p.window_mode} windows · start frame ${p.first_frame} · stride ${p.frame_stride}`;
-    return `${training} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames`;
+    return `${training} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames (${run.rollout_steps + p.history_frames} frames total)`;
   }))];
   $('protocol').textContent = protocols.join(' / ');
   $('protocol').title = 'Training, validation and test use separate trajectories. Checkpoints are selected on validation rollouts. Graph models use bond edges only, including on Noisy LJ.';
@@ -79,8 +108,14 @@ function render(animate = false) {
   renderChart(animate === true);
   renderTable();
   for (const button of $('legend').children) {
-    button.setAttribute('aria-pressed', String(enabled.has(button.dataset.model)));
-    button.querySelector('.swatch').style.background = color(button.dataset.model);
+    const model = button.dataset.model;
+    const counts = [...new Set(data.runs.filter(run => run.dataset === dataset
+      && (run.mode ?? 'normal') === mode && run.comparison_id === cohorts[cohortKey()] && run.model === model).map(run => run.parameters))];
+    button.hidden = !counts.length;
+    button.querySelector('.model-parameters').textContent = counts.map(count => count.toLocaleString()).join(' / ');
+    button.title = `${DESCRIPTIONS[model] ?? model} · ${counts.map(count => count.toLocaleString()).join(' / ')} parameters`;
+    button.setAttribute('aria-pressed', String(enabled.has(model)));
+    button.querySelector('.swatch').style.background = color(model);
   }
 }
 function renderRanking(grouped) {
@@ -109,7 +144,7 @@ function renderChart(animate) {
   if (!window.Plotly) { $('chart').textContent = 'The plot could not load. Results are available below.'; return; }
   const plot = $('plot'), traces = [];
   const individual = $('line-mode').value === 'individual';
-  const all = groups(data.runs.filter(run => run.comparison_id === cohorts[run.dataset]
+  const all = groups(data.runs.filter(run => (run.mode ?? 'normal') === mode && run.comparison_id === cohorts[cohortKey(run.dataset)]
     && enabled.has(run.model) && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)));
   const identity = group => JSON.stringify([group.model, Object.entries(group.hyperparameters).sort()]);
   const slots = [...new Map(all.map(group => [identity(group), group])).entries()].sort((a,b) => a[0].localeCompare(b[0]));
@@ -156,7 +191,7 @@ function renderChart(animate) {
     shapes:[{type:'line',x0:horizon,x1:horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
     annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:'No results for these filters.',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
-  plot.setAttribute('aria-label', `${label(dataset)}: Poisson’s ratio R squared against rollout steps. Values are available in the runs table.`);
+  plot.setAttribute('aria-label', `${label(dataset)}, ${mode === 'ood' ? 'OOD' : 'normal'}: Poisson’s ratio R squared against rollout steps. Values are available in the runs table.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
   if (animate && sameTraces && plot.data.some(trace => trace.y.some(finite)) && traces.some(trace => trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     Plotly.animate(plot,{data:traces,traces:traces.map((_,i) => i)},
@@ -229,7 +264,7 @@ function renderTable() {
   if (!runs.length) {const row=node('tr'),cell=node('td','No runs match these filters.','empty');cell.colSpan=COLUMNS.length;row.append(cell);$('table-body').append(row);}
 }
 function downloadCSV() {
-  const columns=['dataset','model','seed','hyperparameters','parameters','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`];
+  const columns=['dataset','mode','comparison_id','model','seed','hyperparameters','parameters','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`];
   const quote=value=>'"'+String(value ?? '').replaceAll('"','""')+'"';
   const rows=tableRuns().map(run=>columns.map(key=>quote(key==='hyperparameters'?JSON.stringify(run.hyperparameters):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:run[key])).join(','));
   const url=URL.createObjectURL(new Blob([[columns.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'}));
@@ -249,14 +284,15 @@ fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${re
   enabled=new Set(data.runs.map(run=>run.model));
   for(const key of datasets()){const button=node('button',label(key));button.dataset.value=key;button.onclick=()=>setDataset(key);$('datasets').append(button);}
   for(const key of datasets()){
-    cohorts[key]=data.runs.find(run=>run.dataset===key).comparison_id;
+    for (const distribution of ['normal', 'ood']) cohorts[`${key}:${distribution}`]=data.runs.find(run=>run.dataset===key && (run.mode ?? 'normal') === distribution)?.comparison_id;
   }
+  for (const button of $('modes').children) button.onclick=()=>{mode=button.dataset.mode;setDataset(dataset);};
   for(const model of [...enabled].sort((a,b)=>MODELS.indexOf(a)-MODELS.indexOf(b))){
     const button=node('button'),dot=node('i',undefined,'swatch');dot.style.background=color(model);button.dataset.model=model;button.title=DESCRIPTIONS[model] ?? model;
-    button.append(dot,node('span',model));button.onclick=()=>{enabled.has(model)?enabled.delete(model):enabled.add(model);render();};$('legend').append(button);
+    button.append(dot,node('span',model),node('span',undefined,'model-parameters'));button.onclick=()=>{enabled.has(model)?enabled.delete(model):enabled.add(model);render();};$('legend').append(button);
   }
   for(const seed of [...new Set(data.runs.map(run=>run.seed))].sort((a,b)=>a-b)) for(const id of ['plot-seed','seed']) $(id).append(new Option(`Seed ${seed}`,String(seed)));
-  $('cohort').onchange=()=>{cohorts[dataset]=$('cohort').value;render();};
+  $('cohort').onchange=()=>{cohorts[cohortKey()]=$('cohort').value;render();};
   for(const id of ['bands','plot-seed','line-mode'])$(id).onchange=render;
   $('horizon').oninput=()=>{horizon=JSON.parse($('horizon').dataset.steps)[$('horizon').value];render();};
   $('reset-models').onclick=()=>{enabled=new Set(data.runs.map(run=>run.model));render();};

@@ -1,0 +1,1271 @@
+{
+ "dataset": "stiff_optimized",
+ "ranking_steps": 100,
+ "history_frames": 4,
+ "upper_fraction": 0.3,
+ "train_networks": 30,
+ "test_limit": 100,
+ "cutoff_poisson_ratio": 0.14230261162820343,
+ "counts": {
+  "train": 30,
+  "val": 57,
+  "test": 100
+ },
+ "unused": [
+  "chunk_highP_105",
+  "chunk_598",
+  "chunk_highP_38",
+  "chunk_508",
+  "chunk_394",
+  "chunk_914",
+  "chunk_616",
+  "chunk_162",
+  "chunk_157",
+  "chunk_107",
+  "chunk_891",
+  "chunk_590",
+  "chunk_398",
+  "chunk_260",
+  "chunk_highP_84",
+  "chunk_140",
+  "chunk_290",
+  "chunk_730",
+  "chunk_844",
+  "chunk_695",
+  "chunk_265",
+  "chunk_155",
+  "chunk_425",
+  "chunk_313",
+  "chunk_340",
+  "chunk_125",
+  "chunk_768",
+  "chunk_717",
+  "chunk_highP_73",
+  "chunk_highP_91",
+  "chunk_813",
+  "chunk_highP_94",
+  "chunk_49",
+  "chunk_92",
+  "chunk_176",
+  "chunk_222",
+  "chunk_339",
+  "chunk_525",
+  "chunk_482",
+  "chunk_highP_72",
+  "chunk_786",
+  "chunk_701",
+  "chunk_highP_123",
+  "chunk_866",
+  "chunk_817",
+  "chunk_630",
+  "chunk_298",
+  "chunk_818",
+  "chunk_121",
+  "chunk_151",
+  "chunk_194",
+  "chunk_478",
+  "chunk_792",
+  "chunk_178",
+  "chunk_79",
+  "chunk_596",
+  "chunk_highP_33",
+  "chunk_504",
+  "chunk_highP_60",
+  "chunk_681",
+  "chunk_highP_18",
+  "chunk_302",
+  "chunk_highP_44",
+  "chunk_308",
+  "chunk_43",
+  "chunk_379",
+  "chunk_689",
+  "chunk_576",
+  "chunk_664",
+  "chunk_436",
+  "chunk_539",
+  "chunk_197",
+  "chunk_318",
+  "chunk_279",
+  "chunk_296",
+  "chunk_highP_3",
+  "chunk_30",
+  "chunk_852",
+  "chunk_555",
+  "chunk_228",
+  "chunk_871",
+  "chunk_183",
+  "chunk_29",
+  "chunk_60",
+  "chunk_322",
+  "chunk_108",
+  "chunk_744",
+  "chunk_2",
+  "chunk_918",
+  "chunk_133",
+  "chunk_912",
+  "chunk_288",
+  "chunk_611",
+  "chunk_479",
+  "chunk_78",
+  "chunk_763",
+  "chunk_729",
+  "chunk_759",
+  "chunk_236",
+  "chunk_96",
+  "chunk_193"
+ ],
+ "ranking": [
+  {
+   "system": "chunk_highP_21",
+   "poisson_ratio": 0.38287779023229385
+  },
+  {
+   "system": "chunk_95",
+   "poisson_ratio": 0.3767420534055104
+  },
+  {
+   "system": "chunk_738",
+   "poisson_ratio": 0.37345334635717237
+  },
+  {
+   "system": "chunk_266",
+   "poisson_ratio": 0.3717506181732338
+  },
+  {
+   "system": "chunk_423",
+   "poisson_ratio": 0.36207442675335333
+  },
+  {
+   "system": "chunk_440",
+   "poisson_ratio": 0.3604839179998247
+  },
+  {
+   "system": "chunk_621",
+   "poisson_ratio": 0.3600092972276056
+  },
+  {
+   "system": "chunk_highP_68",
+   "poisson_ratio": 0.35767803887024313
+  },
+  {
+   "system": "chunk_867",
+   "poisson_ratio": 0.3564982734271214
+  },
+  {
+   "system": "chunk_688",
+   "poisson_ratio": 0.3563115735161824
+  },
+  {
+   "system": "chunk_179",
+   "poisson_ratio": 0.355388201510738
+  },
+  {
+   "system": "chunk_304",
+   "poisson_ratio": 0.353786627044336
+  },
+  {
+   "system": "chunk_54",
+   "poisson_ratio": 0.35313809041271776
+  },
+  {
+   "system": "chunk_713",
+   "poisson_ratio": 0.35286947301050264
+  },
+  {
+   "system": "chunk_184",
+   "poisson_ratio": 0.3513805004314064
+  },
+  {
+   "system": "chunk_671",
+   "poisson_ratio": 0.3507199070584476
+  },
+  {
+   "system": "chunk_586",
+   "poisson_ratio": 0.35065327885637027
+  },
+  {
+   "system": "chunk_highP_120",
+   "poisson_ratio": 0.3473423492429495
+  },
+  {
+   "system": "chunk_160",
+   "poisson_ratio": 0.347244899788504
+  },
+  {
+   "system": "chunk_628",
+   "poisson_ratio": 0.34706504605169797
+  },
+  {
+   "system": "chunk_316",
+   "poisson_ratio": 0.34582790432750116
+  },
+  {
+   "system": "chunk_1",
+   "poisson_ratio": 0.3450801503898038
+  },
+  {
+   "system": "chunk_84",
+   "poisson_ratio": 0.34452344297932896
+  },
+  {
+   "system": "chunk_81",
+   "poisson_ratio": 0.3377162154863091
+  },
+  {
+   "system": "chunk_426",
+   "poisson_ratio": 0.3371279555155985
+  },
+  {
+   "system": "chunk_highP_86",
+   "poisson_ratio": 0.32945396220642786
+  },
+  {
+   "system": "chunk_highP_147",
+   "poisson_ratio": 0.30655626201114516
+  },
+  {
+   "system": "chunk_highP_6",
+   "poisson_ratio": 0.30553283912733215
+  },
+  {
+   "system": "chunk_highP_145",
+   "poisson_ratio": 0.29561209230921814
+  },
+  {
+   "system": "chunk_highP_95",
+   "poisson_ratio": 0.2950514986859759
+  },
+  {
+   "system": "chunk_450",
+   "poisson_ratio": 0.2829933381573139
+  },
+  {
+   "system": "chunk_highP_23",
+   "poisson_ratio": 0.280137226376958
+  },
+  {
+   "system": "chunk_826",
+   "poisson_ratio": 0.27861827573020326
+  },
+  {
+   "system": "chunk_highP_41",
+   "poisson_ratio": 0.2748349487868034
+  },
+  {
+   "system": "chunk_588",
+   "poisson_ratio": 0.2727468456415216
+  },
+  {
+   "system": "chunk_highP_12",
+   "poisson_ratio": 0.2663292062977288
+  },
+  {
+   "system": "chunk_456",
+   "poisson_ratio": 0.26550974191968246
+  },
+  {
+   "system": "chunk_highP_153",
+   "poisson_ratio": 0.26281856897654576
+  },
+  {
+   "system": "chunk_719",
+   "poisson_ratio": 0.26250219282086457
+  },
+  {
+   "system": "chunk_685",
+   "poisson_ratio": 0.2616543334935488
+  },
+  {
+   "system": "chunk_471",
+   "poisson_ratio": 0.26022827832813883
+  },
+  {
+   "system": "chunk_751",
+   "poisson_ratio": 0.25596353882618295
+  },
+  {
+   "system": "chunk_906",
+   "poisson_ratio": 0.2546293316061639
+  },
+  {
+   "system": "chunk_87",
+   "poisson_ratio": 0.2528889185078781
+  },
+  {
+   "system": "chunk_67",
+   "poisson_ratio": 0.25084564974350543
+  },
+  {
+   "system": "chunk_231",
+   "poisson_ratio": 0.2473719574651914
+  },
+  {
+   "system": "chunk_806",
+   "poisson_ratio": 0.24674424365492162
+  },
+  {
+   "system": "chunk_811",
+   "poisson_ratio": 0.24534929701511526
+  },
+  {
+   "system": "chunk_610",
+   "poisson_ratio": 0.24205671505855614
+  },
+  {
+   "system": "chunk_327",
+   "poisson_ratio": 0.24056172154417882
+  },
+  {
+   "system": "chunk_180",
+   "poisson_ratio": 0.2402461151220925
+  },
+  {
+   "system": "chunk_highP_20",
+   "poisson_ratio": 0.23774246994263257
+  },
+  {
+   "system": "chunk_442",
+   "poisson_ratio": 0.2372353653790883
+  },
+  {
+   "system": "chunk_602",
+   "poisson_ratio": 0.23113511589266555
+  },
+  {
+   "system": "chunk_277",
+   "poisson_ratio": 0.22462492242453833
+  },
+  {
+   "system": "chunk_10",
+   "poisson_ratio": 0.2194543579620188
+  },
+  {
+   "system": "chunk_highP_51",
+   "poisson_ratio": 0.21414527844557157
+  },
+  {
+   "system": "chunk_362",
+   "poisson_ratio": 0.21357054064810538
+  },
+  {
+   "system": "chunk_highP_79",
+   "poisson_ratio": 0.20455728698313122
+  },
+  {
+   "system": "chunk_97",
+   "poisson_ratio": 0.20449495088243294
+  },
+  {
+   "system": "chunk_242",
+   "poisson_ratio": 0.1993371394560266
+  },
+  {
+   "system": "chunk_267",
+   "poisson_ratio": 0.1936972146972978
+  },
+  {
+   "system": "chunk_highP_35",
+   "poisson_ratio": 0.193436297121747
+  },
+  {
+   "system": "chunk_175",
+   "poisson_ratio": 0.19098084118933006
+  },
+  {
+   "system": "chunk_253",
+   "poisson_ratio": 0.19090170863708206
+  },
+  {
+   "system": "chunk_674",
+   "poisson_ratio": 0.18967633139965726
+  },
+  {
+   "system": "chunk_132",
+   "poisson_ratio": 0.18852921637277684
+  },
+  {
+   "system": "chunk_highP_65",
+   "poisson_ratio": 0.187721590286022
+  },
+  {
+   "system": "chunk_highP_126",
+   "poisson_ratio": 0.18578188240021754
+  },
+  {
+   "system": "chunk_highP_148",
+   "poisson_ratio": 0.18527496699192417
+  },
+  {
+   "system": "chunk_799",
+   "poisson_ratio": 0.18523518759678662
+  },
+  {
+   "system": "chunk_highP_129",
+   "poisson_ratio": 0.18266305882079029
+  },
+  {
+   "system": "chunk_highP_2",
+   "poisson_ratio": 0.17868750777034878
+  },
+  {
+   "system": "chunk_617",
+   "poisson_ratio": 0.17785278914988867
+  },
+  {
+   "system": "chunk_832",
+   "poisson_ratio": 0.1750256947596427
+  },
+  {
+   "system": "chunk_highP_115",
+   "poisson_ratio": 0.17390924755245538
+  },
+  {
+   "system": "chunk_869",
+   "poisson_ratio": 0.17200453792541304
+  },
+  {
+   "system": "chunk_453",
+   "poisson_ratio": 0.1718165941772374
+  },
+  {
+   "system": "chunk_highP_106",
+   "poisson_ratio": 0.1632250026570039
+  },
+  {
+   "system": "chunk_609",
+   "poisson_ratio": 0.16168227386011905
+  },
+  {
+   "system": "chunk_highP_90",
+   "poisson_ratio": 0.15784886292733352
+  },
+  {
+   "system": "chunk_highP_103",
+   "poisson_ratio": 0.15633446795403685
+  },
+  {
+   "system": "chunk_570",
+   "poisson_ratio": 0.1532825676349568
+  },
+  {
+   "system": "chunk_82",
+   "poisson_ratio": 0.15227529148046792
+  },
+  {
+   "system": "chunk_highP_49",
+   "poisson_ratio": 0.15176874238608298
+  },
+  {
+   "system": "chunk_352",
+   "poisson_ratio": 0.14911800207278303
+  },
+  {
+   "system": "chunk_highP_122",
+   "poisson_ratio": 0.14230261162820343
+  },
+  {
+   "system": "chunk_highP_151",
+   "poisson_ratio": 0.14038616927663064
+  },
+  {
+   "system": "chunk_768",
+   "poisson_ratio": 0.13850046766532276
+  },
+  {
+   "system": "chunk_155",
+   "poisson_ratio": 0.1338470508666355
+  },
+  {
+   "system": "chunk_highP_33",
+   "poisson_ratio": 0.13197977978259967
+  },
+  {
+   "system": "chunk_695",
+   "poisson_ratio": 0.13108681892980736
+  },
+  {
+   "system": "chunk_664",
+   "poisson_ratio": 0.130376967757925
+  },
+  {
+   "system": "chunk_817",
+   "poisson_ratio": 0.12599248236010518
+  },
+  {
+   "system": "chunk_525",
+   "poisson_ratio": 0.12514928180015197
+  },
+  {
+   "system": "chunk_highP_84",
+   "poisson_ratio": 0.12151619519137576
+  },
+  {
+   "system": "chunk_highP_94",
+   "poisson_ratio": 0.11817743904376886
+  },
+  {
+   "system": "chunk_669",
+   "poisson_ratio": 0.11337284091866864
+  },
+  {
+   "system": "chunk_highP_123",
+   "poisson_ratio": 0.11108826754385964
+  },
+  {
+   "system": "chunk_627",
+   "poisson_ratio": 0.1074662366782777
+  },
+  {
+   "system": "chunk_478",
+   "poisson_ratio": 0.10670412603776915
+  },
+  {
+   "system": "chunk_125",
+   "poisson_ratio": 0.10587288380842136
+  },
+  {
+   "system": "chunk_74",
+   "poisson_ratio": 0.10127397946140912
+  },
+  {
+   "system": "chunk_911",
+   "poisson_ratio": 0.09896773480807051
+  },
+  {
+   "system": "chunk_642",
+   "poisson_ratio": 0.09459081200362086
+  },
+  {
+   "system": "chunk_92",
+   "poisson_ratio": 0.0912255082626291
+  },
+  {
+   "system": "chunk_highP_88",
+   "poisson_ratio": 0.08705708924948109
+  },
+  {
+   "system": "chunk_730",
+   "poisson_ratio": 0.08417030651561774
+  },
+  {
+   "system": "chunk_296",
+   "poisson_ratio": 0.0812163586859344
+  },
+  {
+   "system": "chunk_705",
+   "poisson_ratio": 0.07951400650953906
+  },
+  {
+   "system": "chunk_759",
+   "poisson_ratio": 0.07735695944484529
+  },
+  {
+   "system": "chunk_162",
+   "poisson_ratio": 0.07698972083016077
+  },
+  {
+   "system": "chunk_120",
+   "poisson_ratio": 0.07524091803443572
+  },
+  {
+   "system": "chunk_470",
+   "poisson_ratio": 0.0743016539392958
+  },
+  {
+   "system": "chunk_86",
+   "poisson_ratio": 0.07127589766584878
+  },
+  {
+   "system": "chunk_251",
+   "poisson_ratio": 0.06679753388937716
+  },
+  {
+   "system": "chunk_224",
+   "poisson_ratio": 0.06521337516482179
+  },
+  {
+   "system": "chunk_highP_3",
+   "poisson_ratio": 0.05748508626255209
+  },
+  {
+   "system": "chunk_308",
+   "poisson_ratio": 0.05551937407744567
+  },
+  {
+   "system": "chunk_908",
+   "poisson_ratio": 0.05398584251695727
+  },
+  {
+   "system": "chunk_highP_91",
+   "poisson_ratio": 0.05239246657823652
+  },
+  {
+   "system": "chunk_896",
+   "poisson_ratio": 0.052224951241153325
+  },
+  {
+   "system": "chunk_658",
+   "poisson_ratio": 0.04832516125877887
+  },
+  {
+   "system": "chunk_156",
+   "poisson_ratio": 0.04746374272572938
+  },
+  {
+   "system": "chunk_104",
+   "poisson_ratio": 0.046735366473343795
+  },
+  {
+   "system": "chunk_590",
+   "poisson_ratio": 0.041653763177056685
+  },
+  {
+   "system": "chunk_228",
+   "poisson_ratio": 0.03916221052880324
+  },
+  {
+   "system": "chunk_49",
+   "poisson_ratio": 0.03652389224137379
+  },
+  {
+   "system": "chunk_812",
+   "poisson_ratio": 0.03505618260049437
+  },
+  {
+   "system": "chunk_highP_73",
+   "poisson_ratio": 0.03095872766253627
+  },
+  {
+   "system": "chunk_highP_18",
+   "poisson_ratio": 0.02892059160835644
+  },
+  {
+   "system": "chunk_364",
+   "poisson_ratio": 0.025888470602012967
+  },
+  {
+   "system": "chunk_300",
+   "poisson_ratio": 0.025706636966052167
+  },
+  {
+   "system": "chunk_282",
+   "poisson_ratio": 0.022084403029223935
+  },
+  {
+   "system": "chunk_highP_75",
+   "poisson_ratio": 0.02132540262539721
+  },
+  {
+   "system": "chunk_477",
+   "poisson_ratio": 0.010741976852817062
+  },
+  {
+   "system": "chunk_highP_44",
+   "poisson_ratio": 0.008470153742338945
+  },
+  {
+   "system": "chunk_871",
+   "poisson_ratio": 0.005580871248940658
+  },
+  {
+   "system": "chunk_348",
+   "poisson_ratio": 0.0011093512426096446
+  },
+  {
+   "system": "chunk_533",
+   "poisson_ratio": -0.0005677739397317726
+  },
+  {
+   "system": "chunk_highP_76",
+   "poisson_ratio": -0.0014633583930683427
+  },
+  {
+   "system": "chunk_269",
+   "poisson_ratio": -0.004722873832285665
+  },
+  {
+   "system": "chunk_835",
+   "poisson_ratio": -0.0051258664882491084
+  },
+  {
+   "system": "chunk_504",
+   "poisson_ratio": -0.005664599725173536
+  },
+  {
+   "system": "chunk_824",
+   "poisson_ratio": -0.009990989477025746
+  },
+  {
+   "system": "chunk_895",
+   "poisson_ratio": -0.01023714843266627
+  },
+  {
+   "system": "chunk_133",
+   "poisson_ratio": -0.011871044846708425
+  },
+  {
+   "system": "chunk_819",
+   "poisson_ratio": -0.012541080319960459
+  },
+  {
+   "system": "chunk_864",
+   "poisson_ratio": -0.013166148445067463
+  },
+  {
+   "system": "chunk_highP_64",
+   "poisson_ratio": -0.018787466056424416
+  },
+  {
+   "system": "chunk_0",
+   "poisson_ratio": -0.019532237214388647
+  },
+  {
+   "system": "chunk_844",
+   "poisson_ratio": -0.027621282743284178
+  },
+  {
+   "system": "chunk_744",
+   "poisson_ratio": -0.0322874456371167
+  },
+  {
+   "system": "chunk_highP_72",
+   "poisson_ratio": -0.033312667059814775
+  },
+  {
+   "system": "chunk_651",
+   "poisson_ratio": -0.03403334443107025
+  },
+  {
+   "system": "chunk_107",
+   "poisson_ratio": -0.03477629107530336
+  },
+  {
+   "system": "chunk_108",
+   "poisson_ratio": -0.03561765807693172
+  },
+  {
+   "system": "chunk_544",
+   "poisson_ratio": -0.03682002537122662
+  },
+  {
+   "system": "chunk_765",
+   "poisson_ratio": -0.03721599861379548
+  },
+  {
+   "system": "chunk_564",
+   "poisson_ratio": -0.03817559377604664
+  },
+  {
+   "system": "chunk_157",
+   "poisson_ratio": -0.04127098763836889
+  },
+  {
+   "system": "chunk_highP_60",
+   "poisson_ratio": -0.04280854324376206
+  },
+  {
+   "system": "chunk_866",
+   "poisson_ratio": -0.04477536400716182
+  },
+  {
+   "system": "chunk_599",
+   "poisson_ratio": -0.046021220097395364
+  },
+  {
+   "system": "chunk_234",
+   "poisson_ratio": -0.048320906077229726
+  },
+  {
+   "system": "chunk_452",
+   "poisson_ratio": -0.053094495608339634
+  },
+  {
+   "system": "chunk_596",
+   "poisson_ratio": -0.058446597072045935
+  },
+  {
+   "system": "chunk_340",
+   "poisson_ratio": -0.059738359995157336
+  },
+  {
+   "system": "chunk_414",
+   "poisson_ratio": -0.059989974814006516
+  },
+  {
+   "system": "chunk_616",
+   "poisson_ratio": -0.06282040980792757
+  },
+  {
+   "system": "chunk_508",
+   "poisson_ratio": -0.06586992442130918
+  },
+  {
+   "system": "chunk_288",
+   "poisson_ratio": -0.06854207208875751
+  },
+  {
+   "system": "chunk_highP_105",
+   "poisson_ratio": -0.07272578783536333
+  },
+  {
+   "system": "chunk_30",
+   "poisson_ratio": -0.07340677433763634
+  },
+  {
+   "system": "chunk_487",
+   "poisson_ratio": -0.07363988722772105
+  },
+  {
+   "system": "chunk_379",
+   "poisson_ratio": -0.07543751623901218
+  },
+  {
+   "system": "chunk_73",
+   "poisson_ratio": -0.0782357810574741
+  },
+  {
+   "system": "chunk_891",
+   "poisson_ratio": -0.08102296714258392
+  },
+  {
+   "system": "chunk_279",
+   "poisson_ratio": -0.08821782713874107
+  },
+  {
+   "system": "chunk_highP_38",
+   "poisson_ratio": -0.08847281112948585
+  },
+  {
+   "system": "chunk_555",
+   "poisson_ratio": -0.08962015818724459
+  },
+  {
+   "system": "chunk_122",
+   "poisson_ratio": -0.0901896779851933
+  },
+  {
+   "system": "chunk_756",
+   "poisson_ratio": -0.09822330464863878
+  },
+  {
+   "system": "chunk_605",
+   "poisson_ratio": -0.10168207041835908
+  },
+  {
+   "system": "chunk_436",
+   "poisson_ratio": -0.10597761555939886
+  },
+  {
+   "system": "chunk_394",
+   "poisson_ratio": -0.1062295052673842
+  },
+  {
+   "system": "chunk_852",
+   "poisson_ratio": -0.10773098458744645
+  },
+  {
+   "system": "chunk_highP_25",
+   "poisson_ratio": -0.11147654832365049
+  },
+  {
+   "system": "chunk_701",
+   "poisson_ratio": -0.1147968236803916
+  },
+  {
+   "system": "chunk_820",
+   "poisson_ratio": -0.11637814601775938
+  },
+  {
+   "system": "chunk_630",
+   "poisson_ratio": -0.12049899846944573
+  },
+  {
+   "system": "chunk_482",
+   "poisson_ratio": -0.12545789651111058
+  },
+  {
+   "system": "chunk_576",
+   "poisson_ratio": -0.12759755827688515
+  },
+  {
+   "system": "chunk_178",
+   "poisson_ratio": -0.12954035872481906
+  },
+  {
+   "system": "chunk_918",
+   "poisson_ratio": -0.13141009709501864
+  },
+  {
+   "system": "chunk_539",
+   "poisson_ratio": -0.13236619625511553
+  },
+  {
+   "system": "chunk_521",
+   "poisson_ratio": -0.13519895024672346
+  },
+  {
+   "system": "chunk_6",
+   "poisson_ratio": -0.13571473348466115
+  },
+  {
+   "system": "chunk_598",
+   "poisson_ratio": -0.13573059347441807
+  },
+  {
+   "system": "chunk_818",
+   "poisson_ratio": -0.13798561970943515
+  },
+  {
+   "system": "chunk_343",
+   "poisson_ratio": -0.1388827627753477
+  },
+  {
+   "system": "chunk_786",
+   "poisson_ratio": -0.1403059855483914
+  },
+  {
+   "system": "chunk_813",
+   "poisson_ratio": -0.1409668022009094
+  },
+  {
+   "system": "chunk_151",
+   "poisson_ratio": -0.14526668626275444
+  },
+  {
+   "system": "chunk_912",
+   "poisson_ratio": -0.14541526631968793
+  },
+  {
+   "system": "chunk_176",
+   "poisson_ratio": -0.14583186123593786
+  },
+  {
+   "system": "chunk_859",
+   "poisson_ratio": -0.15058798340367593
+  },
+  {
+   "system": "chunk_876",
+   "poisson_ratio": -0.1507326881883903
+  },
+  {
+   "system": "chunk_320",
+   "poisson_ratio": -0.1509527807277285
+  },
+  {
+   "system": "chunk_611",
+   "poisson_ratio": -0.15144951269175932
+  },
+  {
+   "system": "chunk_481",
+   "poisson_ratio": -0.15476957657117255
+  },
+  {
+   "system": "chunk_78",
+   "poisson_ratio": -0.15574373117320645
+  },
+  {
+   "system": "chunk_313",
+   "poisson_ratio": -0.1570269215524331
+  },
+  {
+   "system": "chunk_717",
+   "poisson_ratio": -0.15828186984205847
+  },
+  {
+   "system": "chunk_236",
+   "poisson_ratio": -0.15910269437837476
+  },
+  {
+   "system": "chunk_388",
+   "poisson_ratio": -0.16217408915271705
+  },
+  {
+   "system": "chunk_415",
+   "poisson_ratio": -0.16219137422880664
+  },
+  {
+   "system": "chunk_121",
+   "poisson_ratio": -0.16493314289120165
+  },
+  {
+   "system": "chunk_914",
+   "poisson_ratio": -0.16904985423850313
+  },
+  {
+   "system": "chunk_479",
+   "poisson_ratio": -0.173455281812867
+  },
+  {
+   "system": "chunk_289",
+   "poisson_ratio": -0.17399989034025717
+  },
+  {
+   "system": "chunk_689",
+   "poisson_ratio": -0.174725785131952
+  },
+  {
+   "system": "chunk_604",
+   "poisson_ratio": -0.1760585246573397
+  },
+  {
+   "system": "chunk_79",
+   "poisson_ratio": -0.17853286121153278
+  },
+  {
+   "system": "chunk_498",
+   "poisson_ratio": -0.17882455185969076
+  },
+  {
+   "system": "chunk_729",
+   "poisson_ratio": -0.17980539288288183
+  },
+  {
+   "system": "chunk_249",
+   "poisson_ratio": -0.18018889762215795
+  },
+  {
+   "system": "chunk_789",
+   "poisson_ratio": -0.1817886628078545
+  },
+  {
+   "system": "chunk_419",
+   "poisson_ratio": -0.1839908007240683
+  },
+  {
+   "system": "chunk_246",
+   "poisson_ratio": -0.18460388942094405
+  },
+  {
+   "system": "chunk_600",
+   "poisson_ratio": -0.19236686813476567
+  },
+  {
+   "system": "chunk_445",
+   "poisson_ratio": -0.19788210048238072
+  },
+  {
+   "system": "chunk_193",
+   "poisson_ratio": -0.1991320354124057
+  },
+  {
+   "system": "chunk_459",
+   "poisson_ratio": -0.20039233152630956
+  },
+  {
+   "system": "chunk_392",
+   "poisson_ratio": -0.2024866384208611
+  },
+  {
+   "system": "chunk_711",
+   "poisson_ratio": -0.20558243552464578
+  },
+  {
+   "system": "chunk_792",
+   "poisson_ratio": -0.20568610236407917
+  },
+  {
+   "system": "chunk_337",
+   "poisson_ratio": -0.2058517584520514
+  },
+  {
+   "system": "chunk_326",
+   "poisson_ratio": -0.20809316472087264
+  },
+  {
+   "system": "chunk_183",
+   "poisson_ratio": -0.2102981846577545
+  },
+  {
+   "system": "chunk_681",
+   "poisson_ratio": -0.2116977253991162
+  },
+  {
+   "system": "chunk_310",
+   "poisson_ratio": -0.21622097876569296
+  },
+  {
+   "system": "chunk_788",
+   "poisson_ratio": -0.2163160974304866
+  },
+  {
+   "system": "chunk_112",
+   "poisson_ratio": -0.21780573110865614
+  },
+  {
+   "system": "chunk_763",
+   "poisson_ratio": -0.218867226846932
+  },
+  {
+   "system": "chunk_65",
+   "poisson_ratio": -0.22032308368740464
+  },
+  {
+   "system": "chunk_43",
+   "poisson_ratio": -0.2204420592939577
+  },
+  {
+   "system": "chunk_339",
+   "poisson_ratio": -0.22099679921810403
+  },
+  {
+   "system": "chunk_454",
+   "poisson_ratio": -0.22222287379685532
+  },
+  {
+   "system": "chunk_425",
+   "poisson_ratio": -0.22275733035227646
+  },
+  {
+   "system": "chunk_194",
+   "poisson_ratio": -0.22298827306035432
+  },
+  {
+   "system": "chunk_229",
+   "poisson_ratio": -0.22403035341500946
+  },
+  {
+   "system": "chunk_520",
+   "poisson_ratio": -0.22601174816953218
+  },
+  {
+   "system": "chunk_99",
+   "poisson_ratio": -0.22813644220917864
+  },
+  {
+   "system": "chunk_461",
+   "poisson_ratio": -0.23025432303645918
+  },
+  {
+   "system": "chunk_675",
+   "poisson_ratio": -0.23031888397883055
+  },
+  {
+   "system": "chunk_346",
+   "poisson_ratio": -0.23040132413881736
+  },
+  {
+   "system": "chunk_2",
+   "poisson_ratio": -0.23065643319783388
+  },
+  {
+   "system": "chunk_260",
+   "poisson_ratio": -0.23268099813513193
+  },
+  {
+   "system": "chunk_152",
+   "poisson_ratio": -0.24081415366304657
+  },
+  {
+   "system": "chunk_464",
+   "poisson_ratio": -0.24214561357191133
+  },
+  {
+   "system": "chunk_77",
+   "poisson_ratio": -0.24816865444644345
+  },
+  {
+   "system": "chunk_164",
+   "poisson_ratio": -0.251967298132145
+  },
+  {
+   "system": "chunk_61",
+   "poisson_ratio": -0.25243127972236695
+  },
+  {
+   "system": "chunk_265",
+   "poisson_ratio": -0.2530619507431414
+  },
+  {
+   "system": "chunk_298",
+   "poisson_ratio": -0.2541493358117557
+  },
+  {
+   "system": "chunk_779",
+   "poisson_ratio": -0.25420498187317647
+  },
+  {
+   "system": "chunk_290",
+   "poisson_ratio": -0.2560258597116695
+  },
+  {
+   "system": "chunk_322",
+   "poisson_ratio": -0.2569789324165221
+  },
+  {
+   "system": "chunk_167",
+   "poisson_ratio": -0.25894306501402753
+  },
+  {
+   "system": "chunk_318",
+   "poisson_ratio": -0.25979938867096175
+  },
+  {
+   "system": "chunk_187",
+   "poisson_ratio": -0.26832614761309026
+  },
+  {
+   "system": "chunk_302",
+   "poisson_ratio": -0.2726231731054771
+  },
+  {
+   "system": "chunk_753",
+   "poisson_ratio": -0.2747472827842636
+  },
+  {
+   "system": "chunk_222",
+   "poisson_ratio": -0.2749188370650589
+  },
+  {
+   "system": "chunk_342",
+   "poisson_ratio": -0.2810996406158981
+  },
+  {
+   "system": "chunk_29",
+   "poisson_ratio": -0.2849916293009043
+  },
+  {
+   "system": "chunk_344",
+   "poisson_ratio": -0.2858101539564394
+  },
+  {
+   "system": "chunk_143",
+   "poisson_ratio": -0.28857869172586603
+  },
+  {
+   "system": "chunk_89",
+   "poisson_ratio": -0.295149356673818
+  },
+  {
+   "system": "chunk_400",
+   "poisson_ratio": -0.31001572905240493
+  },
+  {
+   "system": "chunk_197",
+   "poisson_ratio": -0.31041237207010924
+  },
+  {
+   "system": "chunk_60",
+   "poisson_ratio": -0.3203196301849541
+  },
+  {
+   "system": "chunk_9",
+   "poisson_ratio": -0.326016959254115
+  },
+  {
+   "system": "chunk_96",
+   "poisson_ratio": -0.3275795927437628
+  },
+  {
+   "system": "chunk_398",
+   "poisson_ratio": -0.3383370663099337
+  },
+  {
+   "system": "chunk_174",
+   "poisson_ratio": -0.3510373916398199
+  },
+  {
+   "system": "chunk_140",
+   "poisson_ratio": -0.5337495218509739
+  }
+ ]
+}

@@ -4,6 +4,7 @@
     gnn-bench schema                       the raw frame schema and the input graph
     gnn-bench models                       registered models and their defaults
     gnn-bench difficulty <dataset>         measure a dataset before training on it
+    gnn-bench ood-config <config.json>     prepare a highest-30% Poisson split
     gnn-bench train <config.json>          train and score models across seeds
     gnn-bench evaluate <run_dir>           re-evaluate a cached run from its checkpoint
     gnn-bench report <dataset>             compare every cached run, side by side
@@ -162,6 +163,21 @@ def cmd_train(args) -> None:
             print(json.dumps(result.get("metrics", {}), indent=1))
 
 
+def cmd_ood_config(args) -> None:
+    from .data.ood import prepare_ood
+
+    config = RunConfig.from_json(args.config)
+    if args.dataset:
+        config = replace(config, dataset=args.dataset)
+    torch.set_num_threads(args.threads)
+    config, audit = prepare_ood(config, args.train_networks)
+    path = Path(args.out)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    config.to_json(path)
+    path.with_suffix(".ranking.json").write_text(json.dumps(audit, indent=1))
+    print(f"{config.dataset}: {audit['counts']} -> {path}")
+
+
 def cmd_evaluate(args) -> None:
     from .training.loop import load_checkpoint
     from .normalization import Normalizer
@@ -257,6 +273,13 @@ def main(argv: list[str] | None = None) -> None:
                        help="change one config field, e.g. train.epochs=80; repeatable")
     train.add_argument("--force", action="store_true", help="rerun even if already cached")
     train.set_defaults(func=cmd_train)
+
+    ood = sub.add_parser("ood-config", help="prepare an explicit highest-30%% Poisson train/validation split")
+    ood.add_argument("config")
+    ood.add_argument("--dataset", help="override the config's dataset")
+    ood.add_argument("--train-networks", type=int, default=30, help="training networks from the upper pool (default: 30)")
+    ood.add_argument("--out", required=True, help="output config; also writes a .ranking.json audit")
+    ood.set_defaults(func=cmd_ood_config)
 
     evaluate = sub.add_parser("evaluate", help="re-evaluate a cached run from its selected or last checkpoint")
     evaluate.add_argument("run_dir")

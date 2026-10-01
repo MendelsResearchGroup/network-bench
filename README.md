@@ -52,6 +52,44 @@ GNN_BENCH_DATA_ROOT=~/work/data gnn-bench train configs/networks.json \
 Noisy LJ uses the stored bond edges and stiffnesses. The benchmark does not infer
 missing rest lengths or LJ parameters; force and stress analysis is unavailable.
 
+### Out-of-distribution comparison
+
+Prepare a fixed split for each dataset, then train the same models and seeds:
+
+```bash
+gnn-bench --threads 4 ood-config configs/networks.json \
+  --dataset noisy_lj --out configs/ood/noisy_lj.json
+gnn-bench --threads 4 train configs/ood/noisy_lj.json \
+  --model gns mlp edge_mlp edge_mlp_delta edge_mlp_attention linear_floor frozen --seeds 0 1 2
+```
+
+Networks are ranked by ground-truth, position-based Poisson's ratio at the
+100-step evaluation horizon: frame 3 is the reference and frame 103 is the
+target, using four initial frames. The highest 30% (rounded up) forms the
+training/validation pool. Shuffle that pool with data-split seed 42; use its
+first 30 networks for training and all the rest for validation. Shuffle the
+lower 70% using the same generator, then take at most 100 test networks. The
+remaining lower-ratio networks are unused. Equal ratios are ordered by network
+ID. `ood-config --train-networks` changes the training count.
+
+| Dataset | Training | Validation | OOD test |
+|---|---:|---:|---:|
+| Node optimized | 30 | 85 | 100 |
+| Stiffness optimized | 30 | 57 | 100 |
+| Noisy LJ | 30 | 30 | 100 |
+
+The configs store every network assignment explicitly; accompanying
+`*.ranking.json` files record every ratio and the cutoff. Training still uses
+the first 20 frames, and checkpoints are selected on high-ratio validation
+networks. Test trajectories do not enter training, normalization, or checkpoint
+selection. Ground-truth test responses are used to define the OOD split.
+
+The website's **Normal / OOD** toggle switches all results together. **Exact
+network split** lists every train/validation/test and unused network. Normal uses 50/50/70
+randomly assigned networks, so its sample counts differ from OOD. R² is computed
+within each mode's own test population. Parameter counts appear beside model
+names, in model comparison cards, and in the Runs table.
+
 The data split stays fixed (`split.seed`); `train.seed` controls model
 initialisation and training-window sampling. Every run has its own saved config,
 weights, and metrics. Repeating the command skips completed runs. `--force`

@@ -24,6 +24,7 @@ class SplitSpec:
     first_frame: int = 0
     frame_stride: int = 1
     max_frames: int | None = None
+    ood: bool = False  # Highest-Poisson train/validation pool; lower-Poisson test.
 
 
 @dataclass(frozen=True)
@@ -70,7 +71,11 @@ class RunConfig:
     train: TrainSpec = field(default_factory=TrainSpec)
 
     def to_dict(self) -> dict:
-        return asdict(self)
+        payload = asdict(self)
+        # Preserve the cache keys of existing normal runs.
+        if not self.split.ood:
+            payload["split"].pop("ood")
+        return payload
 
     def to_json(self, path: str | Path) -> None:
         Path(path).write_text(json.dumps(self.to_dict(), indent=1, sort_keys=True))

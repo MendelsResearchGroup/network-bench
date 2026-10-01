@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .. import models
+from ..data import registry
 from ..training.config import RunConfig
 
 __all__ = [
@@ -97,7 +98,7 @@ def export_results(root: str | Path | None = None) -> dict:
     Failed and unfinished runs are left out. Non-finite numbers become `None`,
     since JSON has no NaN.
     """
-    runs = []
+    runs, splits, available = [], {}, {}
     for path in sorted(results_root(root).glob("*/*/seed-*/metrics.json")):
         result = read_result(path.parent)
         config, measured = result["config"], result["metrics"]
@@ -109,10 +110,20 @@ def export_results(root: str | Path | None = None) -> dict:
             training_frames = min(training_frames, spec.split.max_frames)
         comparison = {key: value for key, value in config.items() if key not in ("model", "model_hyperparameters")}
         comparison["train"] = {key: value for key, value in train.items() if key != "seed"}
+        # Compare actual membership, whether the config supplied it or generated it.
+        comparison["split"] = {key: value for key, value in config["split"].items() if key != "explicit"}
         comparison["systems"] = result["split"]
         comparison_id = hashlib.sha256(json.dumps(comparison, sort_keys=True).encode()).hexdigest()[:8]
+        dataset = config["dataset"]
+        if dataset not in available:
+            available[dataset] = registry.get(dataset).systems()
+        used = {stem for stems in result["split"].values() for stem in stems}
+        splits[comparison_id] = {"dataset": dataset, "mode": "ood" if spec.split.ood else "normal",
+                                 "seed": spec.split.seed, "systems": result["split"],
+                                 "unused": [stem for stem in available[dataset] if stem not in used]}
         runs.append({
             "dataset": config["dataset"],
+            "mode": "ood" if spec.split.ood else "normal",
             "comparison_id": comparison_id,
             "model": config["model"],
             "seed": train["seed"],
@@ -142,7 +153,7 @@ def export_results(root: str | Path | None = None) -> dict:
                 if key.startswith("poisson_r2_")
             },
         })
-    return {"runs": _finite(runs)}
+    return {"runs": _finite(runs), "splits": splits}
 
 
 def write_export(path: str | Path, root: str | Path | None = None) -> int:

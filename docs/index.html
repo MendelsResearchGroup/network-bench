@@ -21,14 +21,17 @@
   <div id="notice" role="status" aria-live="polite" class="notice">Loading the latest benchmark…</div>
   <div id="dashboard" hidden>
     <section id="explore" class="explore" aria-label="Dataset selection">
-      <div class="dataset-row"><div id="datasets" class="segmented" role="group" aria-label="Dataset"></div><label id="cohort-label" hidden>Comparison <select id="cohort"></select></label></div>
+      <div class="dataset-row"><div id="datasets" class="segmented" role="group" aria-label="Dataset"></div><div id="modes" class="segmented" role="group" aria-label="Training distribution"><button data-mode="normal" aria-pressed="true">Normal</button><button data-mode="ood" aria-pressed="false">OOD</button></div><label id="cohort-label" hidden>Comparison <select id="cohort"></select></label></div>
+      <p id="split-rule" class="footnote"></p>
       <p id="protocol" class="footnote"></p>
+      <details class="split-details"><summary>Exact network split <span id="split-counts"></span></summary><p id="split-note" class="footnote"></p><a id="ranking-audit" class="footnote" hidden>Full Poisson’s ratio ranking and cutoff ↗</a><div id="split-membership" class="split-membership"></div></details>
     </section>
     <section class="results-grid" aria-label="Model comparison">
       <div class="panel curve-panel">
         <div class="panel-heading"><h2>Poisson’s ratio R²</h2><span class="direction">Higher is better ↗</span></div>
         <div class="plot-filters"><label>Training seed <select id="plot-seed"><option value="all">All seeds</option></select></label><label>Lines <select id="line-mode"><option value="mean">Mean across seeds</option><option value="individual">Individual seeds</option></select></label></div>
         <div id="legend" class="legend" role="group" aria-label="Show models"></div>
+        <p class="footnote legend-note">Parameter counts are shown beside each model.</p>
         <div id="chart" class="chart"><div id="plot" class="plot" role="img"></div></div>
         <div class="chart-controls"><label><input id="bands" type="checkbox" checked> ±1 SD</label><button id="reset-models" class="text-button">Show all models</button></div>
         <p id="range-note" class="footnote"></p>
