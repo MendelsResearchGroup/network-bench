@@ -102,8 +102,13 @@ def export_results(root: str | Path | None = None) -> dict:
         result = read_result(path.parent)
         config, measured = result["config"], result["metrics"]
         train = config["train"]
+        comparison = {key: value for key, value in config.items() if key not in ("model", "model_hyperparameters")}
+        comparison["train"] = {key: value for key, value in train.items() if key != "seed"}
+        comparison["systems"] = result["split"]
+        comparison_id = hashlib.sha256(json.dumps(comparison, sort_keys=True).encode()).hexdigest()[:8]
         runs.append({
             "dataset": config["dataset"],
+            "comparison_id": comparison_id,
             "model": config["model"],
             "seed": train["seed"],
             "name": result["name"],

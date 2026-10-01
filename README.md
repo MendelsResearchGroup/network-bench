@@ -115,8 +115,12 @@ at that rollout horizon. Optional stress metrics remain in the saved metrics.
 saved split. It loads only that split, without preparing training data again.
 
 `gnn-bench export` updates `docs/results.json` for the static results page;
-PBS jobs do this when they finish. View it with
-`python -m http.server --directory docs 8000` or publish `docs/` with GitHub Pages.
+PBS jobs do this when they finish. The browser plots every dataset with Plotly,
+filters models and seeds, and compares seed means with sample standard deviations.
+The exported comparison ID keeps different run settings and system splits apart.
+Plotly is loaded from its versioned CDN; no build step or backend is needed.
+View it with `python -m http.server --directory docs 8000` or publish `docs/`
+from `main` with GitHub Pages.
 
 Dataset layouts, force fields, difficulty measures, and scientific caveats are
 in the [data and physics reference](docs/reference.md).
