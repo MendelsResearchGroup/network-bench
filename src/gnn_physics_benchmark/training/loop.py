@@ -20,11 +20,10 @@ from pathlib import Path
 import torch
 from torch_geometric.data import Data
 
-from ..graph.features import build_input_graph, potential_for
-from ..interfaces.graph import InputGraphSpec
+from ..graph.features import build_input_graph, potential_for, prepare_window
 from ..metrics.rollout import rollout_errors, summarise_rollouts
 from .config import RunConfig, TrainSpec
-from .loss import fit_target_scale, prediction_loss
+from .loss import prediction_loss
 from .rollout import advance_box, diverged, rollout
 from .windows import WindowCache, target_positions, window_starts
 
@@ -48,7 +47,7 @@ def _step_optimizer(model, optimizer, spec: TrainSpec) -> None:
 def _freeze_input_normalizers(model, epoch: int, spec: TrainSpec) -> None:
     if epoch != spec.freeze_input_norm_epoch:
         return
-    for normalizer in getattr(model, "input_normalizers", list)():
+    for normalizer in model.input_normalizers():
         normalizer.freeze()
 
 
@@ -70,9 +69,8 @@ def validate_one_step(model, trajectories, graph_spec, potential, spec: TrainSpe
         for trajectory in trajectories:
             for start in window_starts(len(trajectory), span, spec.windows_per_sim, spec.window_mode, rng):
                 window = trajectory[start : start + graph_spec.window_length]
-                from ..graph.features import prepare_window
-
                 graph = build_input_graph(prepare_window(window, graph_spec, potential), graph_spec, potential)
+                graph = graph.to(spec.device)
                 target = target_positions(trajectory, start + graph_spec.window_length, spec.device)
                 total += float(
                     prediction_loss(model, model(graph), graph, target, scale, kind=spec.loss, accumulate=False)
@@ -144,13 +142,7 @@ def train(
     rng = random.Random(spec.seed)
     optimizer = _optimizer(model, spec)
     scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, spec.gamma)
-    cache = WindowCache(
-        graph_spec,
-        potential,
-        device=spec.device,
-        limit_mb=spec.cache_limit_mb,
-        enabled=spec.cache_windows,
-    )
+    cache = WindowCache(graph_spec, potential, device=spec.device, enabled=spec.cache_windows)
 
     multi_step = spec.mode == "multi_step"
     span = graph_spec.window_length + spec.max_rollout_steps
@@ -211,8 +203,6 @@ def train(
 
 def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, scale, cache, index):
     """Loss for one training window: one step, or a short rollout of `steps`."""
-    from ..graph.features import prepare_window
-
     window = cache.get(("train", index, start), trajectory, start)
     graph = build_input_graph(window, graph_spec, potential)
     target = target_positions(trajectory, start + graph_spec.window_length, spec.device)
@@ -222,7 +212,7 @@ def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, s
         return loss, 1, False
 
     box_delta_x = graph.box_tensor[0] - window[-2].box_tensor[0]
-    raw = [g for g in trajectory[start : start + graph_spec.window_length]]
+    raw = [g.clone().to(spec.device) for g in trajectory[start : start + graph_spec.window_length]]
     taken = 1
     for step in range(1, steps):
         frame = advance_box(frame, box_delta_x, spec.box_mode)
@@ -256,5 +246,5 @@ def save_checkpoint(model, config: RunConfig, scale, path: str | Path) -> None:
 
 def load_checkpoint(path: str | Path):
     """`(state_dict, target_scale_state, RunConfig)` from a saved checkpoint."""
-    payload = torch.load(path, weights_only=False)
+    payload = torch.load(path, weights_only=False, map_location="cpu")
     return payload["model"], payload["target_scale"], RunConfig.from_dict(payload["config"])

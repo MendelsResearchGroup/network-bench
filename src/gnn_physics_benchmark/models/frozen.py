@@ -20,28 +20,24 @@ Beware of two different things that both get called "frozen" in this literature.
 from __future__ import annotations
 
 import torch
+from torch import Tensor
 from torch_geometric.data import Data
 
 from ..interfaces.graph import InputGraphSpec
-from ..interfaces.model import current_velocity, integrate_acceleration
+from ..interfaces.model import SimulatorModel, current_velocity
 from ..normalization import Normalizer
 
 __all__ = ["Frozen"]
 
 
-class Frozen(torch.nn.Module):
+class Frozen(SimulatorModel):
     """Predicts that nothing moves."""
 
     def __init__(self, spec: InputGraphSpec, target_scale: Normalizer):
-        super().__init__()
-        self.spec = spec
-        self.hyperparameters: dict = {}
+        super().__init__(spec, target_scale)
         # The training loop builds an optimizer over the model's parameters; one
         # unused scalar keeps that path honest without changing the prediction.
         self.unused = torch.nn.Parameter(torch.zeros(1))
 
-    def input_normalizers(self) -> list[Normalizer]:
-        return []
-
-    def forward(self, graph: Data) -> Data:
-        return integrate_acceleration(graph, -current_velocity(graph) + 0.0 * self.unused)
+    def predict_acceleration(self, graph: Data) -> Tensor:
+        return -current_velocity(graph) + 0.0 * self.unused

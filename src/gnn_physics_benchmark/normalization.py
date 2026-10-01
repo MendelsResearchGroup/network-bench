@@ -22,16 +22,14 @@ __all__ = ["Normalizer"]
 class Normalizer(torch.nn.Module):
     """Standardise a tensor by statistics accumulated over training batches.
 
-    `max_accumulations` caps how many batches contribute, and `freeze()` stops
-    the accumulation outright. Freezing matters more than it looks: while the
+    `freeze()` stops the accumulation. Freezing matters more than it looks: while the
     statistics move, so does the scale the loss is divided by, and two epochs'
     losses are not comparable.
     """
 
-    def __init__(self, size: int, *, max_accumulations: int = 1_000_000, std_epsilon: float = 1e-8):
+    def __init__(self, size: int, *, std_epsilon: float = 1e-8):
         super().__init__()
         self.size = size
-        self.max_accumulations = max_accumulations
         self.register_buffer("frozen", torch.tensor(False))
         self.register_buffer("std_epsilon", torch.tensor(float(std_epsilon)))
         self.register_buffer("count", torch.tensor(0.0))
@@ -40,7 +38,7 @@ class Normalizer(torch.nn.Module):
         self.register_buffer("total_squared", torch.zeros(1, size))
 
     def forward(self, data: Tensor, *, accumulate: bool = True) -> Tensor:
-        if accumulate and not bool(self.frozen) and float(self.accumulations) < self.max_accumulations:
+        if accumulate and not bool(self.frozen):
             self._accumulate(data.detach())
         return (data - self.mean()) / self.std()
 

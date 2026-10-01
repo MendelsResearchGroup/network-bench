@@ -43,11 +43,8 @@ from torch_geometric.utils import coalesce, is_undirected
 from .potential import KGPotential
 
 __all__ = [
-    "bond_width",
     "typed_width",
     "IS_BOND",
-    "IS_PAIR",
-    "TYPED_EDGE_COLUMNS",
     "infer_dim",
     "spatial_slice",
     "minimum_image",
@@ -61,30 +58,12 @@ __all__ = [
     "prepare_frames",
 ]
 
-def bond_width(dim: int) -> int:
-    """Width of a raw bond-only `edge_attr` carrying a single parameter."""
-    return dim + 2
-
-
 def typed_width(dim: int) -> int:
     """Width of the typed bond-plus-pair `edge_attr`."""
     return dim + 5
 
 #: Column of the one-hot flag marking a bond (as opposed to a pair) edge.
 IS_BOND = 0
-IS_PAIR = 1
-
-#: The typed layout, documented column by column.
-TYPED_EDGE_COLUMNS = (
-    ("is_bond", "1.0 on a FENE bond edge, 0.0 otherwise"),
-    ("is_pair", "1.0 on a non-bonded Lennard-Jones edge, 0.0 otherwise"),
-    ("dx", "x component of the minimum-image edge vector, source minus target, in sigma"),
-    ("dy", "y component of the same vector"),
-    ("dz", "z component of the same vector"),
-    ("r", "length of that vector, in sigma"),
-    ("K_or_epsilon", "FENE spring constant on a bond edge, LJ epsilon on a pair edge"),
-    ("R0_or_sigma", "FENE maximum extent on a bond edge, LJ sigma on a pair edge"),
-)
 
 
 def infer_dim(graph: Data) -> int:
@@ -323,9 +302,6 @@ def prepare_frames(
     symmetrised bond-only graph -- which is what the `edges="bond"` input-graph
     mode wants, and the only thing a spring network has.
     """
-    if pair_edges_on not in ("all", "last"):
-        raise ValueError(f"unknown pair_edges_on {pair_edges_on!r}; expected 'all' or 'last'.")
-
     prepared = []
     for index, frame in enumerate(frames):
         if not isinstance(getattr(frame, "box_tensor", None), Tensor):

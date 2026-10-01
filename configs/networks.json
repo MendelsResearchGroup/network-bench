@@ -1,0 +1,7 @@
+{
+ "dataset": "node_optimized",
+ "model": "gns",
+ "graph": {"edges": "bond", "history": 3},
+ "split": {"manifest": null, "sizes": [50, 50, 70], "max_frames": 104},
+ "train": {"windows_per_sim": 16, "val_rollout_steps": 100, "validate_every": 2, "select_by": "poisson_r2_100"}
+}

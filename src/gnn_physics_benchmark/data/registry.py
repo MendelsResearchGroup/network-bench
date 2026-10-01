@@ -171,7 +171,7 @@ DATASETS: dict[str, DatasetEntry] = {
         field_notes=(
             "Ly and Lz are constant by construction, so the transverse strain is "
             "identically zero and the box-based Poisson's ratio is not measurable "
-            "here: the `poisson_r2` metric reports NaN. The mechanical response "
+            "here: the `poisson_r2_<k>` metrics report NaN. The mechanical response "
             "still carries it, though -- at clamped transverse box the ratio of "
             "the transverse to the axial stress-strain slope is nu/(1-nu), which "
             "gives nu = 0.445 on rubber_0000, matching the LAMMPS log. That is "
@@ -244,12 +244,14 @@ DATASETS: dict[str, DatasetEntry] = {
         key="node_optimized",
         directory="node_optimized",
         description=(
-            "1998 two-dimensional spring networks whose node positions were optimised for a "
+            "381 two-dimensional spring networks whose node positions were optimised for a "
             "target Poisson's ratio, compressed along x to 1% strain with the transverse box "
             "barostatted to zero stress. 100-196 nodes (median 148), about 2.9 bonds per "
             "node, 500 frames per system 200 MD steps apart, 2e-5 strain per frame. Poisson's "
-            "ratio -0.45 to 0.37, median -0.03. Overdamped: the net force points along the "
-            "next displacement rather than along the acceleration."
+            "ratio -0.45 to 0.35, median -0.03. Overdamped: the net force points along the "
+            "next displacement rather than along the acceleration. These are the "
+            "`data_mini.tar.gz` subset of the Zenodo record (doi:10.5281/zenodo.20181262), "
+            "whose full `data.tar.gz` holds 1998 such systems."
         ),
         schema=_INVERSE_DESIGN_SCHEMA,
         interval=200,
@@ -269,12 +271,14 @@ DATASETS: dict[str, DatasetEntry] = {
         key="stiff_optimized",
         directory="stiff_optimized",
         description=(
-            "1085 two-dimensional spring networks whose per-bond stiffnesses were optimised "
+            "288 two-dimensional spring networks whose per-bond stiffnesses were optimised "
             "for a target Poisson's ratio, compressed along x to 3% strain with the "
-            "transverse box barostatted to zero stress. 100-400 nodes (median 248), about "
+            "transverse box barostatted to zero stress. 100-400 nodes (median 240), about "
             "2.9 bonds per node, 1500 frames per system 200 MD steps apart, 2e-5 strain per "
-            "frame. Two families: 930 `chunk_<n>` (Poisson's ratio median -0.18, down to "
-            "-0.77) and 155 `chunk_highP_<n>` (median +0.12). Overdamped."
+            "frame. Two families: 242 `chunk_<n>` (Poisson's ratio median -0.10, down to "
+            "-0.77) and 46 `chunk_highP_<n>` (median +0.16). Overdamped. These are the "
+            "`data_mini.tar.gz` subset of the Zenodo record (doi:10.5281/zenodo.20181262), "
+            "whose full `data.tar.gz` holds 1085 such systems (930 plain, 155 highP)."
         ),
         schema=_INVERSE_DESIGN_SCHEMA,
         interval=200,
@@ -284,11 +288,12 @@ DATASETS: dict[str, DatasetEntry] = {
         potential=_INVERSE_DESIGN_POTENTIAL,
         field_notes=(
             "The per-bond stiffnesses are the optimisation variable, so they bear no "
-            "relation to the rest length any more: k runs from 1e-7 to 1.5. The optimiser "
+            "relation to the rest length any more: k runs from 3e-6 to 1.5. The optimiser "
             "keeps each bond between cut and its 1/l0 value -- k * l0 lies strictly inside "
-            "(0, 1), with about 8% of bonds below 0.01, i.e. all but cut. Not even the unoptimised members follow 1/l0: 70 systems "
-            "(54 plain, 16 highP) are the optimiser's starting point, k = 0.5 / l0 exactly, "
-            "Poisson's ratio 0.33-0.40, and they are kept in the set. "
+            "(0, 1), with about 8% of bonds below 0.01 in the full set, i.e. all but cut. Not "
+            "even the unoptimised members follow 1/l0: 25 systems (22 plain, 3 highP) are the "
+            "optimiser's starting point, k = 0.5 / l0 exactly, Poisson's ratio 0.33-0.38, and "
+            "they are kept in the set. "
             "Reconstructing the stiffness as 1/l0 is wrong here, not approximate. The "
             "dynamics are overdamped, so the non-affine displacement should follow the net "
             "force: early in the compression the column's bond forces explain about 0.97 of "

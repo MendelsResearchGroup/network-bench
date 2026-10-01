@@ -4,19 +4,22 @@
     gnn-bench schema                       the raw frame schema and the input graph
     gnn-bench models                       registered models and their defaults
     gnn-bench difficulty <dataset>         measure a dataset before training on it
-    gnn-bench train <config.json>          train, evaluate and cache one run
+    gnn-bench train <config.json>          train and score models across seeds
     gnn-bench evaluate <run_dir>           re-evaluate a cached run from its checkpoint
     gnn-bench report <dataset>             compare every cached run, side by side
+    gnn-bench export                       write every run to docs/results.json for the results page
 """
 
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
 import json
 from pathlib import Path
 
 import torch
 
+from . import benchmark
 from . import evaluate as evaluation
 from . import models
 from .data import registry
@@ -34,7 +37,9 @@ REPORT_COLUMNS = (
     ("frozen_mse", "frozen", "{:.3e}"),
     ("steps_completed", "steps", "{:.0f}"),
     ("diverged", "div", "{:.0f}"),
-    ("poisson_r2", "nu R2", "{:.3f}"),
+    ("poisson_r2_10", "nu R2@10", "{:.3f}"),
+    ("poisson_r2_50", "nu R2@50", "{:.3f}"),
+    ("poisson_r2_100", "nu R2@100", "{:.3f}"),
     ("ratio_r2", "ratio R2", "{:.3f}"),
     ("sxx_slope_r2", "sxx R2", "{:.3f}"),
     ("stress_rel_mse", "str.relMSE", "{:.3e}"),
@@ -45,12 +50,7 @@ REPORT_COLUMNS = (
 def _format(value, spec: str) -> str:
     if value is None:
         return "-"
-    try:
-        if isinstance(value, float) and value != value:
-            return "nan"
-        return spec.format(value)
-    except (TypeError, ValueError):
-        return str(value)
+    return spec.format(value)
 
 
 def _table(rows: list[list[str]], headers: list[str]) -> str:
@@ -103,7 +103,9 @@ def cmd_models(args) -> None:
 
 
 def cmd_difficulty(args) -> None:
-    result = evaluation.measure_difficulty(
+    from . import difficulty
+
+    result = difficulty.measure_difficulty(
         args.dataset,
         systems=args.systems,
         manifest=args.manifest,
@@ -131,33 +133,77 @@ def cmd_difficulty(args) -> None:
 
 def cmd_train(args) -> None:
     config = RunConfig.from_json(args.config)
+    # One config can serve every dataset and model: these swap them in. A model
+    # swapped in runs with its own default hyperparameters.
+    if args.dataset:
+        config = replace(config, dataset=args.dataset)
+    if args.model:
+        config = replace(config, model_hyperparameters={})
+    # `--set model_hyperparameters.hidden_dim=64` changes one field of the config.
+    payload = config.to_dict()
+    for item in args.set:
+        key, value = item.split("=", 1)
+        *path, last = key.split(".")
+        node = payload
+        for part in path:
+            node = node[part]
+        try:
+            node[last] = json.loads(value)
+        except json.JSONDecodeError:
+            node[last] = value
+    config = RunConfig.from_dict(payload)
     torch.set_num_threads(args.threads)
-    result = evaluation.run(config, root=args.root, resume=not args.force, split=args.split)
-    print()
-    print(json.dumps(result.get("metrics", {}), indent=1))
+    for model in args.model or [config.model]:
+        model_config = replace(config, model=model)
+        for seed in args.seeds or [config.train.seed]:
+            run_config = replace(model_config, train=replace(config.train, seed=seed))
+            print(f"\n{run_config.dataset} / {model} / seed {seed}", flush=True)
+            result = benchmark.run(run_config, root=args.root, resume=not args.force, split=args.split)
+            print(json.dumps(result.get("metrics", {}), indent=1))
 
 
 def cmd_evaluate(args) -> None:
-    from .training import build, load_checkpoint
+    from .training.loop import load_checkpoint
+    from .normalization import Normalizer
 
     directory = Path(args.run_dir)
-    config = RunConfig.from_json(directory / "config.json")
     torch.set_num_threads(args.threads)
     checkpoints = sorted((directory / "checkpoints").glob("epoch_*.pt"))
     if not checkpoints:
         raise SystemExit(f"no checkpoint under {directory / 'checkpoints'}.")
 
-    prepared = build(config)
-    state, _, _ = load_checkpoint(checkpoints[-1])
-    prepared.model.load_state_dict(state)
-    print(f"{checkpoints[-1].name} on split {args.split!r}\n")
-    print(json.dumps(evaluation.evaluate_model(prepared, split=args.split), indent=1))
+    saved = cache.read_result(directory)
+    selected = saved.get("metrics", {}).get("selected_epoch")
+    checkpoint = directory / "checkpoints" / f"epoch_{selected:04d}.pt" if selected else checkpoints[-1]
+    state, scale_state, config = load_checkpoint(checkpoint)
+    scale = Normalizer(config.graph.dim)
+    scale.load_state_dict(scale_state)
+    model = models.build(config.model, config.graph, scale, **config.model_hyperparameters).to(config.train.device)
+    model.load_state_dict(state)
+    data = benchmark.load_data(config, saved["split"][args.split])
+    print(f"{checkpoint.name} on split {args.split!r}\n")
+    print(json.dumps(evaluation.evaluate_model(model, data, config, split=args.split), indent=1))
 
 
 def cmd_report(args) -> None:
     runs = cache.load_results(args.dataset, args.root)
     if not runs:
         raise SystemExit(f"no cached runs for {args.dataset} under {cache.results_root(args.root)}.")
+
+    if args.seeds:
+        from .results.summary import summarize_seeds
+
+        rows = []
+        for group in summarize_seeds(runs):
+            values = []
+            for key, _, spec in REPORT_COLUMNS:
+                value = group["metrics"].get(key)
+                values.append("-" if value is None else
+                              f"{_format(value['mean'], spec)} ± {_format(value['std'], spec)} ({value['n']})")
+            rows.append([group["model"], group["name"], ",".join(map(str, group["seeds"]))] + values)
+        print(_table(rows, ["model", "settings", "seeds"] + [label for _, label, _ in REPORT_COLUMNS]))
+        print("\nMean ± sample standard deviation (finite runs per metric); one run has no std.")
+        return
 
     headers = ["model", "run"] + [label for _, label, _ in REPORT_COLUMNS]
     rows = []
@@ -173,6 +219,11 @@ def cmd_report(args) -> None:
     print("\nrel.MSE is pos.MSE / frozen, so 1.0 is no better than every bead standing still.")
     print("nu R2 is NaN wherever the transverse box is clamped; ratio R2 is the stress-based")
     print("Poisson's ratio, which is measurable there.")
+
+
+def cmd_export(args) -> None:
+    count = cache.write_export(args.out, args.root)
+    print(f"{count} runs -> {args.out}")
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -196,19 +247,29 @@ def main(argv: list[str] | None = None) -> None:
     difficulty.add_argument("--max-frames", type=int, default=None, dest="max_frames")
     difficulty.set_defaults(func=cmd_difficulty)
 
-    train = sub.add_parser("train", help="train, evaluate and cache one run")
+    train = sub.add_parser("train", help="train and score models across training seeds")
     train.add_argument("config")
     train.add_argument("--split", default="test")
+    train.add_argument("--dataset", help="override the config's dataset")
+    train.add_argument("--model", nargs="+", help="models to run (each uses its default hyperparameters)")
+    train.add_argument("--seeds", nargs="+", type=int, help="training seeds, e.g. 0 1 2; data split stays fixed")
+    train.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                       help="change one config field, e.g. train.epochs=80; repeatable")
     train.add_argument("--force", action="store_true", help="rerun even if already cached")
     train.set_defaults(func=cmd_train)
 
-    evaluate = sub.add_parser("evaluate", help="re-evaluate a cached run from its last checkpoint")
+    evaluate = sub.add_parser("evaluate", help="re-evaluate a cached run from its selected or last checkpoint")
     evaluate.add_argument("run_dir")
     evaluate.add_argument("--split", default="test")
     evaluate.set_defaults(func=cmd_evaluate)
 
+    export = sub.add_parser("export", help="write every finished run to the results page's JSON")
+    export.add_argument("--out", default=str(Path(__file__).resolve().parents[2] / "docs" / "results.json"))
+    export.set_defaults(func=cmd_export)
+
     report = sub.add_parser("report", help="compare cached runs for one dataset")
     report.add_argument("dataset")
+    report.add_argument("--seeds", action="store_true", help="mean and sample standard deviation across training seeds")
     report.set_defaults(func=cmd_report)
 
     args = parser.parse_args(argv)

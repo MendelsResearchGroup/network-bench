@@ -1,0 +1,22 @@
+#!/bin/bash
+# One training run as a PBS job, the same as `gnn-bench train`:
+#
+#   qsub -v CONFIG=configs/networks.json,DATASET=stiff_optimized,MODEL=gns train.pbs
+#
+# DATASET, MODEL and SET are optional overrides. SET holds `--set` values joined
+# by `+`, e.g. SET=model_hyperparameters.hidden_dim=128+model_hyperparameters.depth=2 `-V` hands the job
+# your environment, so GNN_BENCH_DATA_ROOT comes along. When training ends the job
+# rewrites docs/results.json, so the results page shows every finished run.
+#PBS -N gnn-bench
+#PBS -q mendels_q
+#PBS -l select=1:ncpus=4:mem=16gb
+#PBS -l place=free:shared
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -V
+cd "$PBS_O_WORKDIR"
+sets=()
+for item in ${SET//+/ }; do sets+=(--set "$item"); done
+.venv/bin/gnn-bench --threads 4 train "$CONFIG" ${DATASET:+--dataset "$DATASET"} ${MODEL:+--model "$MODEL"} "${sets[@]}"
+# Refresh the results page's data with every finished run.
+.venv/bin/gnn-bench export

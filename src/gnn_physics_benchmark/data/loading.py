@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import sys
 import types
-from pathlib import Path
 
 import torch
 from torch_geometric.data import Data
@@ -164,6 +163,7 @@ def resolve_split(
     explicit: dict[str, list[str]] | None = None,
     manifest: str | None = None,
     ratios: tuple[float, float, float] = (0.6, 0.2, 0.2),
+    sizes: tuple[int, int, int] | None = None,
     seed: int = 42,
     limit: int | None = None,
 ) -> dict[str, list[str]]:
@@ -175,7 +175,8 @@ def resolve_split(
     Otherwise the systems of `manifest` (or everything on disk, if no manifest is
     named) are shuffled under `seed` and cut by `ratios`. The ensemble varies by
     random seed only, so there is nothing to stratify on and a shuffled split is
-    the honest one. `limit` keeps only the first `limit` systems *before* the cut,
+    the honest one. `sizes` gives the three parts as counts instead of ratios.
+    `limit` keeps only the first `limit` systems *before* the cut,
     for quick smoke runs.
     """
     if explicit is not None:
@@ -200,12 +201,17 @@ def resolve_split(
         raise ValueError(f"split ratios must sum to 1.0, got {sum(ratios)}.")
     order = torch.randperm(len(stems), generator=torch.Generator().manual_seed(seed)).tolist()
     shuffled = [stems[index] for index in order]
-    train_end = int(len(shuffled) * ratios[0])
-    val_end = train_end + int(len(shuffled) * ratios[1])
+    if sizes is not None:
+        train_end, val_end = sizes[0], sizes[0] + sizes[1]
+        test_end = val_end + sizes[2]
+    else:
+        train_end = int(len(shuffled) * ratios[0])
+        val_end = train_end + int(len(shuffled) * ratios[1])
+        test_end = len(shuffled)
     return {
         "train": shuffled[:train_end],
         "val": shuffled[train_end:val_end],
-        "test": shuffled[val_end:],
+        "test": shuffled[val_end:test_end],
     }
 
 

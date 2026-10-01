@@ -7,25 +7,21 @@ starts out as pure velocity persistence and learns corrections to it.
 
 from __future__ import annotations
 
-import torch
-from torch import nn
+from torch import Tensor, nn
 from torch_geometric.data import Data
 
 from ..interfaces.graph import InputGraphSpec
-from ..interfaces.model import integrate_acceleration
+from ..interfaces.model import SimulatorModel
 from ..normalization import Normalizer
 
 __all__ = ["TinyVelocityMLP"]
 
 
-class TinyVelocityMLP(nn.Module):
+class TinyVelocityMLP(SimulatorModel):
     """Map the velocity history `[N, dim * history]` to an acceleration `[N, dim]`."""
 
     def __init__(self, spec: InputGraphSpec, target_scale: Normalizer, *, hidden_dim: int = 4):
-        super().__init__()
-        self.spec = spec
-        self.target_scale = target_scale
-        self.hyperparameters = {"hidden_dim": hidden_dim}
+        super().__init__(spec, target_scale, hidden_dim=hidden_dim)
 
         self.network = nn.Sequential(
             nn.Linear(spec.node_feature_width, hidden_dim),
@@ -42,6 +38,6 @@ class TinyVelocityMLP(nn.Module):
     def input_normalizers(self) -> list[Normalizer]:
         return [self.node_normalizer]
 
-    def forward(self, graph: Data) -> Data:
+    def predict_acceleration(self, graph: Data) -> Tensor:
         x = self.node_normalizer(graph.x, accumulate=self.training)
-        return integrate_acceleration(graph, self.target_scale.inverse(self.network(x)))
+        return self.target_scale.inverse(self.network(x))

@@ -28,9 +28,7 @@
  },
  "train": {
   "accumulation_steps": 4,
-  "batch_size": 1,
   "box_mode": "deform_x",
-  "cache_limit_mb": 4096.0,
   "cache_windows": true,
   "detach_rollout": false,
   "device": "cpu",

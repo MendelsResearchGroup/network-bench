@@ -15,17 +15,18 @@ bounds the non-trivial local one.
 from __future__ import annotations
 
 import torch
+from torch import Tensor
 from torch_geometric.data import Data
 
 from ..interfaces.graph import InputGraphSpec
-from ..interfaces.model import integrate_acceleration
+from ..interfaces.model import SimulatorModel
 from ..normalization import Normalizer
 from .blocks import AxisSharedEncoder, build_mlp, node_extras
 
 __all__ = ["NodeMLP"]
 
 
-class NodeMLP(torch.nn.Module):
+class NodeMLP(SimulatorModel):
     """Per-node feed-forward predictor of one-step acceleration."""
 
     def __init__(
@@ -33,13 +34,10 @@ class NodeMLP(torch.nn.Module):
         spec: InputGraphSpec,
         target_scale: Normalizer,
         *,
-        hidden_size: int = 64,
-        num_mlp: int = 3,
+        hidden_size: int = 128,
+        num_mlp: int = 4,
     ):
-        super().__init__()
-        self.spec = spec
-        self.target_scale = target_scale
-        self.hyperparameters = {"hidden_size": hidden_size, "num_mlp": num_mlp}
+        super().__init__(spec, target_scale, hidden_size=hidden_size, num_mlp=num_mlp)
 
         self.node_encoder = AxisSharedEncoder(
             spec.history, hidden_size, dim=spec.dim, num_mlp=num_mlp, extra_channels=spec.extra_node_channels
@@ -53,7 +51,7 @@ class NodeMLP(torch.nn.Module):
     def input_normalizers(self) -> list[Normalizer]:
         return [n for n in (self.node_normalizer, self.force_normalizer) if n is not None]
 
-    def forward(self, graph: Data) -> Data:
+    def predict_acceleration(self, graph: Data) -> Tensor:
         extras = node_extras(graph, self.spec)
         if self.force_normalizer is not None:
             normalized = graph.clone()
@@ -62,4 +60,4 @@ class NodeMLP(torch.nn.Module):
 
         x = self.node_normalizer(graph.x, accumulate=self.training)
         x = self.node_projection(self.node_encoder(x, extras))
-        return integrate_acceleration(graph, self.target_scale.inverse(self.decoder(x)))
+        return self.target_scale.inverse(self.decoder(x))

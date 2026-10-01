@@ -61,14 +61,11 @@ def rollout(
 ) -> list[Data]:
     """Roll `model` forward `num_steps` frames from a seed of raw frames.
 
-    Returns the seed frames followed by everything the model produced, so the
+    Returns CPU frames: the seed followed by everything the model produced, so the
     result indexes like the ground-truth trajectory it is compared against. A
     short return means the rollout diverged and was stopped.
     """
-    if len(seed) < spec.window_length:
-        raise ValueError(f"a history of {spec.history} needs {spec.window_length} seed frames, got {len(seed)}.")
-
-    trajectory = [frame.clone() for frame in seed]
+    trajectory = [frame.clone().to(device) for frame in seed]
     window = trajectory[-spec.window_length :]
     box_delta_x = window[-1].box_tensor[0] - window[-2].box_tensor[0]
 
@@ -88,4 +85,4 @@ def rollout(
     finally:
         if was_training:
             model.train()
-    return trajectory
+    return [frame.cpu() for frame in trajectory]
