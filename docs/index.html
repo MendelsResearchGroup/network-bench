@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare learned simulators on spring-network compression. Explore rollout accuracy, variation across training seeds, and every benchmark run.">
   <meta name="color-scheme" content="light dark">
-  <title>Network Bench — Models meet mechanics</title>
+  <title>Network Bench — Results</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%231e5042'/%3E%3Cpath d='M10 28L20 10L30 28Z' fill='none' stroke='%23f2f0e9' stroke-width='2'/%3E%3Cg fill='%23f2f0e9'%3E%3Ccircle cx='10' cy='28' r='3'/%3E%3Ccircle cx='20' cy='10' r='3'/%3E%3Ccircle cx='30' cy='28' r='3'/%3E%3C/g%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8" defer></script>
@@ -15,51 +15,36 @@
 <a class="skip" href="#explore">Skip to results</a>
 <header class="masthead wrap">
   <a class="brand" href="./" aria-label="Network Bench home"><svg width="29" height="29" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25L16 5L27 25Z"/><circle cx="5" cy="25" r="3"/><circle cx="16" cy="5" r="3"/><circle cx="27" cy="25" r="3"/></svg>network<span>bench</span></a>
-  <nav aria-label="Main navigation"><a href="#method">Method</a><a href="results.json" download>JSON ↓</a><a href="https://github.com/MendelsResearchGroup/network-bench">Source ↗</a><button id="theme" class="icon-button" aria-label="Switch to dark theme" title="Switch theme">◐</button></nav>
+  <nav aria-label="Main navigation"><a href="results.json" download>JSON ↓</a><a href="https://github.com/MendelsResearchGroup/network-bench">Source ↗</a><button id="theme" class="icon-button" aria-label="Switch to dark theme" title="Switch theme">◐</button></nav>
 </header>
 <main class="wrap">
-  <section class="hero" aria-labelledby="title">
-    <div><p class="eyebrow"><span class="status-dot"></span> A benchmark for learned simulators</p><h1 id="title">Models meet<br><em>mechanics.</em></h1><p class="intro">From the motion of a node to the response of a material.<br class="desktop"> Compare how well neural networks learn to simulate spring networks.</p><div class="hero-meta"><span id="total-runs">Loading results…</span><span>Open methodology</span><span>Reproducible runs</span></div></div>
-    <div class="network-art" aria-hidden="true"><svg id="network" viewBox="0 0 420 270"></svg><div class="art-caption"><span>01 / A material as a graph</span><span>nodes + bonds → motion</span></div></div>
-  </section>
   <div id="notice" role="status" aria-live="polite" class="notice">Loading the latest benchmark…</div>
   <div id="dashboard" hidden>
     <section id="explore" class="explore" aria-label="Dataset selection">
-      <div class="section-kicker">THE EXPERIMENT</div>
-      <div class="dataset-row"><div id="datasets" class="segmented" role="group" aria-label="Dataset"></div><label id="cohort-label" hidden>Comparison <select id="cohort"></select></label><span class="badge">2D spring networks</span></div>
-      <p id="dataset-description" class="secondary"></p>
-    </section>
-    <section class="stats" aria-label="Comparison overview">
-      <div><span class="stat-label">Leading model <span id="stat-horizon"></span></span><strong id="leader-name">—</strong><span id="leader-detail" class="stat-detail"></span></div>
-      <div><span class="stat-label">Mean test R² <span class="info" title="Poisson’s ratio R² across test systems, averaged over training seeds.">ⓘ</span></span><strong id="leader-score">—</strong><span id="leader-spread" class="stat-detail"></span></div>
-      <div><span class="stat-label">Independent training seeds</span><strong id="seed-count">—</strong><span id="run-count" class="stat-detail"></span></div>
-      <div><span class="stat-label">Systems in the split</span><strong id="split-count">—</strong><span class="stat-detail">train / validation / test</span></div>
+      <div class="dataset-row"><div id="datasets" class="segmented" role="group" aria-label="Dataset"></div><label id="cohort-label" hidden>Comparison <select id="cohort"></select></label></div>
     </section>
     <section class="results-grid" aria-label="Model comparison">
       <div class="panel curve-panel">
-        <div class="panel-heading"><div><p class="section-kicker">01 / ROLLOUT ACCURACY</p><h2>How far does the prediction hold?</h2></div><span class="direction">Higher is better ↗</span></div>
-        <p class="secondary small">Poisson’s ratio R² on test systems. Lines are seed means; bands show ±1 sample standard deviation.</p>
-        <div class="plot-filters"><label>Training seed <select id="plot-seed"><option value="all">All seeds · mean ± SD</option></select></label><label>Lines <select id="line-mode"><option value="mean">Mean across seeds</option><option value="individual">Individual seeds</option></select></label></div>
+        <div class="panel-heading"><h2>Poisson’s ratio R²</h2><span class="direction">Higher is better ↗</span></div>
+        <div class="plot-filters"><label>Training seed <select id="plot-seed"><option value="all">All seeds</option></select></label><label>Lines <select id="line-mode"><option value="mean">Mean across seeds</option><option value="individual">Individual seeds</option></select></label></div>
         <div id="legend" class="legend" role="group" aria-label="Show models"></div>
         <div id="chart" class="chart"></div>
-        <div class="chart-controls"><label><input id="bands" type="checkbox" checked> Seed variability</label><label><input id="full-range" type="checkbox"> Full vertical range</label><button id="reset-models" class="text-button">Show all models</button></div>
+        <div class="chart-controls"><label><input id="bands" type="checkbox" checked> ±1 SD</label><button id="reset-models" class="text-button">Show all models</button></div>
         <p id="range-note" class="footnote"></p>
       </div>
       <aside class="panel ranking-panel" aria-labelledby="ranking-title">
-        <p class="section-kicker">02 / AT A GLANCE</p><h2 id="ranking-title">The model comparison</h2><label class="rank-dataset-label">Dataset <select id="rank-dataset"></select></label><div class="horizon-label"><label for="horizon">Rollout horizon</label><output id="horizon-value" for="horizon"></output></div><input id="horizon" type="range" min="0" max="9" value="9"><div class="range-labels"><span id="first-step"></span><span id="last-step"></span></div>
-        <div class="ranking-caption"><span>MODEL</span><span>MEAN R² ± SD</span></div><ol id="ranking" class="ranking"></ol><p class="footnote">Ordered by mean test R² at this horizon. Zero matches a constant mean prediction; negative is worse. Missing scores are excluded and counts are shown.</p>
+        <h2 id="ranking-title">Model comparison</h2><label class="rank-dataset-label">Dataset <select id="rank-dataset"></select></label><div class="horizon-label"><label for="horizon">Rollout horizon</label><output id="horizon-value" for="horizon"></output></div><input id="horizon" type="range" min="0" max="9" value="9"><div class="range-labels"><span id="first-step"></span><span id="last-step"></span></div>
+        <div class="ranking-caption"><span>MODEL</span><span>MEAN R² ± SD</span></div><ol id="ranking" class="ranking"></ol>
       </aside>
     </section>
     <section class="panel runs-panel" aria-labelledby="runs-title">
-      <div class="panel-heading"><div><p class="section-kicker">03 / THE RUNS BEHIND THE NUMBERS</p><h2 id="runs-title">Every seed. Every result.</h2></div><button id="download" class="outline-button">Download CSV ↓</button></div>
+      <div class="panel-heading"><h2 id="runs-title">Runs</h2><button id="download" class="outline-button">Download CSV ↓</button></div>
       <div class="table-controls"><label class="search-label"><span>⌕</span><input id="search" type="search" placeholder="Find a model…" aria-label="Find a model"></label><label>Seed <select id="seed"><option value="all">All seeds</option></select></label><span id="table-count" class="secondary small" aria-live="polite"></span></div>
       <div class="table-scroll" tabindex="0" role="region" aria-label="Benchmark runs, scroll horizontally on small screens"><table><caption class="sr-only">Individual test results. Use column buttons to sort; expand a model for its settings.</caption><thead id="table-head"></thead><tbody id="table-body"></tbody></table></div>
-      <p class="footnote">Each checkpoint is chosen within its own run using validation data. The test split is used only for scoring. Relative MSE compares position error with frozen positions; lower is better and 1 means no improvement.</p>
     </section>
   </div>
-  <section id="method" class="method" aria-labelledby="method-title"><div><p class="section-kicker">SAME RULES. USEFUL COMPARISONS.</p><h2 id="method-title">What’s being measured?</h2><p class="secondary">One shared graph, one training objective, and the same held-out systems. Models predict motion; the benchmark measures whether that motion recovers the material’s response.</p><a class="text-link" href="https://github.com/MendelsResearchGroup/network-bench/blob/main/docs/reference.md">Read the data & physics reference ↗</a></div><div class="method-steps"><div><span>01</span><p><b>Learn a step</b>Predict node acceleration from velocity history and graph features.</p></div><div><span>02</span><p><b>Roll forward</b>Feed predictions back in to simulate an entire trajectory.</p></div><div><span>03</span><p><b>Measure the response</b>Fit transverse strain from node positions to score Poisson’s ratio.</p></div></div></section>
 </main>
-<footer class="wrap"><span class="brand-small">network / bench</span><span id="generated">Results loaded directly from JSON.</span><a href="https://github.com/MendelsResearchGroup/network-bench">Mendels Research Group ↗</a></footer>
+<footer class="wrap"><span class="brand-small">network / bench</span><span id="generated"></span><a href="https://github.com/MendelsResearchGroup/network-bench">Mendels Research Group ↗</a></footer>
 <noscript><p class="wrap notice">This explorer needs JavaScript. You can still <a href="results.json">download the results JSON</a>.</p></noscript>
 </body>
 </html>

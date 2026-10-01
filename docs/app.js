@@ -1,16 +1,13 @@
 /* A static explorer: all aggregation and filtering happens in the browser. */
 const $ = id => document.getElementById(id);
 const MODELS = ['gns', 'edge_mlp', 'mlp', 'tiny_mlp', 'linear_floor', 'frozen'];
-const DATASETS = {
-  node_optimized: ['Node optimized', 'Node positions optimized for a target Poisson’s ratio. The benchmark predicts their response under compression.'],
-  stiff_optimized: ['Stiffness optimized', 'Bond stiffnesses optimized for a target Poisson’s ratio. The graph stays fixed; the material response changes.']
-};
+const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness optimized'};
 const DESCRIPTIONS = {gns: 'Graph message passing', edge_mlp: 'Local bond encodings', mlp: 'Node features only', tiny_mlp: 'Single hidden layer', linear_floor: 'Linear velocity predictor', frozen: 'Frozen-position baseline'};
 let data, dataset = 'all', cohorts = {}, enabled = new Set(), horizon = 100;
 let tableSort = {key: 'r2', descending: true};
 const finite = x => typeof x === 'number' && Number.isFinite(x);
 const number = (v, digits = 3) => finite(v) ? v.toFixed(digits) : '—';
-const label = key => DATASETS[key]?.[0] ?? key.replaceAll('_', ' ');
+const label = key => DATASETS[key] ?? key.replaceAll('_', ' ');
 const css = key => getComputedStyle(document.documentElement).getPropertyValue(key).trim();
 const color = model => css(`--s${Math.max(0, MODELS.indexOf(model)) + 1}`);
 const settings = run => Object.entries(run.hyperparameters).map(([key, value]) => `${key}=${value}`).join(', ') || 'No hyperparameters';
@@ -54,9 +51,6 @@ function setDataset(value) {
   $('cohort-label').hidden = dataset === 'all' || comparisons.length < 2;
   $('cohort').replaceChildren(...comparisons.map(id => new Option(id, id)));
   $('cohort').value = cohorts[dataset] ?? '';
-  $('dataset-description').textContent = dataset === 'all'
-    ? 'Compare both materials side by side. Shared colors identify models; each plot keeps its own test systems.'
-    : DATASETS[dataset]?.[1] ?? 'Shared inputs and evaluation within this dataset.';
   render();
 }
 function render() {
@@ -71,7 +65,7 @@ function render() {
   $('horizon-value').textContent = `${horizon} steps`;
   $('first-step').textContent = steps.length ? `${steps[0]} steps` : '—';
   $('last-step').textContent = steps.length ? `${steps.at(-1)} steps` : '—';
-  renderOverview(grouped, runs);
+  renderRanking(grouped);
   renderCharts(grouped);
   renderTable();
   for (const button of $('legend').children) {
@@ -79,20 +73,10 @@ function render() {
     button.querySelector('.swatch').style.background = color(button.dataset.model);
   }
 }
-function renderOverview(grouped, runs) {
+function renderRanking(grouped) {
   const selected = $('rank-dataset').value;
   const ranking = grouped.filter(group => group.dataset === selected).map(group => ({...group, score: group.points[horizon] ?? stats([])}))
     .sort((a, b) => (b.score.mean ?? -Infinity) - (a.score.mean ?? -Infinity));
-  const leader = ranking.find(group => finite(group.score.mean));
-  $('stat-horizon').textContent = `@ ${horizon}`;
-  $('leader-name').textContent = leader?.model ?? 'No scores';
-  $('leader-detail').textContent = label(selected);
-  $('leader-score').textContent = number(leader?.score.mean);
-  $('leader-spread').textContent = leader ? `± ${number(leader.score.sd)} SD · n=${leader.score.n}` : 'Select models with finite scores';
-  const local = runs.filter(run => run.dataset === selected);
-  $('seed-count').textContent = new Set(local.map(run => run.seed)).size;
-  $('run-count').textContent = `${local.length} runs · ${ranking.length} model settings`;
-  $('split-count').textContent = local.length ? ['train', 'val', 'test'].map(key => local[0].split[key]).join(' / ') : '—';
   $('ranking').replaceChildren();
   ranking.forEach((group, index) => {
     const item = node('li'), line = node('div', undefined, 'rank-line'), name = node('span', undefined, 'rank-name');
@@ -117,7 +101,6 @@ function renderCharts(grouped) {
   const visible = dataset === 'all' ? datasets() : [dataset];
   // Keep Plotly containers alive so zoom survives horizon and theme changes.
   for (const child of [...$('chart').children]) if (!visible.includes(child.dataset.dataset)) { Plotly.purge(child.querySelector('.plot')); child.remove(); }
-  let clipped = false;
   for (const key of visible) {
     let block = [...$('chart').children].find(child => child.dataset.dataset === key);
     if (!block) {
@@ -154,25 +137,22 @@ function renderCharts(grouped) {
           customdata:points.map(point => [number(point.sd),point.n]),hovertemplate:'%{y:.3f} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>'});
       }
     }
-    const min = Math.min(0, ...values), max = Math.max(1, ...values);
-    const low = $('full-range').checked ? min - .04 : Math.max(-1, min - .04);
-    if (!$('full-range').checked && min < -1) clipped = true;
+    const max = Math.max(1, ...values);
     const mobile = window.innerWidth < 600;
     const layout = {
-      height:mobile ? 290 : 320, margin:{l:46,r:16,t:16,b:48}, paper_bgcolor:css('--surface'), plot_bgcolor:css('--surface'),
+      height:mobile ? 350 : 460, margin:{l:46,r:16,t:16,b:48}, paper_bgcolor:css('--surface'), plot_bgcolor:css('--surface'),
       font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:11,color:css('--muted')},
-      showlegend:false, hovermode:'x unified', dragmode:'zoom', uirevision:`${key}-${cohorts[key]}-${$('full-range').checked}`,
+      showlegend:false, hovermode:'x unified', dragmode:'zoom', uirevision:`${key}-${cohorts[key]}`,
       hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:11,color:css('--ink')}},
       xaxis:{title:{text:'ROLLOUT STEP',font:{size:9}}, gridcolor:css('--grid'),zeroline:false, tickmode:'auto',nticks:mobile?5:10, fixedrange:false},
-      yaxis:{title:{text:'TEST R²',font:{size:9}}, range:[low,max+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),zerolinewidth:1,tickformat:'.2f',nticks:5},
+      yaxis:{title:{text:'TEST R²',font:{size:9}}, range:[0,max+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),zerolinewidth:1,tickformat:'.2f',nticks:5},
       shapes:[{type:'line',x0:horizon,x1:horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
       annotations:values.length ? [] : [{text:lines.length?'No finite R² scores at these horizons.':'Select a model to display its results.',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
     };
     Plotly.react(plot,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,displayModeBar:true,
       modeBarButtonsToRemove:['select2d','lasso2d','zoomIn2d','zoomOut2d','autoScale2d'],toImageButtonOptions:{format:'svg',filename:`network-bench-${key}`,width:1000,height:500}});
   }
-  $('range-note').textContent = clipped ? 'Some values or bands fall below −1. Enable “Full vertical range” to see them; hover shows the actual score.'
-    : 'Drag to zoom · double-click to reset · camera to download SVG. R² is computed across systems, then averaged across seeds.';
+  $('range-note').textContent = 'Mean ± sample SD across seeds. Plot starts at 0; negative scores remain in the table.';
 }
 function tableRuns() {
   return selectedRuns().filter(run => run.model.toLowerCase().includes($('search').value.trim().toLowerCase())
@@ -238,24 +218,15 @@ function downloadCSV() {
   const url=URL.createObjectURL(new Blob([[columns.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'}));
   const link=node('a');link.href=url;link.download='network-bench-results.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-function drawNetwork() {
-  const svg=$('network'),points=[];
-  const element=(tag,attributes)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [key,value] of Object.entries(attributes))e.setAttribute(key,value);return e;};
-  for(let row=0;row<5;row++)for(let col=0;col<7;col++)points.push([30+col*53+Math.sin(row*7+col*3)*12,25+row*47+Math.cos(col*4+row*2)*10]);
-  points.forEach(([x,y],i)=>{for(const j of [i+1,i+7,i+8])if(points[j] && (j===i+7 || i%7<6)){const [xx,yy]=points[j];svg.append(element('line',{x1:x,y1:y,x2:xx,y2:yy,stroke:'var(--green)','stroke-width':.8,opacity:.24}));}});
-  points.forEach(([cx,cy],i)=>{svg.append(element('circle',{cx,cy,r:i%6===0?5:3,fill:i%6===0?'var(--s2)':'var(--green)',opacity:i%6===0?.95:.65}));});
-}
 function setTheme(dark) {
   document.documentElement.dataset.theme=dark?'dark':'light';
   $('theme').setAttribute('aria-label',`Switch to ${dark?'light':'dark'} theme`);
   if(data) render();
 }
-setTheme(matchMedia('(prefers-color-scheme: dark)').matches);
+setTheme(false);
 $('theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
-drawNetwork();
 fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}).then(payload=>{
-  data=payload;
-  $('total-runs').textContent=`${data.runs.length} completed runs`;
+  data={...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')};
   $('generated').textContent=`Updated ${new Date(data.generated).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})} · ${data.runs.length} runs`;
   if(!data.runs.length){$('notice').textContent='No completed runs have been published yet.';return;}
   enabled=new Set(data.runs.map(run=>run.model));
@@ -270,7 +241,7 @@ fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${re
   }
   for(const seed of [...new Set(data.runs.map(run=>run.seed))].sort((a,b)=>a-b)) for(const id of ['plot-seed','seed']) $(id).append(new Option(`Seed ${seed}`,String(seed)));
   $('cohort').onchange=()=>{cohorts[dataset]=$('cohort').value;render();};
-  for(const id of ['bands','full-range','plot-seed','line-mode','rank-dataset'])$(id).onchange=render;
+  for(const id of ['bands','plot-seed','line-mode','rank-dataset'])$(id).onchange=render;
   $('horizon').oninput=()=>{horizon=JSON.parse($('horizon').dataset.steps)[$('horizon').value];render();};
   $('reset-models').onclick=()=>{enabled=new Set(data.runs.map(run=>run.model));render();};
   $('search').oninput=renderTable;$('seed').onchange=renderTable;$('download').onclick=downloadCSV;
