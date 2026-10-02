@@ -245,12 +245,12 @@ function renderChart(animate) {
   if (individual) for (const group of all) for (const run of group.runs) values.push(...Object.values(run.poisson_r2).filter(finite));
   const mobile = window.innerWidth < 600;
   const layout = {
-    height:mobile ? 410 : 540, margin:{l:64,r:20,t:26,b:60},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
-    font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:14,color:css('--ink')},
+    height:mobile ? 440 : 560, margin:{l:72,r:20,t:26,b:68},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
+    font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:16,color:css('--ink')},
     showlegend:false,hovermode:'x unified',dragmode:'zoom',uirevision:'single-plot',
-    hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:14,color:css('--ink')}},
-    xaxis:{title:{text:'ROLLOUT STEP',font:{size:14}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?5:10},
-    yaxis:{title:{text:'TEST R²',font:{size:14}},range:[0,Math.max(1,...values)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:'.2f',nticks:5},
+    hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:20,color:css('--ink')}},
+    xaxis:{title:{text:'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
+    yaxis:{title:{text:'TEST R²',font:{size:16}},range:[0,Math.max(1,...values)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:'.2f',nticks:5},
     shapes:[{type:'line',x0:horizon,x1:horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
     annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:'No results for these filters.',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };

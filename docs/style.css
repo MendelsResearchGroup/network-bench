@@ -49,7 +49,7 @@ body {
   margin:0;
   background:var(--paper);
   color:var(--ink);
-  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font:18px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 a {
@@ -100,7 +100,7 @@ button,select {
   align-items:center;
   gap:7px;
   text-decoration:none;
-  font-size:22px;
+  font-size:24px;
   font-weight:650;
   letter-spacing:-.7px;
 }
@@ -119,7 +119,7 @@ button,select {
   display:flex;
   gap:26px;
   align-items:center;
-  font-size:15px;
+  font-size:18px;
 }
 .masthead nav a {
   text-decoration:none;
@@ -134,7 +134,7 @@ button,select {
   border-radius:50%;
   width:32px;
   height:32px;
-  font-size:22px;
+  font-size:24px;
   line-height:1;
 }
 .explore {
@@ -159,7 +159,7 @@ button,select {
   padding:9px 18px;
   background:transparent;
   border-radius:6px;
-  font-size:16px;
+  font-size:18px;
   color:var(--muted);
   transition:background .25s ease,color .25s ease,box-shadow .25s ease;
 }
@@ -173,15 +173,15 @@ button,select {
   color:var(--muted);
 }
 .small {
-  font-size:15px;
+  font-size:18px;
 }
 .explore>p {
-  font-size:15px;
+  font-size:18px;
   margin:12px 0 0;
 }
 .split-details {
   margin-top:12px;
-  font-size:15px;
+  font-size:18px;
 }
 .split-details summary {
   cursor:pointer;
@@ -195,14 +195,14 @@ button,select {
   gap:20px;
 }
 .split-membership h3 {
-  font-size:15px;
+  font-size:18px;
   font-weight:500;
 }
 .split-membership ol {
   max-height:180px;
   overflow:auto;
   padding:0 0 0 32px;
-  font:14px/1.8 ui-monospace,monospace;
+  font:16px/1.8 ui-monospace,monospace;
   overflow-wrap:anywhere;
 }
 @media(max-width:760px) {
@@ -231,13 +231,13 @@ button,select {
 h2 {
   font-family:Georgia,"Times New Roman",serif;
   font-weight:400;
-  font-size:26px;
+  font-size:30px;
   line-height:1.3;
   letter-spacing:-.4px;
   margin:0;
 }
 .direction {
-  font-size:14px;
+  font-size:16px;
   white-space:nowrap;
   color:var(--muted);
 }
@@ -255,7 +255,7 @@ h2 {
   border:1px solid var(--line);
   background:transparent;
   padding:7px 10px;
-  font-size:14px;
+  font-size:16px;
   max-width:100%;
   flex-wrap:wrap;
   display:flex;
@@ -275,7 +275,7 @@ h2 {
 .legend .swatch {
   width:20px;
   height:auto;
-  font-size:20px;
+  font-size:22px;
   font-style:normal;
   line-height:1;
 }
@@ -305,11 +305,11 @@ h2 {
   overflow:visible;
 }
 .chart svg text {
-  font:14px ui-monospace,SFMono-Regular,Consolas,monospace;
+  font:16px ui-monospace,SFMono-Regular,Consolas,monospace;
   fill:var(--muted);
 }
 .chart svg .axis-title {
-  font-size:13px;
+  font-size:16px;
   letter-spacing:.6px;
 }
 .chart-controls {
@@ -319,7 +319,7 @@ h2 {
   gap:15px;
   padding-top:12px;
   border-top:1px solid var(--line);
-  font-size:14px;
+  font-size:16px;
   color:var(--muted);
 }
 .chart-controls label {
@@ -338,13 +338,13 @@ input[type=checkbox] {
   background:none;
   padding:0;
   color:var(--green);
-  font-size:14px;
+  font-size:16px;
   text-decoration:underline;
   text-underline-offset:3px;
   margin-left:auto;
 }
 .footnote {
-  font-size:14px;
+  font-size:16px;
   color:var(--muted);
   line-height:1.7;
   margin:14px 0 0;
@@ -353,11 +353,11 @@ input[type=checkbox] {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  font-size:14px;
+  font-size:16px;
   margin:24px 0 12px;
 }
 .horizon-label output {
-  font:14px ui-monospace,SFMono-Regular,Consolas,monospace;
+  font:16px ui-monospace,SFMono-Regular,Consolas,monospace;
   color:var(--green);
   background:var(--soft);
   padding:4px 8px;
@@ -373,13 +373,13 @@ input[type=range] {
 .range-labels {
   display:flex;
   justify-content:space-between;
-  font:13px ui-monospace,SFMono-Regular,Consolas,monospace;
+  font:16px ui-monospace,SFMono-Regular,Consolas,monospace;
   color:var(--muted);
 }
 .ranking-caption {
   display:flex;
   justify-content:space-between;
-  font:12px ui-monospace,SFMono-Regular,Consolas,monospace;
+  font:16px ui-monospace,SFMono-Regular,Consolas,monospace;
   letter-spacing:1px;
   color:var(--muted);
   border-bottom:1px solid var(--line);
@@ -400,7 +400,7 @@ input[type=range] {
   justify-content:space-between;
   gap:8px;
   align-items:center;
-  font-size:15px;
+  font-size:18px;
 }
 .rank-name {
   display:flex;
@@ -408,17 +408,17 @@ input[type=range] {
   gap:8px;
 }
 .rank-number {
-  font:13px ui-monospace,SFMono-Regular,Consolas,monospace;
+  font:16px ui-monospace,SFMono-Regular,Consolas,monospace;
   color:var(--muted);
   width:18px;
 }
 .rank-score {
   margin-left:auto;
-  font:15px ui-monospace,SFMono-Regular,Consolas,monospace;
+  font:18px ui-monospace,SFMono-Regular,Consolas,monospace;
   white-space:nowrap;
 }
 .rank-score small {
-  font-size:13px;
+  font-size:16px;
   color:var(--muted);
 }
 .rank-meta {
@@ -427,7 +427,7 @@ input[type=range] {
   gap:4px 8px;
   justify-content:space-between;
   margin:6px 0 0 20px;
-  font-size:13px;
+  font-size:16px;
   color:var(--muted);
 }
 .rank-bar {
@@ -450,7 +450,7 @@ input[type=range] {
   border:1px solid var(--line);
   border-radius:6px;
   padding:8px 12px;
-  font-size:14px;
+  font-size:16px;
 }
 .outline-button:hover {
   background:var(--soft);
@@ -460,7 +460,7 @@ input[type=range] {
   gap:18px;
   align-items:center;
   margin:24px 0 16px;
-  font-size:14px;
+  font-size:16px;
 }
 .table-controls>span {
   margin-left:auto;
@@ -476,7 +476,7 @@ input[type=search] {
   border:0;
   outline-offset:1px;
   width:170px;
-  font-size:14px;
+  font-size:16px;
   padding:7px 4px;
 }
 .search-label {
@@ -488,12 +488,12 @@ input[type=search] {
   padding:0 9px;
 }
 .search-label>span {
-  font-size:24px;
+  font-size:26px;
   line-height:1;
   color:var(--muted);
 }
 select {
-  font-size:14px;
+  font-size:16px;
   border:1px solid var(--line);
   padding:6px 8px;
   border-radius:5px;
@@ -504,12 +504,12 @@ select {
 table {
   width:100%;
   border-collapse:collapse;
-  font-size:14px;
+  font-size:16px;
   white-space:nowrap;
 }
 th {
   text-align:right;
-  font-size:13px;
+  font-size:16px;
   font-weight:500;
   letter-spacing:.3px;
   color:var(--muted);
@@ -565,7 +565,7 @@ td details dl {
   white-space:normal;
   max-width:230px;
   margin:10px 0 0;
-  font:13px/1.8 ui-monospace,monospace;
+  font:16px/1.8 ui-monospace,monospace;
   color:var(--muted);
 }
 td dt {
@@ -584,7 +584,7 @@ td dd:after {
   border:1px solid var(--line);
   border-radius:4px;
   padding:1px 7px;
-  font:14px ui-monospace,monospace;
+  font:16px ui-monospace,monospace;
 }
 .score-cell {
   color:var(--green);
@@ -594,7 +594,7 @@ td dd:after {
   padding:40px 10px;
   text-align:center;
   color:var(--muted);
-  font-size:15px;
+  font-size:18px;
 }
 footer {
   display:flex;
@@ -604,7 +604,7 @@ footer {
   border-top:1px solid var(--line);
   padding-top:22px!important;
   padding-bottom:28px!important;
-  font:13px ui-monospace,SFMono-Regular,Consolas,monospace;
+  font:16px ui-monospace,SFMono-Regular,Consolas,monospace;
   color:var(--muted);
 }
 footer a {
@@ -612,12 +612,12 @@ footer a {
 }
 .brand-small {
   font-weight:600;
-  font-size:14px;
+  font-size:16px;
   color:var(--ink);
 }
 .notice {
   padding:22px 0;
-  font-size:16px;
+  font-size:18px;
   color:var(--muted);
 }
 .sr-only {
@@ -675,13 +675,13 @@ footer a {
   }
   .masthead nav {
     gap:16px;
-    font-size:14px;
+    font-size:16px;
   }
   .masthead nav a:first-child {
     display:none;
   }
   .brand {
-    font-size:20px;
+    font-size:22px;
   }
   .results-grid {
     grid-template-columns:1fr;
@@ -719,22 +719,22 @@ footer a {
   }
   .table-controls>span {
     margin-left:0;
-    font-size:14px;
+    font-size:16px;
   }
   .runs-panel .panel-heading {
     align-items:flex-start;
   }
   .runs-panel h2 {
-    font-size:24px;
+    font-size:26px;
   }
   .outline-button {
     white-space:nowrap;
     padding:7px 9px;
-    font-size:14px;
+    font-size:16px;
   }
   footer {
     flex-wrap:wrap;
-    font-size:13px;
+    font-size:16px;
   }
   footer #generated {
     order:3;
@@ -773,7 +773,7 @@ footer a {
   flex-wrap:wrap;
   align-items:center;
   margin-top:18px;
-  font-size:14px;
+  font-size:16px;
   color:var(--muted);
 }
 .plot-filters label {
@@ -782,7 +782,7 @@ footer a {
   gap:7px;
 }
 .plot-filters select {
-  font-size:14px;
+  font-size:16px;
 }
 .plot-filters .mode-toggle {
   width:auto;
@@ -793,7 +793,7 @@ footer a {
 .plot-filters .mode-toggle button {
   flex:none;
   padding:4px 9px;
-  font-size:14px;
+  font-size:16px;
   border-radius:4px;
 }
 .plot {
@@ -824,7 +824,7 @@ footer a {
     flex-wrap:wrap;
   }
   .segmented button {
-    font-size:14px;
+    font-size:16px;
     white-space:nowrap;
     padding:9px;
   }
@@ -832,7 +832,7 @@ footer a {
     gap:10px;
   }
   .plot-filters label {
-    font-size:13px;
+    font-size:16px;
   }
 }
 .table-scroll {
