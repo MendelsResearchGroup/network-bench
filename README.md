@@ -137,6 +137,15 @@ display settings. For example, `?dataset=noisy_lj&mode=ood&training=mst` opens
 the Noisy LJ OOD results with MST selected. Model lines use distinct markers
 and dash patterns as well as colors; labels and plot text stay high contrast.
 
+The R² and position-MSE plots share one filter bar, model legend and horizon
+slider. Both show the same selected models; the default top three are ranked by
+R² at the selected horizon. Position MSE is recorded every ten rollout steps,
+averaging squared position errors over node coordinates and then over test
+networks. Lower MSE is better. The table and CSV include position MSE and
+relative MSE at the selected horizon; relative MSE divides the mean position
+error by the mean frozen-position baseline at that same step. Plot bands show
+sample standard deviation across training seeds.
+
 The data split stays fixed (`split.seed`); `train.seed` controls model
 initialisation and training-window sampling. Every run has its own saved config,
 weights, and metrics. Repeating the command skips completed runs. `--force`

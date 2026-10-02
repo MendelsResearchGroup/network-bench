@@ -153,6 +153,16 @@ def export_results(root: str | Path | None = None) -> dict:
             },
             "relative_mse": measured.get("relative_mse"),
             "position_mse": measured.get("position_mse"),
+            "position_mse_by_step": {
+                int(key.rsplit("_", 1)[1]): value
+                for key, value in measured.items()
+                if key.startswith("position_mse_")
+            },
+            "relative_mse_by_step": {
+                int(key.rsplit("_", 1)[1]): value
+                for key, value in measured.items()
+                if key.startswith("relative_mse_")
+            },
             "diverged": measured.get("diverged"),
             "poisson_r2": {
                 int(key.rsplit("_", 1)[1]): value

@@ -19,6 +19,10 @@ let data, dataset = 'node_optimized', mode = 'normal', trainingMode = 'one_step'
 let tableSort = {key: 'r2', descending: true};
 const finite = x => typeof x === 'number' && Number.isFinite(x);
 const number = (v, digits = 3) => finite(v) ? v.toFixed(digits) : '—';
+const scientific = v => finite(v) ? v.toExponential(3) : '—';
+const metricValues = (run, metric) => metric === 'poisson_r2' ? run.poisson_r2
+  : run[metric] && Object.keys(run[metric]).length ? run[metric]
+  : {[run.rollout_steps]: run[metric.replace('_by_step', '')]};
 const label = key => DATASETS[key] ?? key.replaceAll('_', ' ');
 const css = key => getComputedStyle(document.documentElement).getPropertyValue(key).trim();
 const color = model => css(`--s${Math.max(0, MODELS.indexOf(model)) + 1}`);
@@ -45,7 +49,7 @@ function selectedRuns() {
   return modeRuns().filter(run => run.comparison_id === cohorts[cohortKey()]
     && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value));
 }
-function groups(runs) {
+function groups(runs, metric = 'poisson_r2') {
   const grouped = new Map();
   for (const run of runs) {
     const key = JSON.stringify([run.dataset, run.comparison_id, run.model, Object.entries(run.hyperparameters).sort()]);
@@ -53,8 +57,8 @@ function groups(runs) {
     grouped.get(key).runs.push(run);
   }
   return [...grouped.values()].map(group => {
-    const steps = [...new Set(group.runs.flatMap(run => Object.keys(run.poisson_r2).map(Number)))].sort((a, b) => a - b);
-    return {...group, points: Object.fromEntries(steps.map(step => [step, stats(group.runs.map(run => run.poisson_r2[step]))]))};
+    const steps = [...new Set(group.runs.flatMap(run => Object.keys(metricValues(run, metric)).map(Number)))].sort((a, b) => a - b);
+    return {...group, points: Object.fromEntries(steps.map(step => [step, stats(group.runs.map(run => metricValues(run, metric)[step]))]))};
   });
 }
 function setDataset(value, resetModels = true) {
@@ -163,6 +167,7 @@ function render(animate = false) {
   if (topModels) enabled = new Set(rankedGroups(grouped).filter(group => finite(group.score.mean)).slice(0, 3).map(group => group.model));
   renderRanking(grouped);
   renderChart(animate === true);
+  renderChart(animate === true, 'position_mse_by_step');
   renderTable();
   for (const button of $('legend').children) {
     const model = button.dataset.model;
@@ -200,13 +205,14 @@ function renderRanking(grouped) {
 function rgba(hex, alpha) {
   return `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${alpha})`;
 }
-function renderChart(animate) {
-  if (!window.Plotly) { $('chart').textContent = 'The plot could not load. Results are available below.'; return; }
-  const plot = $('plot'), traces = [];
+function renderChart(animate, metric = 'poisson_r2') {
+  const mse = metric === 'position_mse_by_step';
+  if (!window.Plotly) { $(mse ? 'mse-chart' : 'chart').textContent = 'The plot could not load. Results are available below.'; return; }
+  const plot = $(mse ? 'mse-plot' : 'plot'), traces = [];
   const individual = $('line-mode').value === 'individual';
   const plottedScore = value => finite(value) ? Math.max(0, value) : null;
   const all = groups(data.runs.filter(run => matchesMode(run) && run.comparison_id === cohorts[cohortKey(run.dataset)]
-    && enabled.has(run.model) && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)));
+    && enabled.has(run.model) && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)), metric);
   const identity = group => JSON.stringify([group.model, Object.entries(group.hyperparameters).sort()]);
   const slots = [...new Map(all.map(group => [identity(group), group])).entries()].sort((a,b) => a[0].localeCompare(b[0]));
   const x = [...new Set(data.runs.flatMap(run => Object.keys(run.poisson_r2).map(Number)))].sort((a,b) => a-b);
@@ -221,11 +227,11 @@ function renderChart(animate) {
       const seeds = [...new Set(data.runs.filter(run => identity(run) === id).map(run => run.seed))].sort((a,b) => a-b);
       for (const seed of seeds) {
         const run = group?.runs.find(run => run.seed === seed);
-        const scores = x.map(step => run?.poisson_r2[step] ?? null);
+        const scores = x.map(step => run ? metricValues(run, metric)[step] ?? null : null);
         traces.push({...base, uid:`${uid}-${seed}`, y:scores.map(plottedScore), customdata:scores,
           mode:'lines+markers', name:`${template.model} · seed ${seed}`,
           line:{color:c,width:2.4,dash:['solid','dash','dot'][seed % 3],simplify:false},marker:{size:6,symbol:appearance.symbol},
-          hovertemplate:'%{customdata:.3f}<extra>%{fullData.name}</extra>'});
+          hovertemplate:`%{customdata:${mse ? '.3e' : '.3f'}}<extra>%{fullData.name}</extra>`});
       }
     } else {
       const points = x.map(step => group?.points[step] ?? stats([]));
@@ -233,40 +239,40 @@ function renderChart(animate) {
       traces.push({...base,uid:`${uid}-lower`,y:band(-1),mode:'lines',line:{width:0,simplify:false},hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-upper`,y:band(1),mode:'lines',line:{width:0,simplify:false},fill:'tonexty',fillcolor:rgba(c,.12),hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-mean`,y:points.map(point => plottedScore(point.mean)),mode:'lines+markers',name:template.model,
-          line:{color:c,width:3,dash:appearance.dash,simplify:false},marker:{size:7,symbol:appearance.symbol},customdata:points.map(point => [number(point.sd),point.n,point.mean]),
-          hovertemplate:'%{customdata[2]:.3f} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>'});
+          line:{color:c,width:3,dash:appearance.dash,simplify:false},marker:{size:7,symbol:appearance.symbol},customdata:points.map(point => [(mse ? scientific : number)(point.sd),point.n,point.mean]),
+          hovertemplate:`%{customdata[2]:${mse ? '.3e' : '.3f'}} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>`});
     }
   }
   // Shared axes and stable trace slots let each model morph into itself.
-  for (const group of all) for (const point of Object.values(group.points)) {
+  const visible = all.filter(group => group.dataset === dataset);
+  for (const group of visible) for (const point of Object.values(group.points)) {
     if (finite(point.mean)) values.push(point.mean + ($('bands').checked ? point.sd ?? 0 : 0));
 
   }
-  if (individual) for (const group of all) for (const run of group.runs) values.push(...Object.values(run.poisson_r2).filter(finite));
+  if (individual) for (const group of visible) for (const run of group.runs) values.push(...Object.values(metricValues(run, metric)).filter(finite));
   const mobile = window.innerWidth < 600;
+  const maximum = Math.max(0, ...values);
   const layout = {
-    height:mobile ? 440 : 560, margin:{l:72,r:20,t:26,b:68},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
+    height:mobile ? 440 : 560, margin:{l:90,r:20,t:26,b:68},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
     font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:16,color:css('--ink')},
-    showlegend:false,hovermode:'x unified',dragmode:'zoom',uirevision:'single-plot',
+    showlegend:false,hovermode:'x unified',dragmode:'zoom',uirevision:metric,
     hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:20,color:css('--ink')}},
     xaxis:{title:{text:'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
-    yaxis:{title:{text:'TEST R²',font:{size:16}},range:[0,Math.max(1,...values)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:'.2f',nticks:5},
+    yaxis:{title:{text:mse ? 'POSITION MSE' : 'TEST R²',font:{size:16}},range:[0,mse ? (maximum > 0 ? maximum * 1.05 : 1) : Math.max(1,maximum)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:mse ? '.1e' : '.2f',nticks:5},
     shapes:[{type:'line',x0:horizon,x1:horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
     annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:'No results for these filters.',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
-  plot.setAttribute('aria-label', `${label(dataset)}, ${mode === 'ood' ? 'OOD' : 'normal'}, ${trainingMode === 'multi_step' ? 'multi-step training' : 'one-step training'}: Poisson’s ratio R squared against rollout steps. Values are available in the runs table.`);
+  plot.setAttribute('aria-label', `${label(dataset)}, ${mode === 'ood' ? 'OOD' : 'normal'}, ${trainingMode === 'multi_step' ? 'multi-step training' : 'one-step training'}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against rollout steps. Values are available in the runs table.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
-  if (animate && sameTraces && plot.data.some(trace => trace.y.some(finite)) && traces.some(trace => trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (!mse && animate && sameTraces && plot.data.some(trace => trace.y.some(finite)) && traces.some(trace => trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     Plotly.animate(plot,{data:traces,traces:traces.map((_,i) => i)},
       {mode:'immediate',transition:{duration:650,easing:'cubic-in-out'},frame:{duration:650,redraw:true}});
   } else {
     Plotly.react(plot,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,displayModeBar:true,
       modeBarButtonsToRemove:['select2d','lasso2d','zoomIn2d','zoomOut2d','autoScale2d'],
-      toImageButtonOptions:{format:'svg',filename:'network-bench',width:1100,height:550}});
+      toImageButtonOptions:{format:'svg',filename:mse ? 'network-bench-mse' : 'network-bench-r2',width:1100,height:550}});
   }
-  $('range-note').textContent = individual
-    ? 'Individual seeds · Negative scores are drawn at 0; hover and table show actual values.'
-    : 'Mean ± sample SD across seeds · Negative scores are drawn at 0; hover and table show actual values.';
+  $(mse ? 'mse-range-note' : 'range-note').textContent = `${individual ? 'Individual seeds' : 'Mean ± sample SD across seeds'} · ${mse ? 'Lower MSE is better. Values use squared coordinate units.' : 'Negative scores are drawn at 0; hover and table show actual values.'}`;
 }
 
 function tableRuns() {
@@ -281,7 +287,8 @@ const COLUMNS = [
   {key:'epoch',label:'Best epoch',value:run=>run.selected_epoch ?? run.trained_epochs ?? run.epochs},
   {key:'trained',label:'Trained epochs',value:run=>run.trained_epochs ?? run.epochs},
   {key:'val',label:'Validation score',value:run=>run.val_score},
-  {key:'relative',label:'Relative MSE ↓',value:run=>run.relative_mse},
+  {key:'mse',label:'Position MSE ↓',value:run=>metricValues(run,'position_mse_by_step')[horizon]},
+  {key:'relative',label:'Relative MSE ↓',value:run=>metricValues(run,'relative_mse_by_step')[horizon]},
   {key:'r2',label:'Test R² ↑',value:run=>run.poisson_r2[horizon]},
   {key:'diverged',label:'Diverged',value:run=>run.diverged}
 ];
@@ -295,13 +302,13 @@ function renderTable() {
     const order=typeof av==='string'?av.localeCompare(bv):av-bv;
     return tableSort.descending ? -order:order;
   });
-  $('table-count').textContent=`${runs.length} runs · test R² at step ${horizon}`;
+  $('table-count').textContent=`${runs.length} runs · test metrics at step ${horizon}`;
   const head=node('tr');
   for (const column of COLUMNS) {
     const th=node('th'); th.scope='col';
     th.setAttribute('aria-sort',column.key===tableSort.key?(tableSort.descending?'descending':'ascending'):'none');
-    const button=node('button',column.key==='r2'?`Test R² @${horizon} ↑`:column.label);
-    button.onclick=()=>{tableSort={key:column.key,descending:column.key===tableSort.key?!tableSort.descending:true};renderTable();};
+    const button=node('button',column.key==='r2'?`Test R² @${horizon} ↑`:column.key==='mse'?`Position MSE @${horizon} ↓`:column.key==='relative'?`Relative MSE @${horizon} ↓`:column.label);
+    button.onclick=()=>{tableSort={key:column.key,descending:column.key===tableSort.key?!tableSort.descending:!['mse','relative'].includes(column.key)};renderTable();};
     th.append(button); head.append(th);
   }
   $('table-head').replaceChildren(head); $('table-body').replaceChildren();
@@ -317,6 +324,7 @@ function renderTable() {
         details.append(dl); cell.append(details);
       } else if (column.key==='seed') cell.append(node('span',String(value),'seed-pill'));
       else if (column.key==='parameters') cell.textContent=value.toLocaleString();
+      else if (column.key==='mse') cell.textContent=scientific(value);
       else if (['val','relative','r2'].includes(column.key)) cell.textContent=number(value);
       else cell.textContent=value ?? '—';
       if (column.key==='r2') cell.className='score-cell';
@@ -329,9 +337,9 @@ function renderTable() {
   updateURL();
 }
 function downloadCSV() {
-  const columns=['dataset','mode','training_mode','rollout_schedule','detach_rollout','comparison_id','model','seed','hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`];
+  const columns=['dataset','mode','training_mode','rollout_schedule','detach_rollout','comparison_id','model','seed','hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`,`position_mse_${horizon}`,`relative_mse_${horizon}`];
   const quote=value=>'"'+String(value ?? '').replaceAll('"','""')+'"';
-  const rows=tableRuns().map(run=>columns.map(key=>quote(['hyperparameters','rollout_schedule'].includes(key)?JSON.stringify(run[key]):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:run[key])).join(','));
+  const rows=tableRuns().map(run=>columns.map(key=>quote(['hyperparameters','rollout_schedule'].includes(key)?JSON.stringify(run[key]):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:key.startsWith('position_mse_')?metricValues(run,'position_mse_by_step')[horizon]:key.startsWith('relative_mse_')?metricValues(run,'relative_mse_by_step')[horizon]:run[key])).join(','));
   const url=URL.createObjectURL(new Blob([[columns.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'}));
   const link=node('a');link.href=url;link.download='network-bench-results.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }

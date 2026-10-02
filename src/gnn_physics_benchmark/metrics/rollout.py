@@ -12,7 +12,11 @@ the box, its transverse edges stay put, so a box-based ratio would be the same
 for every model. On ground truth the position-based ratio matches the box-based
 one to R^2 >= 0.99 on the inverse-design sets.
 
-It is a ratio of means over systems rather than a mean of ratios. A single system
+Position MSE, the frozen baseline and relative MSE are also recorded at these
+horizons. Each position MSE averages squared errors over node coordinates first,
+then averages those per-system errors across the networks that reached the step.
+
+Relative MSE is a ratio of means over systems rather than a mean of ratios. A single system
 whose frozen baseline happens to be tiny would otherwise dominate the average.
 """
 
@@ -86,8 +90,13 @@ def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, dr
         float(reference[-1].box_tensor[axis]) == float(seed.box_tensor[axis])
         for axis in range(seed.box_tensor.numel()) if axis != driven_axis
     )
-    nu = {}
+    nu, mse = {}, {}
     for step in range(POISSON_EVERY, reached - history, POISSON_EVERY):
+        target = truth[history + step].pos
+        mse[step] = (
+            float(torch.nn.functional.mse_loss(predicted[history + step].pos, target)),
+            float(torch.nn.functional.mse_loss(predicted[history].pos, target)),
+        )
         if clamped:
             nu[step] = (float("nan"), float("nan"))
             continue
@@ -100,6 +109,7 @@ def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, dr
         "frozen_mse": float(torch.nn.functional.mse_loss(predicted[history].pos, last_true)),
         "steps_completed": reached - history - 1,
         "nu": nu,
+        "mse": mse,
     }
 
 
@@ -126,4 +136,10 @@ def summarise_rollouts(errors: list[dict], requested_steps: int) -> dict:
     for step in range(POISSON_EVERY, requested_steps + 1, POISSON_EVERY):
         pairs = [error["nu"][step] for error in errors if step in error["nu"]]
         summary[f"poisson_r2_{step}"] = r2_centred([p[0] for p in pairs], [p[1] for p in pairs])
+        mse = [error["mse"][step] for error in errors if step in error["mse"]]
+        position = sum(pair[0] for pair in mse) / len(mse) if mse else float("nan")
+        frozen = sum(pair[1] for pair in mse) / len(mse) if mse else float("nan")
+        summary[f"position_mse_{step}"] = position
+        summary[f"frozen_mse_{step}"] = frozen
+        summary[f"relative_mse_{step}"] = position / frozen if frozen > 0 else float("nan")
     return summary

@@ -27,17 +27,27 @@
       <details class="split-details"><summary>Exact network split <span id="split-counts"></span></summary><p id="split-note" class="footnote"></p><a id="ranking-audit" class="footnote" hidden>Full Poisson’s ratio ranking and cutoff ↗</a><div id="split-membership" class="split-membership"></div></details>
     </section>
     <section class="results-grid" aria-label="Model comparison">
-      <div class="panel curve-panel">
-        <div class="panel-heading"><h2>Poisson’s ratio R²</h2><span class="direction">Higher is better ↗</span></div>
+      <div class="panel filters-panel">
+        <h2>Models and filters</h2>
         <div class="plot-filters"><div id="modes" class="segmented mode-toggle" role="group" aria-label="Training distribution"><button data-mode="normal" aria-pressed="true">Normal</button><button data-mode="ood" aria-pressed="false">OOD</button></div><div id="training-modes" class="segmented mode-toggle" role="group" aria-label="Training objective"><button data-training="one_step" aria-pressed="true">One-step</button><button data-training="multi_step" aria-pressed="false" title="Multi-step training">MST</button></div><label>Training seed <select id="plot-seed"><option value="all">All seeds</option></select></label><label>Lines <select id="line-mode"><option value="mean">Mean across seeds</option><option value="individual">Individual seeds</option></select></label></div>
         <div id="legend" class="legend" role="group" aria-label="Show models"></div>
-        <p class="footnote legend-note">Top 3 by mean R² at the selected horizon shown by default. Click a model to toggle its line; numbers show parameter counts.</p>
-        <div id="chart" class="chart"><div id="plot" class="plot" role="img"></div></div>
+        <p class="footnote legend-note">The same models appear in both plots. Top 3 by mean R² at the selected horizon shown by default. Click a model to toggle both lines; numbers show parameter counts.</p>
         <div class="chart-controls"><label><input id="bands" type="checkbox" checked> ±1 SD</label><button id="top-models" class="text-button">Show top 3</button><button id="reset-models" class="text-button">Show all models</button></div>
+        <div class="horizon-control"><div class="horizon-label"><label for="horizon">Rollout horizon</label><output id="horizon-value" for="horizon"></output></div><input id="horizon" type="range" min="0" max="9" value="9"><div class="range-labels"><span id="first-step"></span><span id="last-step"></span></div></div>
+      </div>
+      <div class="panel curve-panel">
+        <div class="panel-heading"><h2>Poisson’s ratio R²</h2><span class="direction">Higher is better ↗</span></div>
+        <div id="chart" class="chart"><div id="plot" class="plot" role="img"></div></div>
         <p id="range-note" class="footnote"></p>
       </div>
+      <div class="panel curve-panel">
+        <div class="panel-heading"><h2>Position MSE</h2><span class="direction">Lower is better ↘</span></div>
+        <p class="footnote">Mean squared position error per node coordinate, averaged across test networks.</p>
+        <div id="mse-chart" class="chart"><div id="mse-plot" class="plot" role="img"></div></div>
+        <p id="mse-range-note" class="footnote"></p>
+      </div>
       <aside class="panel ranking-panel" aria-labelledby="ranking-title">
-        <h2 id="ranking-title">Model comparison</h2><div class="horizon-label"><label for="horizon">Rollout horizon</label><output id="horizon-value" for="horizon"></output></div><input id="horizon" type="range" min="0" max="9" value="9"><div class="range-labels"><span id="first-step"></span><span id="last-step"></span></div>
+        <h2 id="ranking-title">Model comparison</h2><p class="footnote">Ranked by mean R² at the selected horizon.</p>
         <div class="ranking-caption"><span>MODEL</span><span>MEAN R² ± SD</span></div><ol id="ranking" class="ranking"></ol>
       </aside>
     </section>
