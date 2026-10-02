@@ -87,6 +87,50 @@ gnn-bench train configs/networks.json \
 Noisy LJ uses the stored bond edges and stiffnesses. The benchmark does not infer
 missing rest lengths or LJ parameters; force and stress analysis is unavailable.
 
+### Noisy LJ sampling experiments
+
+The [sampling comparison](configs/noisy_lj_stride/comparison.png),
+[PDF](configs/noisy_lj_stride/comparison.pdf),
+[CSV](configs/noisy_lj_stride/comparison.csv) and
+[full results](configs/noisy_lj_stride/comparison.json) record 42 new runs of
+`mlp` and `edge_mlp`, using three seeds per configuration. Every run uses the
+same Normal split: 50 training, 50 validation and 70 test networks, with split
+seed 42. The JSON includes exact network IDs, observed frame indices and
+training target frames. New runs use 16 training windows, a 40-epoch cap and
+early stopping after five validation checks. Checkpoints are selected by
+validation Poisson R² at **100 original stored-frame intervals**.
+
+There are two separate comparisons. The stride-1/2/5 runs observe through
+frame 15 and predict to frame 115, using respectively 100/50/20 model steps.
+The original-start runs observe through frame 3 and predict to frame 103.
+Their two-frame stride-2 variant uses **only frames 1 and 3** from the original
+four inputs and predicts 50 steps. The later-start scores are a different task
+from the website's original benchmark and must be compared within that group.
+
+| Protocol | Model | Test Poisson R² | Relative position MSE |
+|---|---|---:|---:|
+| Frame 15, dense head windows | MLP | 0.676 ± 0.022 | 0.075 |
+| Frame 15, spread windows, every second frame | MLP | 0.733 ± 0.007 | 0.044 |
+| Frame 15, spread windows, every fifth frame | MLP | 0.711 ± 0.002 | 0.045 |
+| Frame 3, published MST | Edge MLP | 0.273 ± 0.026 | 0.116 |
+| Frame 3, spread windows, two inputs, every second frame | Edge MLP | 0.166 ± 0.005 | 0.095 |
+
+Values are means across three seeds; R² spreads are sample standard deviations.
+Every-second-frame training is more promising than every fifth in the plain MLP
+family. At the original starting frame, the short-history stride-2 Edge MLP
+reduces position MSE by about **18% against the published MST Edge MLP**, while
+Poisson R² declines. Existing MST remains the stronger original-start R² result.
+Historical published one-step controls used fixed 40-epoch training; the MST
+controls and new runs use early stopping. These experimental runs are saved
+under their own results root, keeping different frame protocols separate.
+
+```bash
+gnn-bench --threads 4 --root results/noisy-lj-rollouts/runs train \
+  configs/noisy_lj_stride/stride2_spread.json --model mlp --seeds 0 1 2
+gnn-bench --threads 4 --root results/noisy-lj-rollouts/runs train \
+  configs/noisy_lj_stride/stride2_short_original.json --model edge_mlp --seeds 0 1 2
+```
+
 ### Out-of-distribution comparison
 
 Prepare a fixed split for each dataset, then train the same models and seeds:

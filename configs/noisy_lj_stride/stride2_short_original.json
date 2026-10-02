@@ -1,0 +1,27 @@
+{
+ "dataset": "noisy_lj",
+ "model": "edge_mlp",
+ "graph": {
+  "edges": "bond",
+  "history": 1
+ },
+ "split": {
+  "manifest": null,
+  "sizes": [
+   50,
+   50,
+   70
+  ],
+  "max_frames": 52,
+  "first_frame": 1,
+  "frame_stride": 2
+ },
+ "train": {
+  "windows_per_sim": 16,
+  "val_rollout_steps": 50,
+  "validate_every": 2,
+  "select_by": "poisson_r2_50",
+  "early_stopping_patience": 5,
+  "window_mode": "spread"
+ }
+}
