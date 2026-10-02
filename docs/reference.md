@@ -84,8 +84,10 @@ Everything a dataset does not store is derived on load: `pos` from `x`,
 `arange` and `ones`. `derived_columns` handles per-bond quantities that need the
 whole trajectory — `rest_length` is read off the undeformed first frame.
 
-The data is never in the repository. Register a dataset in `data/registry.py` and
-point `GNN_BENCH_DATA_ROOT` at where it lives.
+The data is never in the repository. The default data root is `~/work/data`;
+`node_optimized` and `stiff_optimized` can be symlinks to their existing
+directories in `data_mini/`. Register a dataset in `data/registry.py` and set
+`GNN_BENCH_DATA_ROOT` when using another root.
 
 ## The input graph
 

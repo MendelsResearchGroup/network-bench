@@ -12,11 +12,16 @@ table are comparable by construction rather than by care.
 
 ```bash
 pip install -e .
-export GNN_BENCH_DATA_ROOT=/path/to/datasets
 
 gnn-bench train configs/networks.json --model gns mlp edge_mlp linear_floor frozen --seeds 0 1 2
 gnn-bench report node_optimized --seeds
 ```
+
+Data is read from `~/work/data` by default. The `node_optimized` and
+`stiff_optimized` directories there link to the corresponding directories in
+`data_mini/`; `noisy-lj/` holds the Noisy LJ trajectories. Set
+`GNN_BENCH_DATA_ROOT=/path/to/data` to use another data directory. The repository
+does not store trajectory copies.
 
 This runs each model with three training seeds, sequentially. Each model starts
 with its own default hyperparameters. To change a model setting, for example,
@@ -75,7 +80,7 @@ gnn-bench train configs/mst/node_optimized_ood.json \
 For the 200 Noisy LJ chunks (1500 frames each) under `~/work/data/noisy-lj`:
 
 ```bash
-GNN_BENCH_DATA_ROOT=~/work/data gnn-bench train configs/networks.json \
+gnn-bench train configs/networks.json \
   --dataset noisy_lj --model gns mlp edge_mlp linear_floor frozen --seeds 0 1 2
 ```
 
@@ -126,6 +131,11 @@ The separate **One-step / MST** toggle selects the training objective for the
 plot, rankings, table and CSV. The protocol line shows the rollout curriculum
 and training-frame count. Empty combinations say that results are pending;
 historical results without a training-mode field count as one-step runs.
+Filters update the URL, so copying the address shares the current dataset,
+Normal/OOD split, One-step/MST objective, horizon, seeds, selected models and
+display settings. For example, `?dataset=noisy_lj&mode=ood&training=mst` opens
+the Noisy LJ OOD results with MST selected. Model lines use distinct markers
+and dash patterns as well as colors; labels and plot text stay high contrast.
 
 The data split stays fixed (`split.seed`); `train.seed` controls model
 initialisation and training-window sampling. Every run has its own saved config,

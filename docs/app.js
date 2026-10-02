@@ -1,6 +1,16 @@
 /* A static explorer: all aggregation and filtering happens in the browser. */
 const $ = id => document.getElementById(id);
 const MODELS = ['gns', 'edge_mlp', 'mlp', 'tiny_mlp', 'linear_floor', 'frozen', 'edge_mlp_delta', 'edge_mlp_attention'];
+const MODEL_STYLES = [
+  {symbol:'circle', glyph:'●', dash:'solid'},
+  {symbol:'square', glyph:'■', dash:'dash'},
+  {symbol:'diamond', glyph:'◆', dash:'dot'},
+  {symbol:'triangle-up', glyph:'▲', dash:'dashdot'},
+  {symbol:'triangle-down', glyph:'▼', dash:'longdash'},
+  {symbol:'cross', glyph:'✚', dash:'longdashdot'},
+  {symbol:'star', glyph:'★', dash:'solid'},
+  {symbol:'hexagon', glyph:'⬡', dash:'dash'}
+];
 const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness optimized', noisy_lj: 'Noisy LJ'};
 const DESCRIPTIONS = {gns: 'Graph message passing', edge_mlp: 'Local bond encodings', mlp: 'Node features only', tiny_mlp: 'Single hidden layer', linear_floor: 'Linear velocity predictor', frozen: 'Frozen-position baseline'};
 DESCRIPTIONS.edge_mlp_delta = 'Edge MLP with latest velocity and velocity differences; same parameter count';
@@ -12,6 +22,7 @@ const number = (v, digits = 3) => finite(v) ? v.toFixed(digits) : '—';
 const label = key => DATASETS[key] ?? key.replaceAll('_', ' ');
 const css = key => getComputedStyle(document.documentElement).getPropertyValue(key).trim();
 const color = model => css(`--s${Math.max(0, MODELS.indexOf(model)) + 1}`);
+const modelStyle = model => MODEL_STYLES[Math.max(0, MODELS.indexOf(model))];
 const settings = run => Object.entries(run.hyperparameters).map(([key, value]) => `${key}=${value}`).join(', ') || 'No hyperparameters';
 const datasets = () => [...new Set(data.runs.map(run => run.dataset))].sort();
 const cohortKey = (key = dataset) => `${key}:${mode}:${trainingMode}`;
@@ -46,10 +57,10 @@ function groups(runs) {
     return {...group, points: Object.fromEntries(steps.map(step => [step, stats(group.runs.map(run => run.poisson_r2[step]))]))};
   });
 }
-function setDataset(value) {
+function setDataset(value, resetModels = true) {
   const changed = dataset !== value;
   dataset = value;
-  topModels = true;
+  if (resetModels) topModels = true;
   for (const button of $('datasets').children) button.setAttribute('aria-pressed', String(button.dataset.value === dataset));
   const comparisons = [...new Set(modeRuns().map(run => run.comparison_id))];
   cohorts[cohortKey()] ??= comparisons[0];
@@ -60,6 +71,45 @@ function setDataset(value) {
   for (const button of $('training-modes').children) button.setAttribute('aria-pressed', String(button.dataset.training === trainingMode));
   render(changed);
 }
+function restoreURL() {
+  const params = new URL(location.href).searchParams;
+  dataset = datasets().includes(params.get('dataset')) ? params.get('dataset') : datasets()[0];
+  mode = params.get('mode') === 'ood' ? 'ood' : 'normal';
+  trainingMode = params.get('training') === 'mst' ? 'multi_step' : 'one_step';
+  const step = Number(params.get('step') ?? 100);
+  horizon = finite(step) ? step : 100;
+  const comparisons = modeRuns().map(run => run.comparison_id);
+  cohorts[cohortKey()] = comparisons.includes(params.get('cohort')) ? params.get('cohort') : comparisons[0];
+  for (const [id, key, fallback] of [['plot-seed','seed','all'], ['line-mode','lines','mean'], ['seed','table_seed','all']]) {
+    const value = params.get(key) ?? fallback;
+    $(id).value = [...$(id).options].some(option => option.value === value) ? value : fallback;
+  }
+  $('bands').checked = params.get('bands') !== 'false';
+  $('search').value = params.get('search') ?? '';
+  topModels = !params.has('models');
+  const available = new Set(data.runs.map(run => run.model));
+  enabled = topModels ? available : new Set(params.get('models').split(',').filter(model => available.has(model)));
+  setDataset(dataset, false);
+}
+function updateURL() {
+  const url = new URL(location.href), params = url.searchParams;
+  params.set('dataset', dataset);
+  params.set('mode', mode);
+  params.set('training', trainingMode === 'multi_step' ? 'mst' : 'one_step');
+  const optional = {
+    step:horizon === 100 ? null : String(horizon),
+    seed:$('plot-seed').value === 'all' ? null : $('plot-seed').value,
+    lines:$('line-mode').value === 'mean' ? null : $('line-mode').value,
+    bands:$('bands').checked ? null : 'false',
+    models:topModels ? null : [...enabled].join(','),
+    cohort:$('cohort-label').hidden ? null : cohorts[cohortKey()],
+    table_seed:$('seed').value === 'all' ? null : $('seed').value,
+    search:$('search').value || null
+  };
+  for (const [key, value] of Object.entries(optional)) value == null ? params.delete(key) : params.set(key, value);
+  history.replaceState(null, '', url);
+}
+window.addEventListener('popstate', () => { if (data) restoreURL(); });
 function renderSplit() {
   const split = data.splits[cohorts[cohortKey()]];
   $('ranking-audit').hidden = mode !== 'ood';
@@ -122,7 +172,7 @@ function render(animate = false) {
     button.querySelector('.model-parameters').textContent = counts.map(count => count.toLocaleString()).join(' / ');
     button.title = `${DESCRIPTIONS[model] ?? model} · ${counts.map(count => count.toLocaleString()).join(' / ')} parameters`;
     button.setAttribute('aria-pressed', String(enabled.has(model)));
-    button.querySelector('.swatch').style.background = color(model);
+    button.querySelector('.swatch').style.color = color(model);
   }
 }
 function rankedGroups(grouped) {
@@ -164,6 +214,7 @@ function renderChart(animate) {
   for (const [id, template] of slots) {
     const group = all.find(group => group.dataset === dataset && identity(group) === id);
     const c = color(template.model);
+    const appearance = modelStyle(template.model);
     const uid = 'model-' + [...id].map(char => char.codePointAt(0).toString(16)).join('-');
     const base = {x, ids:x.map(String), type:'scatter', connectgaps:false};
     if (individual) {
@@ -173,7 +224,7 @@ function renderChart(animate) {
         const scores = x.map(step => run?.poisson_r2[step] ?? null);
         traces.push({...base, uid:`${uid}-${seed}`, y:scores.map(plottedScore), customdata:scores,
           mode:'lines+markers', name:`${template.model} · seed ${seed}`,
-          line:{color:c,width:2,dash:['solid','dash','dot'][seed % 3],simplify:false},marker:{size:4},
+          line:{color:c,width:2.4,dash:['solid','dash','dot'][seed % 3],simplify:false},marker:{size:6,symbol:appearance.symbol},
           hovertemplate:'%{customdata:.3f}<extra>%{fullData.name}</extra>'});
       }
     } else {
@@ -182,7 +233,7 @@ function renderChart(animate) {
       traces.push({...base,uid:`${uid}-lower`,y:band(-1),mode:'lines',line:{width:0,simplify:false},hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-upper`,y:band(1),mode:'lines',line:{width:0,simplify:false},fill:'tonexty',fillcolor:rgba(c,.12),hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-mean`,y:points.map(point => plottedScore(point.mean)),mode:'lines+markers',name:template.model,
-          line:{color:c,width:2.6,simplify:false},marker:{size:4},customdata:points.map(point => [number(point.sd),point.n,point.mean]),
+          line:{color:c,width:3,dash:appearance.dash,simplify:false},marker:{size:7,symbol:appearance.symbol},customdata:points.map(point => [number(point.sd),point.n,point.mean]),
           hovertemplate:'%{customdata[2]:.3f} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>'});
     }
   }
@@ -194,12 +245,12 @@ function renderChart(animate) {
   if (individual) for (const group of all) for (const run of group.runs) values.push(...Object.values(run.poisson_r2).filter(finite));
   const mobile = window.innerWidth < 600;
   const layout = {
-    height:mobile ? 380 : 520, margin:{l:46,r:16,t:20,b:48},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
-    font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:11,color:css('--muted')},
+    height:mobile ? 410 : 540, margin:{l:64,r:20,t:26,b:60},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
+    font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:14,color:css('--ink')},
     showlegend:false,hovermode:'x unified',dragmode:'zoom',uirevision:'single-plot',
-    hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:11,color:css('--ink')}},
-    xaxis:{title:{text:'ROLLOUT STEP',font:{size:9}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?5:10},
-    yaxis:{title:{text:'TEST R²',font:{size:9}},range:[0,Math.max(1,...values)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:'.2f',nticks:5},
+    hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:14,color:css('--ink')}},
+    xaxis:{title:{text:'ROLLOUT STEP',font:{size:14}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?5:10},
+    yaxis:{title:{text:'TEST R²',font:{size:14}},range:[0,Math.max(1,...values)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:'.2f',nticks:5},
     shapes:[{type:'line',x0:horizon,x1:horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
     annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:'No results for these filters.',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
@@ -275,6 +326,7 @@ function renderTable() {
     $('table-body').append(row);
   }
   if (!runs.length) {const row=node('tr'),cell=node('td','No runs match these filters.','empty');cell.colSpan=COLUMNS.length;row.append(cell);$('table-body').append(row);}
+  updateURL();
 }
 function downloadCSV() {
   const columns=['dataset','mode','training_mode','rollout_schedule','detach_rollout','comparison_id','model','seed','hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`];
@@ -302,7 +354,7 @@ fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${re
   for (const button of $('modes').children) button.onclick=()=>{mode=button.dataset.mode;setDataset(dataset);};
   for (const button of $('training-modes').children) button.onclick=()=>{trainingMode=button.dataset.training;setDataset(dataset);};
   for(const model of [...enabled].sort((a,b)=>MODELS.indexOf(a)-MODELS.indexOf(b))){
-    const button=node('button'),dot=node('i',undefined,'swatch');dot.style.background=color(model);button.dataset.model=model;button.title=DESCRIPTIONS[model] ?? model;
+    const button=node('button'),dot=node('i',modelStyle(model).glyph,'swatch');dot.style.color=color(model);button.dataset.model=model;button.title=DESCRIPTIONS[model] ?? model;
     button.append(dot,node('span',model),node('span',undefined,'model-parameters'));button.onclick=()=>{topModels=false;enabled.has(model)?enabled.delete(model):enabled.add(model);render();};$('legend').append(button);
   }
   for(const seed of [...new Set(data.runs.map(run=>run.seed))].sort((a,b)=>a-b)) for(const id of ['plot-seed','seed']) $(id).append(new Option(`Seed ${seed}`,String(seed)));
@@ -312,5 +364,5 @@ fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${re
   $('top-models').onclick=()=>{topModels=true;render();};
   $('reset-models').onclick=()=>{topModels=false;enabled=new Set(data.runs.map(run=>run.model));render();};
   $('search').oninput=renderTable;$('seed').onchange=renderTable;$('download').onclick=downloadCSV;
-  $('notice').hidden=true;$('dashboard').hidden=false;setDataset(datasets()[0]);
+  $('notice').hidden=true;$('dashboard').hidden=false;restoreURL();
 }).catch(error=>{$('notice').hidden=false;$('notice').textContent=`Results could not be loaded (${error.message}). Please reload, or download the JSON from the link above.`;});

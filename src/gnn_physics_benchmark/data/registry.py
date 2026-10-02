@@ -7,8 +7,8 @@ them. Adding a dataset means adding one `DatasetEntry` here and dropping the
 trajectories under the data root.
 
 The data itself is never in the repository. `resolve_root` looks under
-`$GNN_BENCH_DATA_ROOT` when that is set and otherwise under `datasets/` beside
-the repository, so the same key works on a laptop and on the cluster.
+`$GNN_BENCH_DATA_ROOT` when that is set and otherwise under `~/work/data`,
+so installed packages and cluster jobs use the same shared data directory.
 """
 
 from __future__ import annotations
@@ -28,8 +28,7 @@ def resolve_root() -> Path:
     override = os.environ.get("GNN_BENCH_DATA_ROOT")
     if override:
         return Path(override).expanduser()
-    # src/gnn_physics_benchmark/data/registry.py -> repository root
-    return Path(__file__).resolve().parents[3] / "datasets"
+    return Path.home() / "work" / "data"
 
 
 @dataclass(frozen=True)
