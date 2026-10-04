@@ -40,9 +40,9 @@ for row,(anchor,variants,labels) in enumerate(settings):
         ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True)
         ax.spines['top'].set_visible(False);ax.spines['right'].set_visible(False)
         if row==0 and column==0:ax.legend(loc='lower left')
-fig.suptitle('Noisy LJ: MLP sampling experiments',fontsize=24,y=.98)
+fig.suptitle('Noisy LJ: exploratory sampling protocols\nOnly frame-3, four-input protocols match the required benchmark',fontsize=21,y=.99)
 fig.text(.5,.025,'Same 50 training / 50 validation / 70 test networks · Mean ± sample SD over 3 training seeds\n'
-         'Compare within each row: later observed frames change the task. Negative R² is drawn at 0; labels show actual values.',ha='center',fontsize=16)
+         'Later starts and two-input protocols are excluded from benchmark claims. Negative R² is drawn at 0; labels show actual values.',ha='center',fontsize=16)
 fig.subplots_adjust(left=.07,right=.98,top=.91,bottom=.14,hspace=.4,wspace=.22)
 fig.savefig(root/'comparison.png',dpi=160)
 fig.savefig(root/'comparison.pdf')

@@ -4,6 +4,10 @@ The target is the one-step acceleration,
 
     a_t = (x_{t+1} - x_t) - (x_t - x_{t-1})
 
+For prediction stride `s`, the effective acceleration target becomes
+`(x_{t+s} - x_t - s * (x_t - x_{t-1})) / s**2`. The input history remains
+consecutive; only the predicted endpoint moves farther ahead.
+
 standardised by a scale fitted once, before training, on **exactly the windows
 training will visit**. Fitting it up front rather than accumulating it during
 training is what stops the model chasing a target that moves underneath it, and
@@ -45,7 +49,8 @@ __all__ = ["acceleration_target", "fit_target_scale", "LOSSES", "prediction_loss
 
 def acceleration_target(graph: Data, target_position: Tensor) -> Tensor:
     """The acceleration that takes the input graph's window to `target_position`."""
-    return target_position - graph.pos - current_velocity(graph)
+    stride = getattr(graph, "prediction_stride", 1)
+    return (target_position - graph.pos - stride * current_velocity(graph)) / stride**2
 
 
 def fit_target_scale(
@@ -69,7 +74,8 @@ def fit_target_scale(
     contributes.
     """
     window_length = graph_spec.window_length
-    span = window_length + train_spec.max_rollout_steps
+    stride = graph_spec.prediction_stride
+    span = window_length + train_spec.max_rollout_steps * stride
     scale = Normalizer(trajectories[0][0].x.shape[1]).to(device)
     rng = random.Random(train_spec.seed)
 
@@ -90,9 +96,11 @@ def fit_target_scale(
         # Every target the window is scored against: one for a one-step run, and
         # one per rolled-out step for a multi-step one.
         for step in range(train_spec.max_rollout_steps):
-            first = start + window_length - 2 + step
-            previous, current, later = (trajectory[first + k].x for k in range(3))
-            scale(((later - current) - (current - previous)).to(device))
+            current_index = start + window_length - 1 + step * stride
+            previous = trajectory[current_index - 1].x
+            current = trajectory[current_index].x
+            later = trajectory[current_index + stride].x
+            scale(((later - current - stride * (current - previous)) / stride**2).to(device))
     scale.freeze()
     return scale
 

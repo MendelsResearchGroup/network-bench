@@ -105,7 +105,7 @@ def export_results(root: str | Path | None = None) -> dict:
         train = config["train"]
         spec = RunConfig.from_dict(config)
         training_frames = (spec.train.windows_per_sim + spec.graph.window_length
-                           + spec.train.max_rollout_steps - 1)
+                           + spec.train.max_rollout_steps * spec.graph.prediction_stride - 1)
         if spec.split.max_frames is not None:
             training_frames = min(training_frames, spec.split.max_frames)
         comparison = {key: value for key, value in config.items() if key not in ("model", "model_hyperparameters")}
@@ -149,6 +149,8 @@ def export_results(root: str | Path | None = None) -> dict:
                 "history_frames": spec.graph.window_length,
                 "first_frame": spec.split.first_frame,
                 "frame_stride": spec.split.frame_stride,
+                "prediction_stride": spec.graph.prediction_stride,
+                "intermediate_frames": "linear interpolation of predictions" if spec.graph.prediction_stride > 1 else None,
                 "evaluation_split": measured["split"],
             },
             "relative_mse": measured.get("relative_mse"),

@@ -89,46 +89,43 @@ missing rest lengths or LJ parameters; force and stress analysis is unavailable.
 
 ### Noisy LJ sampling experiments
 
-The [sampling comparison](configs/noisy_lj_stride/comparison.png),
+**The benchmark always seeds the rollout with frames 0–3 (history 3), then
+predicts to frame 103.** The exploratory sampling runs changed the initial
+history. Their high later-start scores are excluded from benchmark claims.
+In particular, the MLP R² of 0.733 used observations through frame 15 and a
+15→115 measurement interval; it does not improve the original benchmark.
+
+The [exploratory comparison](configs/noisy_lj_stride/comparison.png),
 [PDF](configs/noisy_lj_stride/comparison.pdf),
 [CSV](configs/noisy_lj_stride/comparison.csv) and
-[full results](configs/noisy_lj_stride/comparison.json) record 42 new runs of
-`mlp` and `edge_mlp`, using three seeds per configuration. Every run uses the
-same Normal split: 50 training, 50 validation and 70 test networks, with split
-seed 42. The JSON includes exact network IDs, observed frame indices and
-training target frames. New runs use 16 training windows, a 40-epoch cap and
-early stopping after five validation checks. Checkpoints are selected by
-validation Poisson R² at **100 original stored-frame intervals**.
+[full results](configs/noisy_lj_stride/comparison.json) preserve the measured
+42 MLP/Edge MLP runs for audit. The JSON marks which runs match the required
+initial history. Both the frame-15 protocols and the two-input protocols are
+excluded. The website's original results are unchanged.
 
-There are two separate comparisons. The stride-1/2/5 runs observe through
-frame 15 and predict to frame 115, using respectively 100/50/20 model steps.
-The original-start runs observe through frame 3 and predict to frame 103.
-Their two-frame stride-2 variant uses **only frames 1 and 3** from the original
-four inputs and predicts 50 steps. The later-start scores are a different task
-from the website's original benchmark and must be compared within that group.
+Every run used the same Normal split: 50 training, 50 validation and 70 test
+networks, with split seed 42 and training seeds 0, 1 and 2. Exact network IDs,
+observed frames and training target frames are recorded in the JSON. New runs
+used 16 training windows, a 40-epoch cap and early stopping after five validation
+checks. Checkpoints were selected by validation Poisson R² at 100 original
+stored-frame intervals. Historical one-step controls used fixed 40-epoch
+training; historical MST controls used early stopping.
 
-| Protocol | Model | Test Poisson R² | Relative position MSE |
-|---|---|---:|---:|
-| Frame 15, dense head windows | MLP | 0.676 ± 0.022 | 0.075 |
-| Frame 15, spread windows, every second frame | MLP | 0.733 ± 0.007 | 0.044 |
-| Frame 15, spread windows, every fifth frame | MLP | 0.711 ± 0.002 | 0.045 |
-| Frame 3, published MST | Edge MLP | 0.273 ± 0.026 | 0.116 |
-| Frame 3, spread windows, two inputs, every second frame | Edge MLP | 0.166 ± 0.005 | 0.095 |
+The `frame_stride` setting spaces the input history as well as the
+training data. Setting it to 2 with history 3 therefore requires extra observed
+frames and cannot directly implement a stride-2 rollout from frames 0–3.
+The separate `graph.prediction_stride=2` setting keeps the four consecutive seed
+frames and predicts two frames per call. Intermediate rollout frames are linearly
+interpolated from predictions to maintain a consecutive velocity history;
+no future ground-truth frame is fed back in. `val_rollout_steps=100` continues
+to mean 100 stored-frame intervals, so 50 model calls reach frame 103. This also
+works with differentiable multi-step training.
 
-Values are means across three seeds; R² spreads are sample standard deviations.
-Every-second-frame training is more promising than every fifth in the plain MLP
-family. At the original starting frame, the short-history stride-2 Edge MLP
-reduces position MSE by about **18% against the published MST Edge MLP**, while
-Poisson R² declines. Existing MST remains the stronger original-start R² result.
-Historical published one-step controls used fixed 40-epoch training; the MST
-controls and new runs use early stopping. These experimental runs are saved
-under their own results root, keeping different frame protocols separate.
+The corrected two-frame experiment is reproducible with:
 
 ```bash
-gnn-bench --threads 4 --root results/noisy-lj-rollouts/runs train \
-  configs/noisy_lj_stride/stride2_spread.json --model mlp --seeds 0 1 2
-gnn-bench --threads 4 --root results/noisy-lj-rollouts/runs train \
-  configs/noisy_lj_stride/stride2_short_original.json --model edge_mlp --seeds 0 1 2
+gnn-bench --threads 4 --root results/noisy-lj-predict2/runs train \
+  configs/noisy_lj_stride/predict2_original.json --model gns mlp --seeds 0 1 2
 ```
 
 ### Out-of-distribution comparison

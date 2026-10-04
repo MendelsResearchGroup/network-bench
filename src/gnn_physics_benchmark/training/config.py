@@ -43,7 +43,7 @@ class TrainSpec:
     freeze_input_norm_epoch: int = 5
     target_scale_windows: int | None = None  # None uses every training window.
     validate_every: int = 5
-    val_rollout_steps: int = 50
+    val_rollout_steps: int = 50  # Input-frame intervals, independent of prediction_stride.
     select_by: str | None = None  # None uses val_loss with early stopping, otherwise the last epoch.
     early_stopping_patience: int | None = None  # Validation checks without improvement; None disables stopping.
     stress_metrics: bool = False
@@ -78,6 +78,8 @@ class RunConfig:
     def to_dict(self) -> dict:
         payload = asdict(self)
         # Preserve the cache keys of existing normal runs.
+        if self.graph.prediction_stride == 1:
+            payload["graph"].pop("prediction_stride")
         if not self.split.ood:
             payload["split"].pop("ood")
         if self.train.early_stopping_patience is None:

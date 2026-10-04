@@ -1,0 +1,28 @@
+{
+ "dataset": "noisy_lj",
+ "model": "gns",
+ "graph": {
+  "edges": "bond",
+  "history": 3,
+  "prediction_stride": 2
+ },
+ "split": {
+  "manifest": null,
+  "sizes": [
+   50,
+   50,
+   70
+  ],
+  "max_frames": 104,
+  "first_frame": 0,
+  "frame_stride": 1
+ },
+ "train": {
+  "windows_per_sim": 16,
+  "val_rollout_steps": 100,
+  "validate_every": 2,
+  "select_by": "poisson_r2_100",
+  "early_stopping_patience": 5,
+  "window_mode": "spread"
+ }
+}

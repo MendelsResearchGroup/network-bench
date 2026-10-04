@@ -58,5 +58,8 @@ def evaluate_model(model, trajectories, config, *, split: str = "test", steps: i
     summary = {"split": split, "systems": rollouts, "requested_steps": steps}
     summary.update(metrics.summarise_rollouts(errors, steps))
     summary.update(metrics.summarise_stress(entries))
+    if graph_spec.prediction_stride != 1:
+        summary["prediction_stride"] = graph_spec.prediction_stride
+        summary["model_steps"] = (steps + graph_spec.prediction_stride - 1) // graph_spec.prediction_stride
     summary["parameters"] = sum(p.numel() for p in model.parameters())
     return summary

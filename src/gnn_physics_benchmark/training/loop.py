@@ -25,7 +25,7 @@ from ..graph.features import build_input_graph, potential_for, prepare_window
 from ..metrics.rollout import rollout_errors, summarise_rollouts
 from .config import RunConfig, TrainSpec
 from .loss import prediction_loss
-from .rollout import advance_box, diverged, rollout
+from .rollout import diverged, prediction_frames, rollout
 from .windows import WindowCache, target_positions, window_starts
 
 __all__ = ["train", "validate_one_step", "validate_rollout"]
@@ -63,7 +63,8 @@ def _rollout_steps_for(epoch: int, schedule: tuple[tuple[int, int], ...]) -> int
 def validate_one_step(model, trajectories, graph_spec, potential, spec: TrainSpec, scale) -> float:
     """Mean one-step loss over the first windows of every validation system."""
     rng = random.Random(spec.seed)
-    span = graph_spec.window_length + 1
+    stride = graph_spec.prediction_stride
+    span = graph_spec.window_length + stride
     total, count = 0.0, 0
     model.eval()
     with torch.no_grad():
@@ -72,7 +73,7 @@ def validate_one_step(model, trajectories, graph_spec, potential, spec: TrainSpe
                 window = trajectory[start : start + graph_spec.window_length]
                 graph = build_input_graph(prepare_window(window, graph_spec, potential), graph_spec, potential)
                 graph = graph.to(spec.device)
-                target = target_positions(trajectory, start + graph_spec.window_length, spec.device)
+                target = target_positions(trajectory, start + graph_spec.window_length - 1 + stride, spec.device)
                 total += float(
                     prediction_loss(model, model(graph), graph, target, scale, kind=spec.loss, accumulate=False)
                 )
@@ -146,7 +147,7 @@ def train(
     cache = WindowCache(graph_spec, potential, device=spec.device, enabled=spec.cache_windows)
 
     multi_step = spec.mode == "multi_step"
-    span = graph_spec.window_length + spec.max_rollout_steps
+    span = graph_spec.window_length + spec.max_rollout_steps * graph_spec.prediction_stride
     history: dict = {"train_loss": [], "epochs": [], "early_stopped": False}
     best_score, stale_checks = None, 0
     selection = spec.selection_metric
@@ -221,7 +222,8 @@ def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, s
     """Loss for one training window: one step, or a short rollout of `steps`."""
     window = cache.get(("train", index, start), trajectory, start)
     graph = build_input_graph(window, graph_spec, potential)
-    target = target_positions(trajectory, start + graph_spec.window_length, spec.device)
+    stride = graph_spec.prediction_stride
+    target = target_positions(trajectory, start + graph_spec.window_length - 1 + stride, spec.device)
     loss = prediction_loss(model, (frame := model(graph)), graph, target, scale, kind=spec.loss)
 
     if steps == 1:
@@ -231,12 +233,13 @@ def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, s
     raw = [g.clone().to(spec.device) for g in trajectory[start : start + graph_spec.window_length]]
     taken = 1
     for step in range(1, steps):
-        frame = advance_box(frame, box_delta_x, spec.box_mode)
-        if diverged(frame):
+        frames = prediction_frames(graph, frame, stride, box_delta_x, spec.box_mode)
+        if diverged(frames[-1]):
             return loss / taken, taken, True
-        raw = raw[1:] + [frame.detach() if spec.detach_rollout else frame]
+        frames = [frame.detach() if spec.detach_rollout else frame for frame in frames]
+        raw = (raw + frames)[-graph_spec.window_length:]
         graph = build_input_graph(prepare_window(raw, graph_spec, potential), graph_spec, potential)
-        target = target_positions(trajectory, start + graph_spec.window_length + step, spec.device)
+        target = target_positions(trajectory, start + graph_spec.window_length - 1 + (step + 1) * stride, spec.device)
         frame = model(graph)
         loss = loss + prediction_loss(model, frame, graph, target, scale, kind=spec.loss)
         taken += 1

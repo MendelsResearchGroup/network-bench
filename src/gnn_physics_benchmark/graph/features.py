@@ -119,6 +119,7 @@ def build_input_graph(
     # continues the same clock. Read off the window rather than the dataset, so
     # that a run using `frame_stride` gets the stride it actually loaded.
     graph.frame_interval = int(base.time) - int(window[-2].time)
+    graph.prediction_stride = spec.prediction_stride
 
     if spec.fractional_coordinates:
         graph.fractional_coordinates = base.x / base.box_tensor

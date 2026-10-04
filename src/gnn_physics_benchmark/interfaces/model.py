@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from ..normalization import Normalizer
     from .graph import InputGraphSpec
 
-__all__ = ["SimulatorModel", "integrate_acceleration", "predicted_acceleration", "current_velocity"]
+__all__ = ["SimulatorModel", "integrate_acceleration", "frame_from_positions", "predicted_acceleration", "current_velocity"]
 
 #: Fields copied from the input graph onto the predicted frame unchanged.
 _CARRIED = ("box", "box_tensor", "atom_ids", "atom_types", "molecule_ids")
@@ -89,9 +89,9 @@ def current_velocity(graph: Data) -> Tensor:
 def integrate_acceleration(graph: Data, acceleration: Tensor) -> Data:
     """Build the next frame from a predicted acceleration.
 
-    Semi-implicit Euler at unit timestep, one dumped frame being the unit:
+    Semi-implicit Euler with a stored frame as the unit and stride `s`:
 
-        x_{t+1} = x_t + (x_t - x_{t-1}) + a
+        x_{t+s} = x_t + s * (x_t - x_{t-1}) + s**2 * a
 
     The result is a frame in the raw dataset schema -- bond-only directed edges
     with their 5-wide features recomputed at the new positions -- so it can be
@@ -104,7 +104,15 @@ def integrate_acceleration(graph: Data, acceleration: Tensor) -> Data:
             f"acceleration has shape {tuple(acceleration.shape)}, expected {tuple(graph.pos.shape)}."
         )
 
-    position = graph.pos + current_velocity(graph) + acceleration
+    stride = getattr(graph, "prediction_stride", 1)
+    position = graph.pos + stride * current_velocity(graph) + stride**2 * acceleration
+    frame = frame_from_positions(graph, position, stride)
+    frame.acceleration = acceleration
+    return frame
+
+
+def frame_from_positions(graph: Data, position: Tensor, frame_offset: int) -> Data:
+    """Build a raw frame at given positions, carrying topology and identity."""
 
     # Recompute the raw bond features at the new positions, under the minimum
     # image. Imported here to keep this module free of the graph machinery.
@@ -120,13 +128,12 @@ def integrate_acceleration(graph: Data, acceleration: Tensor) -> Data:
         edge_index=graph.bond_index,
         edge_attr=torch.cat([vectors, lengths, graph.bond_attr[:, position.shape[1] + 1 :]], dim=1),
         bond_types=graph.bond_types,
-        time=int(graph.time) + int(graph.frame_interval),
+        time=int(graph.time) + frame_offset * int(graph.frame_interval),
     )
     for field in _CARRIED:
         value = getattr(graph, field, None)
         if value is not None:
             setattr(frame, field, value)
-    frame.acceleration = acceleration
     return frame
 
 
@@ -140,4 +147,5 @@ def predicted_acceleration(frame: Data, graph: Data) -> Tensor:
     stashed = getattr(frame, "acceleration", None)
     if stashed is not None:
         return stashed
-    return frame.pos - graph.pos - current_velocity(graph)
+    stride = getattr(graph, "prediction_stride", 1)
+    return (frame.pos - graph.pos - stride * current_velocity(graph)) / stride**2

@@ -20,8 +20,9 @@ from torch_geometric.data import Data
 from ..graph.features import build_input_graph, prepare_window
 from ..graph.potential import KGPotential
 from ..interfaces.graph import InputGraphSpec
+from ..interfaces.model import frame_from_positions
 
-__all__ = ["diverged", "advance_box", "rollout"]
+__all__ = ["diverged", "advance_box", "prediction_frames", "rollout"]
 
 
 def diverged(frame: Data) -> bool:
@@ -49,6 +50,21 @@ def advance_box(frame: Data, box_delta_x: torch.Tensor, box_mode: str) -> Data:
     return frame
 
 
+def prediction_frames(graph: Data, predicted: Data, stride: int, box_delta_x: torch.Tensor, box_mode: str) -> list[Data]:
+    """Fill skipped frames using the predicted endpoint, never future truth.
+
+    This keeps the next input's velocity history on consecutive stored-frame
+    intervals even when the model predicts two intervals in one call.
+    """
+    frames = []
+    for offset in range(1, stride):
+        position = graph.pos + (predicted.pos - graph.pos) * (offset / stride)
+        frame = frame_from_positions(graph, position, offset)
+        frames.append(advance_box(frame, offset * box_delta_x, box_mode))
+    frames.append(advance_box(predicted, stride * box_delta_x, box_mode))
+    return frames
+
+
 def rollout(
     model,
     seed: list[Data],
@@ -60,6 +76,9 @@ def rollout(
     device: str = "cpu",
 ) -> list[Data]:
     """Roll `model` forward `num_steps` frames from a seed of raw frames.
+
+    `num_steps` counts input-frame intervals. A prediction stride of 2 needs
+    half as many model calls; intermediate returned frames are interpolated.
 
     Returns CPU frames: the seed followed by everything the model produced, so the
     result indexes like the ground-truth trajectory it is compared against. A
@@ -73,15 +92,17 @@ def rollout(
     model.eval()
     try:
         with torch.no_grad():
-            for step in range(num_steps):
+            stride = spec.prediction_stride
+            for step in range(0, num_steps, stride):
                 graph = build_input_graph(prepare_window(window, spec, potential), spec, potential)
-                predicted = advance_box(model(graph), box_delta_x, box_mode)
+                frames = prediction_frames(graph, model(graph), stride, box_delta_x, box_mode)
+                predicted = frames[-1]
                 if diverged(predicted):
                     print(f"[warning] rollout diverged after {step} steps.")
                     break
-                predicted = predicted.detach()
-                window = window[1:] + [predicted]
-                trajectory.append(predicted)
+                frames = [frame.detach() for frame in frames[:num_steps - step]]
+                window = (window + frames)[-spec.window_length:]
+                trajectory.extend(frames)
     finally:
         if was_training:
             model.train()

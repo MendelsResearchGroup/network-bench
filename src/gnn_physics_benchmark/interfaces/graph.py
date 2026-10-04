@@ -8,7 +8,7 @@ is told what it is getting rather than deciding it.
 
 Why velocities and not positions
 --------------------------------
-The quantity to predict is the one-step acceleration, `(x_{t+1} - x_t) -
+By default the quantity to predict is the one-step acceleration, `(x_{t+1} - x_t) -
 (x_t - x_{t-1})`. Absolute positions are O(3) sigma while that target is O(3e-5)
 sigma, so feeding positions makes the network find a difference of five orders
 in float32. Feeding the displacement history instead puts the input on the
@@ -109,6 +109,10 @@ class InputGraphSpec:
     already the Lennard-Jones minimum at about 1.12 sigma, so `None` is the
     natural setting and there is little room to pull in further."""
 
+    prediction_stride: int = 1
+    """Input-frame intervals predicted in one model call. The input history
+    stays consecutive; skipped rollout frames are interpolated from predictions."""
+
     @property
     def window_length(self) -> int:
         """Frames needed to build one input graph."""
@@ -134,7 +138,10 @@ class InputGraphSpec:
         return replace(self, dim=schema.dim, edge_width=width)
 
     def to_dict(self) -> dict:
-        return asdict(self)
+        payload = asdict(self)
+        if self.prediction_stride == 1:
+            payload.pop("prediction_stride")
+        return payload
 
 
 #: What the built graph carries. `h` is `spec.history`, `N` beads, `E` edges.
@@ -148,6 +155,7 @@ INPUT_GRAPH_SCHEMA = (
     ("bond_attr", "[B, 5]", "its raw 5-wide features, whose last column carries the FENE constant"),
     ("bond_types", "[B]", "backbone or crosslink, carried through to the predicted frame"),
     ("frame_interval", "scalar", "MD steps between consecutive frames of this window"),
+    ("prediction_stride", "scalar", "input-frame intervals predicted per model call; input history stays consecutive"),
     ("edge_attr", "[E, 8] or [E, 5]", "typed layout under 'bond+pair', raw bond layout under 'bond'"),
     ("fractional_coordinates", "[N, 3]", "pos / box_tensor; present only if requested"),
     ("node_force", "[N, 3]", "analytic net force per bead; present only if requested"),

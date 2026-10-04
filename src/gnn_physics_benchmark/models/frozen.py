@@ -40,4 +40,4 @@ class Frozen(SimulatorModel):
         self.unused = torch.nn.Parameter(torch.zeros(1))
 
     def predict_acceleration(self, graph: Data) -> Tensor:
-        return -current_velocity(graph) + 0.0 * self.unused
+        return -current_velocity(graph) / getattr(graph, "prediction_stride", 1) + 0.0 * self.unused
