@@ -87,46 +87,56 @@ gnn-bench train configs/networks.json \
 Noisy LJ uses the stored bond edges and stiffnesses. The benchmark does not infer
 missing rest lengths or LJ parameters; force and stress analysis is unavailable.
 
-### Noisy LJ sampling experiments
+### Noisy LJ: two-frame predictions
 
-**The benchmark always seeds the rollout with frames 0–3 (history 3), then
-predicts to frame 103.** The exploratory sampling runs changed the initial
-history. Their high later-start scores are excluded from benchmark claims.
-In particular, the MLP R² of 0.733 used observations through frame 15 and a
-15→115 measurement interval; it does not improve the original benchmark.
+**Every run seeds the rollout with exactly frames 0–3 (history 3), then predicts
+to frame 103.** The [comparison plot](configs/noisy_lj_stride/predict2_comparison.png),
+[PDF](configs/noisy_lj_stride/predict2_comparison.pdf),
+[CSV](configs/noisy_lj_stride/predict2_comparison.csv) and
+[full results](configs/noisy_lj_stride/predict2_comparison.json) compare GNS and
+MLP predictions over the same original 3→103 interval.
 
-The [exploratory comparison](configs/noisy_lj_stride/comparison.png),
-[PDF](configs/noisy_lj_stride/comparison.pdf),
-[CSV](configs/noisy_lj_stride/comparison.csv) and
-[full results](configs/noisy_lj_stride/comparison.json) preserve the measured
-42 MLP/Edge MLP runs for audit. The JSON marks which runs match the required
-initial history. Both the frame-15 protocols and the two-input protocols are
-excluded. The website's original results are unchanged.
+| Model | Frames per prediction | Test Poisson R² | Relative position MSE |
+|---|---:|---:|---:|
+| GNS | 1 | 0.252 ± 0.024 | 0.204 |
+| GNS | 2 | 0.183 ± 0.038 | 0.106 |
+| MLP | 1 | 0.050 ± 0.175 | 0.217 |
+| MLP | 2 | 0.145 ± 0.190 | 0.112 |
 
-Every run used the same Normal split: 50 training, 50 validation and 70 test
-networks, with split seed 42 and training seeds 0, 1 and 2. Exact network IDs,
-observed frames and training target frames are recorded in the JSON. New runs
-used 16 training windows, a 40-epoch cap and early stopping after five validation
-checks. Checkpoints were selected by validation Poisson R² at 100 original
-stored-frame intervals. Historical one-step controls used fixed 40-epoch
-training; historical MST controls used early stopping.
+These are spread-window training results, with means and sample standard
+deviations across three seeds. Two-frame GNS predictions reduce mean position
+MSE by about 48% versus the one-frame spread control, while Poisson R² falls.
+The published MST GNS remains stronger for Poisson R² (0.264). The corrected
+MLP score of 0.145 is below the website's one-step MLP result (0.197).
 
-The `frame_stride` setting spaces the input history as well as the
-training data. Setting it to 2 with history 3 therefore requires extra observed
-frames and cannot directly implement a stride-2 rollout from frames 0–3.
-The separate `graph.prediction_stride=2` setting keeps the four consecutive seed
-frames and predicts two frames per call. Intermediate rollout frames are linearly
-interpolated from predictions to maintain a consecutive velocity history;
-no future ground-truth frame is fed back in. `val_rollout_steps=100` continues
-to mean 100 stored-frame intervals, so 50 model calls reach frame 103. This also
-works with differentiable multi-step training.
+All runs use the same Normal split: 50 training, 50 validation and 70 test
+networks, split seed 42, and training seeds 0, 1 and 2. New spread-window runs
+use 16 windows, a 40-epoch cap and early stopping after five validation checks.
+Checkpoints are selected by validation Poisson R² at 100 original stored-frame
+intervals. Exact network IDs and training target frames are saved in the JSON;
+window starts differ slightly because the two-frame target needs one additional
+frame. Historical one-step head-window controls used fixed 40-epoch training;
+historical MST controls used early stopping.
 
-The corrected two-frame experiment is reproducible with:
+`graph.prediction_stride=2` keeps the four consecutive seed frames and predicts
+two frames per call. Intermediate rollout frames are linearly interpolated from
+predictions to maintain the consecutive velocity history. Future ground truth
+is never fed back in, and the reported 10/20/…/100-frame metrics land on predicted
+endpoints. `val_rollout_steps=100` still means 100 stored-frame intervals:
+50 model calls reach frame 103. Differentiable multi-step training also supports
+this prediction stride. The separate `split.frame_stride` setting spaces the
+input history itself and is kept at 1.
 
 ```bash
 gnn-bench --threads 4 --root results/noisy-lj-predict2/runs train \
   configs/noisy_lj_stride/predict2_original.json --model gns mlp --seeds 0 1 2
 ```
+
+Earlier exploratory runs changed the initial history, including the MLP score
+of 0.733 observed through frame 15. Those scores are **excluded from benchmark
+claims**. Their [archived measurements](configs/noisy_lj_stride/comparison.json)
+mark which initial histories match the requirement. Experimental runs remain
+under their own results roots; the website's original results are unchanged.
 
 ### Out-of-distribution comparison
 
