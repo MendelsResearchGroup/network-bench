@@ -1,0 +1,67 @@
+/* Shared typography and controls; layouts live in the individual design files. */
+.design { font-size:18px; line-height:1.5; }
+.design-header { display:flex; align-items:center; gap:32px; max-width:1500px; margin:auto; padding:24px 36px; border-bottom:1px solid var(--line); }
+.identity { font-size:24px; font-weight:700; letter-spacing:-.7px; text-decoration:none; }
+.identity span { font-weight:400; color:var(--muted); }
+.design-nav { display:flex; flex-wrap:wrap; gap:24px; font-size:16px; }
+.design-nav a { text-decoration:none; }
+.design-nav a:hover { text-decoration:underline; }
+.downloads { display:flex; align-items:center; gap:16px; margin-left:auto; font-size:16px; }
+.downloads a { text-decoration:none; }
+.downloads button { background:transparent; padding:0; }
+.design-main { max-width:1500px; padding:36px; margin:auto; }
+.eyebrow,.control-label { display:block; font-size:16px; color:var(--muted); }
+.eyebrow { letter-spacing:.06em; margin-bottom:12px; }
+.design h1 { margin:0; font-size:42px; line-height:1.15; letter-spacing:-1.4px; }
+.design h2 { font-family:inherit; font-weight:600; font-size:24px; letter-spacing:-.5px; }
+.control-block { min-width:0; }
+.control-label { margin-bottom:8px; }
+.design .segmented { width:fit-content; }
+.design .segmented button { font-size:16px; padding:7px 12px; white-space:nowrap; }
+.design .horizon-control { width:290px; max-width:100%; }
+.design .horizon-label { margin:0 0 8px; }
+.design .range-labels { margin-top:6px; }
+.design .options summary,.design .methods summary,.experiment-settings summary { cursor:pointer; font-size:17px; }
+.option-fields { display:flex; flex-wrap:wrap; gap:18px; padding:18px 0 4px; }
+.option-fields label { display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:16px; }
+.option-fields select { max-width:100%; }
+.design #train-size-label { display:none!important; }
+.models { margin:24px 0 12px; }
+.models-heading { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; align-items:center; }
+.models-heading .control-label { margin:0; }
+.models-heading>div { display:flex; gap:16px; }
+.muted { color:var(--muted); font-weight:400; }
+.design .text-button { margin:0; }
+.design .legend { margin:12px 0; }
+.design .legend button { font-size:16px; padding:8px 10px; }
+.selection-summary { display:flex; flex-wrap:wrap; gap:8px 24px; justify-content:space-between; font-size:16px; color:var(--muted); margin:18px 0; }
+.metric-panel { min-width:0; }
+.metric-heading { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:baseline; gap:8px; }
+.metric-heading>span { font-size:16px; color:var(--muted); }
+.design .footnote { font-size:16px; }
+.snapshot { margin-top:32px; border-top:1px solid var(--line); padding-top:20px; }
+.snapshot-heading { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:8px; }
+.snapshot .ranking { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0 28px; margin-top:12px; }
+.design .rank-line { font-size:16px; }
+.design .rank-score { font-size:16px; }
+.design .rank-meta,.design .rank-bar { display:none; }
+.design .rank-name { gap:6px; }
+.design .rank-number { width:20px; }
+.methods { padding:22px 0; margin-top:24px; border-top:1px solid var(--line); }
+.design-footer { max-width:1500px; padding:24px 36px!important; margin:28px auto 0!important; display:flex; flex-wrap:wrap; gap:20px; justify-content:space-between; font-size:16px; }
+.design-footer a { text-decoration:none; }
+@media(max-width:1100px) { .snapshot .ranking { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:760px) {
+ .design-header { padding:20px; gap:18px; flex-wrap:wrap; }
+ .design-nav { order:3; width:100%; gap:22px; }
+ .downloads { gap:12px; }
+ .design-main { padding:24px 20px; }
+ .design h1 { font-size:34px; }
+ .design h2 { font-size:24px; }
+ .design .segmented { max-width:100%; flex-wrap:wrap; }
+ .design .segmented button { flex:none; padding:7px 10px; }
+ .selection-summary { flex-direction:column; }
+ .models-heading .muted { display:block; }
+ .snapshot .ranking { grid-template-columns:1fr; }
+ .design-footer { padding:20px!important; }
+}
