@@ -1,0 +1,4412 @@
+[
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 10,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-010.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 20,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-020.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 30,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-030.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 40,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-040.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 50,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-050.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 60,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-060.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 70,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-070.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 80,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-080.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 90,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-090.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-0_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-1_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-100.json"
+ },
+ {
+  "dataset": "noisy_lj",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/noisy_lj/seed-2_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "node_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/node_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 0,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-0_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 1,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-1_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "gns",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "tiny_mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_delta",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "edge_mlp_attention",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-100.json"
+ },
+ {
+  "dataset": "stiff_optimized",
+  "model": "linear_floor",
+  "seed": 2,
+  "train_networks": 100,
+  "config": "configs/learning_curve/stiff_optimized/seed-2_train-100.json"
+ }
+]

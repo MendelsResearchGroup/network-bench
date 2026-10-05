@@ -5,6 +5,7 @@
     gnn-bench models                       registered models and their defaults
     gnn-bench difficulty <dataset>         measure a dataset before training on it
     gnn-bench ood-config <config.json>     prepare a highest-30% Poisson split
+    gnn-bench learning-curve-config <config.json>  prepare nested training subsets
     gnn-bench train <config.json>          train and score models across seeds
     gnn-bench evaluate <run_dir>           re-evaluate a cached run from its checkpoint
     gnn-bench report <dataset>             compare every cached run, side by side
@@ -178,6 +179,18 @@ def cmd_ood_config(args) -> None:
     print(f"{config.dataset}: {audit['counts']} -> {path}")
 
 
+def cmd_learning_curve_config(args) -> None:
+    from .data.learning_curve import write_configs
+
+    config = RunConfig.from_json(args.config)
+    for dataset in args.dataset or [config.dataset]:
+        directory = Path(args.out) / dataset
+        audit = write_configs(replace(config, dataset=dataset), directory,
+                              seeds=args.seeds, train_sizes=args.train_sizes)
+        print(f"{dataset}: {len(audit['systems'])} networks; "
+              f"{len(args.seeds) * len(args.train_sizes)} configs -> {directory}")
+
+
 def cmd_evaluate(args) -> None:
     from .training.loop import load_checkpoint
     from .normalization import Normalizer
@@ -280,6 +293,14 @@ def main(argv: list[str] | None = None) -> None:
     ood.add_argument("--train-networks", type=int, default=30, help="training networks from the upper pool (default: 30)")
     ood.add_argument("--out", required=True, help="output config; also writes a .ranking.json audit")
     ood.set_defaults(func=cmd_ood_config)
+
+    curve = sub.add_parser('learning-curve-config', help='prepare seed-specific splits and nested training sizes')
+    curve.add_argument('config')
+    curve.add_argument('--dataset', nargs='+', help='datasets to prepare')
+    curve.add_argument('--seeds', nargs='+', type=int, default=[0, 1, 2])
+    curve.add_argument('--train-sizes', nargs='+', type=int, default=list(range(10, 101, 10)))
+    curve.add_argument('--out', required=True, help='directory for configs and split membership audits')
+    curve.set_defaults(func=cmd_learning_curve_config)
 
     evaluate = sub.add_parser("evaluate", help="re-evaluate a cached run from its selected or last checkpoint")
     evaluate.add_argument("run_dir")

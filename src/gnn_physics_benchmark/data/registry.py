@@ -7,8 +7,9 @@ them. Adding a dataset means adding one `DatasetEntry` here and dropping the
 trajectories under the data root.
 
 The data itself is never in the repository. `resolve_root` looks under
-`$GNN_BENCH_DATA_ROOT` when that is set and otherwise under `~/work/data`,
-so installed packages and cluster jobs use the same shared data directory.
+`$GNN_BENCH_DATA_ROOT` when that is set and otherwise under
+`/rg/mendels_prj/s.sergey/data_bench`, so installed packages and cluster jobs
+use the same shared data directory.
 """
 
 from __future__ import annotations
@@ -28,7 +29,7 @@ def resolve_root() -> Path:
     override = os.environ.get("GNN_BENCH_DATA_ROOT")
     if override:
         return Path(override).expanduser()
-    return Path.home() / "work" / "data"
+    return Path("/rg/mendels_prj/s.sergey/data_bench")
 
 
 @dataclass(frozen=True)
@@ -129,8 +130,8 @@ _INVERSE_DESIGN_NOTES = (
 DATASETS: dict[str, DatasetEntry] = {
     "noisy_lj": DatasetEntry(
         key="noisy_lj",
-        directory="noisy-lj",
-        description="200 noisy spring-network trajectories with LJ interactions, 1500 stored frames each.",
+        directory="data_LJ_noisy_eps0.01_sigma1.0_cutoff1.122",
+        description="1348 noisy spring-network trajectories with LJ interactions, 1500 stored frames each.",
         schema=FrameSchema(
             edge_columns=("dx", "dy", "r", "stiffness"),
             stored_fields=(),
@@ -141,7 +142,8 @@ DATASETS: dict[str, DatasetEntry] = {
         driven_axis=0,
         free_axes=(1,),
         field_notes=(
-            "Source: data/noisy-lj/chunk_*.pt. Time is counted in stored frames; "
+            "Source: data_LJ_noisy_eps0.01_sigma1.0_cutoff1.122/chunk_*.pt under the shared data root. "
+            "Time is counted in stored frames; "
             "the files do not record the MD dump interval. Benchmark inputs use "
             "the stored bond graph only. No rest lengths or LJ force parameters "
             "are inferred, and force/stress metrics are unavailable."

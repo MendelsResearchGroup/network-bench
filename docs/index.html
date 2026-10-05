@@ -15,23 +15,25 @@
 <a class="skip" href="#explore">Skip to results</a>
 <header class="masthead wrap">
   <a class="brand" href="./" aria-label="Network Bench home"><svg width="29" height="29" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25L16 5L27 25Z"/><circle cx="5" cy="25" r="3"/><circle cx="16" cy="5" r="3"/><circle cx="27" cy="25" r="3"/></svg>network<span>bench</span></a>
-  <nav aria-label="Main navigation"><a href="results.json" download>JSON ↓</a><a href="https://github.com/MendelsResearchGroup/network-bench">Source ↗</a><button id="theme" class="icon-button" aria-label="Switch to dark theme" title="Switch theme">◐</button></nav>
+  <nav aria-label="Main navigation"><a id="json-download" href="results.json" download>JSON ↓</a><a href="https://github.com/MendelsResearchGroup/network-bench">Source ↗</a><button id="theme" class="icon-button" aria-label="Switch to dark theme" title="Switch theme">◐</button></nav>
 </header>
 <main class="wrap">
   <div id="notice" role="status" aria-live="polite" class="notice">Loading the latest benchmark…</div>
   <div id="dashboard" hidden>
     <section id="explore" class="explore" aria-label="Dataset selection">
       <div class="dataset-row"><div id="datasets" class="segmented" role="group" aria-label="Dataset"></div><label id="cohort-label" hidden>Comparison <select id="cohort"></select></label></div>
+      <div id="studies" class="segmented study-toggle" role="group" aria-label="Results view"><button data-study="rollouts" aria-pressed="true">Rollouts</button><button data-study="learning" aria-pressed="false">Learning curves</button></div>
+      <p id="study-note" class="footnote"></p>
       <p id="split-rule" class="footnote"></p>
       <p id="protocol" class="footnote"></p>
-      <details class="split-details"><summary>Exact network split <span id="split-counts"></span></summary><p id="split-note" class="footnote"></p><a id="ranking-audit" class="footnote" hidden>Full Poisson’s ratio ranking and cutoff ↗</a><div id="split-membership" class="split-membership"></div></details>
+      <details class="split-details"><summary>Exact network split <span id="split-counts"></span></summary><label id="split-seed-label" hidden>Inspect split <select id="split-seed"><option value="0">Seed 0</option><option value="1">Seed 1</option><option value="2">Seed 2</option></select></label><p id="split-note" class="footnote"></p><a id="ranking-audit" class="footnote" hidden>Full Poisson’s ratio ranking and cutoff ↗</a><div id="split-membership" class="split-membership"></div></details>
     </section>
     <section class="results-grid" aria-label="Model comparison">
       <div class="panel filters-panel">
         <h2>Models and filters</h2>
-        <div class="plot-filters"><div id="modes" class="segmented mode-toggle" role="group" aria-label="Training distribution"><button data-mode="normal" aria-pressed="true">Normal</button><button data-mode="ood" aria-pressed="false">OOD</button></div><div id="training-modes" class="segmented mode-toggle" role="group" aria-label="Training objective"><button data-training="one_step" aria-pressed="true">One-step</button><button data-training="multi_step" aria-pressed="false" title="Multi-step training">MST</button></div><label>Training seed <select id="plot-seed"><option value="all">All seeds</option></select></label><label>Lines <select id="line-mode"><option value="mean">Mean across seeds</option><option value="individual">Individual seeds</option></select></label></div>
+        <div class="plot-filters"><div id="modes" class="segmented mode-toggle" role="group" aria-label="Training distribution"><button data-mode="normal" aria-pressed="true">Normal</button><button data-mode="ood" aria-pressed="false">OOD</button></div><div id="training-modes" class="segmented mode-toggle" role="group" aria-label="Training objective"><button data-training="one_step" aria-pressed="true">One-step</button><button data-training="multi_step" aria-pressed="false" title="Multi-step training">MST</button></div><label><span id="plot-seed-label">Training seed</span> <select id="plot-seed"><option value="all">All seeds</option></select></label><label>Lines <select id="line-mode"><option value="mean">Mean across seeds</option><option value="individual">Individual seeds</option></select></label><label id="train-size-label" hidden>Inspect training size <select id="train-size"></select></label></div>
         <div id="legend" class="legend" role="group" aria-label="Show models"></div>
-        <p class="footnote legend-note">The same models appear in both plots. Top 3 by mean R² at the selected horizon shown by default. Click a model to toggle both lines; numbers show parameter counts.</p>
+        <p id="legend-note" class="footnote legend-note">The same models appear in both plots. Top 3 by mean R² at the selected horizon shown by default. Click a model to toggle both lines; numbers show parameter counts.</p>
         <div class="chart-controls"><label><input id="bands" type="checkbox" checked> ±1 SD</label><button id="top-models" class="text-button">Show top 3</button><button id="reset-models" class="text-button">Show all models</button></div>
         <div class="horizon-control"><div class="horizon-label"><label for="horizon">Rollout horizon</label><output id="horizon-value" for="horizon"></output></div><input id="horizon" type="range" min="0" max="9" value="9"><div class="range-labels"><span id="first-step"></span><span id="last-step"></span></div></div>
       </div>
@@ -47,7 +49,7 @@
         <p id="mse-range-note" class="footnote"></p>
       </div>
       <aside class="panel ranking-panel" aria-labelledby="ranking-title">
-        <h2 id="ranking-title">Model comparison</h2><p class="footnote">Ranked by mean R² at the selected horizon.</p>
+        <h2 id="ranking-title">Model comparison</h2><p id="ranking-note" class="footnote">Ranked by mean R² at the selected horizon.</p>
         <div class="ranking-caption"><span>MODEL</span><span>MEAN R² ± SD</span></div><ol id="ranking" class="ranking"></ol>
       </aside>
     </section>

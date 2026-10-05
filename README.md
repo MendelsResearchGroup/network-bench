@@ -17,11 +17,16 @@ gnn-bench train configs/networks.json --model gns mlp edge_mlp linear_floor froz
 gnn-bench report node_optimized --seeds
 ```
 
-Data is read from `~/work/data` by default. The `node_optimized` and
-`stiff_optimized` directories there link to the corresponding directories in
-`data_mini/`; `noisy-lj/` holds the Noisy LJ trajectories. Set
-`GNN_BENCH_DATA_ROOT=/path/to/data` to use another data directory. The repository
-does not store trajectory copies.
+Data is read directly from `/rg/mendels_prj/s.sergey/data_bench` by default:
+`node_optimized/` (381 trajectories), `stiff_optimized/` (288 trajectories), and
+`data_LJ_noisy_eps0.01_sigma1.0_cutoff1.122/` (1348 trajectories). Set
+`GNN_BENCH_DATA_ROOT=/path/to/data` to use another root with these directory names.
+The repository does not store trajectory copies.
+
+Existing results record their original network memberships. New seeded splits
+use the full current file roster, so expanding Noisy LJ from 200 to 1348 files
+changes membership even with split seed 42. Pointing at the data does not start
+training or regenerate the published results.
 
 This runs each model with three training seeds, sequentially. Each model starts
 with its own default hyperparameters. To change a model setting, for example,
@@ -77,15 +82,16 @@ gnn-bench train configs/mst/node_optimized_ood.json \
   --seeds 0 1 2
 ```
 
-For the 200 Noisy LJ chunks (1500 frames each) under `~/work/data/noisy-lj`:
+For the 1348 Noisy LJ chunks (1500 frames each) under the shared data root:
 
 ```bash
 gnn-bench train configs/networks.json \
   --dataset noisy_lj --model gns mlp edge_mlp linear_floor frozen --seeds 0 1 2
 ```
 
-Noisy LJ uses the stored bond edges and stiffnesses. The benchmark does not infer
-missing rest lengths or LJ parameters; force and stress analysis is unavailable.
+The autoregressive Noisy LJ benchmark uses the stored bond edges and stiffnesses.
+Its dataset declaration does not infer missing rest lengths or LJ parameters;
+force and stress analysis is unavailable.
 
 ### Noisy LJ: two-frame predictions
 
@@ -207,6 +213,26 @@ resolved systems, and the same evaluated split. It shows mean ± sample standard
 deviation and the finite count for each metric. A single seed has no standard
 deviation. Plain `report` lists individual runs. The short settings ID distinguishes
 configurations; full settings are stored with each run.
+
+For learning curves with different splits per seed, use
+[`configs/learning_curve`](configs/learning_curve/README.md). Each seed selects
+100 training-pool networks, 70 validation networks and 70 test networks from the
+full dataset roster. Training sizes 10, 20, …, 100 use nested prefixes of that
+pool; validation and test stay fixed within a seed. Seeds 0, 1 and 2 change both
+membership and training randomness. The saved `splits.json` files list exact
+membership. These results have a separate summary because the ordinary
+`report --seeds` requires identical membership.
+
+The website's **Learning curves** view plots test R² and position MSE against
+training-network count at a selected rollout step. The training-size selector
+chooses the ranking, run table and exact split to inspect. Its URL preserves
+the selected view and filters; JSON and CSV downloads keep the raw scores.
+
+```bash
+gnn-bench learning-curve-config configs/networks.json \
+  --dataset noisy_lj node_optimized stiff_optimized \
+  --seeds 0 1 2 --out configs/learning_curve
+```
 
 Use CUDA with `--set train.device=cuda` (CPU is the default):
 

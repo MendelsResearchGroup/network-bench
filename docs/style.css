@@ -859,6 +859,8 @@ thead {
 
 /* Results-first layout. */
 .explore { padding: 24px 0; border-top: 0; }
+.study-toggle { width: fit-content; margin-top: 18px; }
+#split-seed-label { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
 .results-grid { grid-template-columns: 1fr; }
 .ranking-panel { position: static; }
 .ranking-panel .ranking { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }

@@ -15,7 +15,7 @@ const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness 
 const DESCRIPTIONS = {gns: 'Graph message passing', edge_mlp: 'Local bond encodings', mlp: 'Node features only', tiny_mlp: 'Single hidden layer', linear_floor: 'Linear velocity predictor', frozen: 'Frozen-position baseline'};
 DESCRIPTIONS.edge_mlp_delta = 'Edge MLP with latest velocity and velocity differences; same parameter count';
 DESCRIPTIONS.edge_mlp_attention = 'Velocity-difference edge MLP with a 32-channel attention-pooled global context';
-let data, dataset = 'node_optimized', mode = 'normal', trainingMode = 'one_step', cohorts = {}, enabled = new Set(), horizon = 100, topModels = true;
+let data, studies, study = 'rollouts', trainSize = 100, dataset = 'node_optimized', mode = 'normal', trainingMode = 'one_step', cohorts = {}, enabled = new Set(), horizon = 100, topModels = true;
 let tableSort = {key: 'r2', descending: true};
 const finite = x => typeof x === 'number' && Number.isFinite(x);
 const number = (v, digits = 3) => finite(v) ? v.toFixed(digits) : '—';
@@ -29,8 +29,9 @@ const color = model => css(`--s${Math.max(0, MODELS.indexOf(model)) + 1}`);
 const modelStyle = model => MODEL_STYLES[Math.max(0, MODELS.indexOf(model))];
 const settings = run => Object.entries(run.hyperparameters).map(([key, value]) => `${key}=${value}`).join(', ') || 'No hyperparameters';
 const datasets = () => [...new Set(data.runs.map(run => run.dataset))].sort();
-const cohortKey = (key = dataset) => `${key}:${mode}:${trainingMode}`;
-const matchesMode = run => (run.mode ?? 'normal') === mode && (run.training_mode ?? 'one_step') === trainingMode;
+const cohortKey = (key = dataset) => `${study}:${key}:${mode}:${trainingMode}`;
+const learning = () => study === 'learning';
+const matchesMode = run => learning() || ((run.mode ?? 'normal') === mode && (run.training_mode ?? 'one_step') === trainingMode);
 const modeRuns = (key = dataset) => data.runs.filter(run => run.dataset === key && matchesMode(run));
 function node(tag, text, className) {
   const element = document.createElement(tag);
@@ -47,9 +48,10 @@ function stats(values) {
 }
 function selectedRuns() {
   return modeRuns().filter(run => run.comparison_id === cohorts[cohortKey()]
+    && (!learning() || run.train_networks === trainSize)
     && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value));
 }
-function groups(runs, metric = 'poisson_r2') {
+function groups(runs, metric = 'poisson_r2', trainingAxis = false) {
   const grouped = new Map();
   for (const run of runs) {
     const key = JSON.stringify([run.dataset, run.comparison_id, run.model, Object.entries(run.hyperparameters).sort()]);
@@ -57,9 +59,30 @@ function groups(runs, metric = 'poisson_r2') {
     grouped.get(key).runs.push(run);
   }
   return [...grouped.values()].map(group => {
-    const steps = [...new Set(group.runs.flatMap(run => Object.keys(metricValues(run, metric)).map(Number)))].sort((a, b) => a - b);
-    return {...group, points: Object.fromEntries(steps.map(step => [step, stats(group.runs.map(run => metricValues(run, metric)[step]))]))};
+    const steps = [...new Set(group.runs.flatMap(run => trainingAxis ? [run.train_networks] : Object.keys(metricValues(run, metric)).map(Number)))].sort((a, b) => a - b);
+    return {...group, points: Object.fromEntries(steps.map(step => [step, stats(group.runs
+      .filter(run => !trainingAxis || run.train_networks === step)
+      .map(run => metricValues(run, metric)[trainingAxis ? horizon : step]))]))};
   });
+}
+function setStudy(value, resetModels = true) {
+  study = value;
+  data = studies[study];
+  $('modes').hidden = $('training-modes').hidden = learning();
+  $('train-size-label').hidden = !learning();
+  $('split-seed-label').hidden = !learning();
+  $('plot-seed-label').textContent = learning() ? 'Split & training seed' : 'Training seed';
+  for (const button of $('studies').children) button.setAttribute('aria-pressed', String(button.dataset.study === study));
+  const sizes = [...new Set(data.runs.map(run => run.train_networks).filter(finite))].sort((a,b) => a-b);
+  $('train-size').replaceChildren(...sizes.map(size => new Option(`${size} networks`, String(size))));
+  if (sizes.length && !sizes.includes(trainSize)) trainSize = sizes.at(-1);
+  $('train-size').value = String(trainSize);
+  $('study-note').textContent = learning()
+    ? 'Learning curves: how accuracy changes with 10–100 training networks. Both plots score the selected rollout horizon. The dotted line marks the training size inspected in the ranking, table and split details.'
+    : 'Rollouts: how accuracy changes over prediction steps for a fixed training set.';
+  $('generated').textContent = `Updated ${new Date(data.generated).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})} · ${data.runs.length} runs in this view`;
+  $('json-download').href = learning() ? 'learning-curves.json' : 'results.json';
+  setDataset(datasets().includes(dataset) ? dataset : datasets()[0], resetModels);
 }
 function setDataset(value, resetModels = true) {
   const changed = dataset !== value;
@@ -77,6 +100,10 @@ function setDataset(value, resetModels = true) {
 }
 function restoreURL() {
   const params = new URL(location.href).searchParams;
+  study = params.get('view') === 'learning' ? 'learning' : 'rollouts';
+  data = studies[study];
+  trainSize = Number(params.get('train') ?? 100);
+  $('split-seed').value = ['0','1','2'].includes(params.get('split_seed')) ? params.get('split_seed') : '0';
   dataset = datasets().includes(params.get('dataset')) ? params.get('dataset') : datasets()[0];
   mode = params.get('mode') === 'ood' ? 'ood' : 'normal';
   trainingMode = params.get('training') === 'mst' ? 'multi_step' : 'one_step';
@@ -93,14 +120,17 @@ function restoreURL() {
   topModels = !params.has('models');
   const available = new Set(data.runs.map(run => run.model));
   enabled = topModels ? available : new Set(params.get('models').split(',').filter(model => available.has(model)));
-  setDataset(dataset, false);
+  setStudy(study, false);
 }
 function updateURL() {
   const url = new URL(location.href), params = url.searchParams;
   params.set('dataset', dataset);
-  params.set('mode', mode);
-  params.set('training', trainingMode === 'multi_step' ? 'mst' : 'one_step');
+  params.set('mode', learning() ? 'normal' : mode);
+  params.set('training', !learning() && trainingMode === 'multi_step' ? 'mst' : 'one_step');
   const optional = {
+    view:learning() ? 'learning' : null,
+    train:learning() ? String(trainSize) : null,
+    split_seed:learning() ? $('split-seed').value : null,
     step:horizon === 100 ? null : String(horizon),
     seed:$('plot-seed').value === 'all' ? null : $('plot-seed').value,
     lines:$('line-mode').value === 'mean' ? null : $('line-mode').value,
@@ -114,18 +144,30 @@ function updateURL() {
   history.replaceState(null, '', url);
 }
 window.addEventListener('popstate', () => { if (data) restoreURL(); });
+window.addEventListener('resize', () => {
+  if (data) { renderChart(false); renderChart(false, 'position_mse_by_step'); }
+});
 function renderSplit() {
-  const split = data.splits[cohorts[cohortKey()]];
-  $('ranking-audit').hidden = mode !== 'ood';
+  if (learning()) {
+    if ($('plot-seed').value !== 'all') $('split-seed').value = $('plot-seed').value;
+    $('split-seed').disabled = $('plot-seed').value !== 'all';
+  }
+  const run = learning() ? modeRuns().find(run => run.train_networks === trainSize && String(run.split_seed) === $('split-seed').value) : null;
+  const split = data.splits[learning() ? run?.split_id : cohorts[cohortKey()]];
+  $('ranking-audit').hidden = learning() || mode !== 'ood';
   $('ranking-audit').href = `https://github.com/MendelsResearchGroup/network-bench/blob/main/configs/ood/${dataset}.ranking.json`;
-  $('split-rule').textContent = mode === 'ood'
+  $('split-rule').textContent = learning()
+    ? 'Normal · one-step training. Each seed shuffles the full dataset roster: 100 networks in a training pool, 70 for validation and 70 for test. Training sizes use nested prefixes of the pool; validation and test stay fixed within a seed. Seeds change both membership and training randomness.'
+    : mode === 'ood'
     ? 'OOD: rank networks by ground-truth Poisson’s ratio at 100 steps. Train and validate within the highest 30%; test on up to 100 networks from the lower 70%.'
     : 'Normal: shuffle networks with a fixed data-split seed, then assign separate training, validation and test networks.';
   $('split-counts').textContent = split
-    ? `· ${split.systems.train.length} train / ${split.systems.val.length} validation / ${split.systems.test.length} test / ${split.unused.length} unused`
+    ? `· ${learning() ? `seed ${split.seed} · ` : ''}${split.systems.train.length} train / ${split.systems.val.length} validation / ${split.systems.test.length} test / ${split.unused.length} unused`
     : '· awaiting completed runs';
   $('split-note').textContent = split
-    ? mode === 'ood'
+    ? learning()
+      ? `Showing split and training seed ${split.seed} at ${trainSize} training networks. Training uses the first ${trainSize} of this seed's 100-network pool. The same 70 validation and 70 test networks are used at every training size and for every model within this seed. Other seeds have different memberships, which can overlap across seeds. Unused IDs include the unselected part of the training pool. Bands show sample SD of per-seed scores, including split and training variation; they are not confidence intervals. Checkpoints are selected using validation R² at 100 steps. IDs below match the saved runs exactly.`
+      : mode === 'ood'
       ? `The upper 30% is rounded up, then shuffled with seed ${split.seed}. Its first ${split.systems.train.length} networks are training; the remaining ${split.systems.val.length} are validation. The lower 70% is shuffled using the same generator; its first ${split.systems.test.length} networks are test, and the rest are unused. Ranking uses the benchmark’s position-based ratio from initial frame 3 to frame 103; equal ratios are ordered by network ID. Checkpoints are selected only on high-ratio validation networks. Sample counts differ from Normal; R² uses this mode’s own test population. Network IDs below match the saved run exactly.`
       : `Data-split seed ${split.seed}: ${split.systems.train.length} training, ${split.systems.val.length} validation and ${split.systems.test.length} test networks; remaining networks are unused. Training seeds change model initialization, while these network assignments stay fixed. Network IDs below match the saved run exactly.`
     : 'No completed results have been published for this split yet.';
@@ -142,6 +184,8 @@ function renderSplit() {
 function render(animate = false) {
   const runs = selectedRuns(), grouped = groups(runs);
   renderSplit();
+  $('ranking-note').textContent = `Ranked by mean R² at step ${horizon}${learning() ? ` · ${trainSize} training networks` : ''}.`;
+  $('legend-note').textContent = `The same models appear in both plots. Top 3 by mean R² at step ${horizon}${learning() ? ` and ${trainSize} training networks` : ''} shown by default. Click a model to toggle both lines; numbers show parameter counts.`;
   const protocols = [...new Set(runs.map(run => {
     const p = run.protocol;
     const training = p.training_frames !== null && p.first_frame === 0 && p.frame_stride === 1
@@ -212,10 +256,10 @@ function renderChart(animate, metric = 'poisson_r2') {
   const individual = $('line-mode').value === 'individual';
   const plottedScore = value => finite(value) ? Math.max(0, value) : null;
   const all = groups(data.runs.filter(run => matchesMode(run) && run.comparison_id === cohorts[cohortKey(run.dataset)]
-    && enabled.has(run.model) && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)), metric);
+    && enabled.has(run.model) && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)), metric, learning());
   const identity = group => JSON.stringify([group.model, Object.entries(group.hyperparameters).sort()]);
   const slots = [...new Map(all.map(group => [identity(group), group])).entries()].sort((a,b) => a[0].localeCompare(b[0]));
-  const x = [...new Set(data.runs.flatMap(run => Object.keys(run.poisson_r2).map(Number)))].sort((a,b) => a-b);
+  const x = [...new Set(data.runs.flatMap(run => learning() ? [run.train_networks] : Object.keys(run.poisson_r2).map(Number)))].sort((a,b) => a-b);
   const values = [];
   for (const [id, template] of slots) {
     const group = all.find(group => group.dataset === dataset && identity(group) === id);
@@ -226,12 +270,14 @@ function renderChart(animate, metric = 'poisson_r2') {
     if (individual) {
       const seeds = [...new Set(data.runs.filter(run => identity(run) === id).map(run => run.seed))].sort((a,b) => a-b);
       for (const seed of seeds) {
-        const run = group?.runs.find(run => run.seed === seed);
-        const scores = x.map(step => run ? metricValues(run, metric)[step] ?? null : null);
+        const scores = x.map(step => {
+          const run = group?.runs.find(run => run.seed === seed && (!learning() || run.train_networks === step));
+          return run ? metricValues(run, metric)[learning() ? horizon : step] ?? null : null;
+        });
         traces.push({...base, uid:`${uid}-${seed}`, y:scores.map(plottedScore), customdata:scores,
           mode:'lines+markers', name:`${template.model} · seed ${seed}`,
           line:{color:c,width:2.4,dash:['solid','dash','dot'][seed % 3],simplify:false},marker:{size:6,symbol:appearance.symbol},
-          hovertemplate:`%{customdata:${mse ? '.3e' : '.3f'}}<extra>%{fullData.name}</extra>`});
+          hovertemplate:`${learning() ? '%{x} training networks · ' : ''}%{customdata:${mse ? '.3e' : '.3f'}}<extra>%{fullData.name}</extra>`});
       }
     } else {
       const points = x.map(step => group?.points[step] ?? stats([]));
@@ -240,7 +286,7 @@ function renderChart(animate, metric = 'poisson_r2') {
         {...base,uid:`${uid}-upper`,y:band(1),mode:'lines',line:{width:0,simplify:false},fill:'tonexty',fillcolor:rgba(c,.12),hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-mean`,y:points.map(point => plottedScore(point.mean)),mode:'lines+markers',name:template.model,
           line:{color:c,width:3,dash:appearance.dash,simplify:false},marker:{size:7,symbol:appearance.symbol},customdata:points.map(point => [(mse ? scientific : number)(point.sd),point.n,point.mean]),
-          hovertemplate:`%{customdata[2]:${mse ? '.3e' : '.3f'}} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>`});
+          hovertemplate:`${learning() ? '%{x} training networks · ' : ''}%{customdata[2]:${mse ? '.3e' : '.3f'}} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>`});
     }
   }
   // Shared axes and stable trace slots let each model morph into itself.
@@ -249,22 +295,22 @@ function renderChart(animate, metric = 'poisson_r2') {
     if (finite(point.mean)) values.push(point.mean + ($('bands').checked ? point.sd ?? 0 : 0));
 
   }
-  if (individual) for (const group of visible) for (const run of group.runs) values.push(...Object.values(metricValues(run, metric)).filter(finite));
+  if (individual) for (const group of visible) for (const run of group.runs) values.push(...(learning() ? [metricValues(run, metric)[horizon]] : Object.values(metricValues(run, metric))).filter(finite));
   const mobile = window.innerWidth < 600;
   const maximum = Math.max(0, ...values);
   const layout = {
     height:mobile ? 440 : 560, margin:{l:90,r:20,t:26,b:68},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
     font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:16,color:css('--ink')},
-    showlegend:false,hovermode:'x unified',dragmode:'zoom',uirevision:metric,
+    showlegend:false,hovermode:'x unified',dragmode:'zoom',uirevision:`${study}:${dataset}:${metric}:${learning() ? horizon : ''}`,
     hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:20,color:css('--ink')}},
-    xaxis:{title:{text:'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
+    xaxis:{title:{text:learning() ? 'TRAINING NETWORKS' : 'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
     yaxis:{title:{text:mse ? 'POSITION MSE' : 'TEST R²',font:{size:16}},range:[0,mse ? (maximum > 0 ? maximum * 1.05 : 1) : Math.max(1,maximum)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:mse ? '.1e' : '.2f',nticks:5},
-    shapes:[{type:'line',x0:horizon,x1:horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
+    shapes:[{type:'line',x0:learning() ? trainSize : horizon,x1:learning() ? trainSize : horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
     annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:'No results for these filters.',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
-  plot.setAttribute('aria-label', `${label(dataset)}, ${mode === 'ood' ? 'OOD' : 'normal'}, ${trainingMode === 'multi_step' ? 'multi-step training' : 'one-step training'}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against rollout steps. Values are available in the runs table.`);
+  plot.setAttribute('aria-label', `${label(dataset)}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against ${learning() ? `training networks, scored at rollout step ${horizon}` : 'rollout steps'}. Values are available in the runs table.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
-  if (!mse && animate && sameTraces && plot.data.some(trace => trace.y.some(finite)) && traces.some(trace => trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (!learning() && !mse && animate && sameTraces && plot.data.some(trace => trace.y.some(finite)) && traces.some(trace => trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     Plotly.animate(plot,{data:traces,traces:traces.map((_,i) => i)},
       {mode:'immediate',transition:{duration:650,easing:'cubic-in-out'},frame:{duration:650,redraw:true}});
   } else {
@@ -272,7 +318,7 @@ function renderChart(animate, metric = 'poisson_r2') {
       modeBarButtonsToRemove:['select2d','lasso2d','zoomIn2d','zoomOut2d','autoScale2d'],
       toImageButtonOptions:{format:'svg',filename:mse ? 'network-bench-mse' : 'network-bench-r2',width:1100,height:550}});
   }
-  $(mse ? 'mse-range-note' : 'range-note').textContent = `${individual ? 'Individual seeds' : 'Mean ± sample SD across seeds'} · ${mse ? 'Lower MSE is better. Values use squared coordinate units.' : 'Negative scores are drawn at 0; hover and table show actual values.'}`;
+  $(mse ? 'mse-range-note' : 'range-note').textContent = `${learning() ? `Test scores at step ${horizon} · ` : ''}${individual ? 'Individual seeds' : learning() ? 'Mean ± sample SD across split and training seeds' : 'Mean ± sample SD across training seeds'} · ${mse ? 'Lower MSE is better. Values use squared coordinate units.' : 'Negative scores are drawn at 0; hover and table show actual values.'}`;
 }
 
 function tableRuns() {
@@ -282,6 +328,7 @@ function tableRuns() {
 const COLUMNS = [
   {key:'model',label:'Model / settings',value:run=>run.model},
   {key:'dataset',label:'Dataset',value:run=>label(run.dataset)},
+  {key:'train_networks',label:'Training networks',value:run=>run.train_networks},
   {key:'seed',label:'Seed',value:run=>run.seed},
   {key:'parameters',label:'Parameters',value:run=>run.parameters},
   {key:'epoch',label:'Best epoch',value:run=>run.selected_epoch ?? run.trained_epochs ?? run.epochs},
@@ -293,7 +340,8 @@ const COLUMNS = [
   {key:'diverged',label:'Diverged',value:run=>run.diverged}
 ];
 function renderTable() {
-  const runs = tableRuns(), column = COLUMNS.find(column=>column.key===tableSort.key);
+  const columns = COLUMNS.filter(column => learning() || column.key !== 'train_networks');
+  const runs = tableRuns(), column = columns.find(column=>column.key===tableSort.key) ?? columns.find(column=>column.key==='r2');
   runs.sort((a,b)=>{
     const av=column.value(a),bv=column.value(b);
     if (av == null && bv == null) return 0;
@@ -302,9 +350,9 @@ function renderTable() {
     const order=typeof av==='string'?av.localeCompare(bv):av-bv;
     return tableSort.descending ? -order:order;
   });
-  $('table-count').textContent=`${runs.length} runs · test metrics at step ${horizon}`;
+  $('table-count').textContent=`${runs.length} runs · ${learning() ? `${trainSize} training networks · ` : ''}test metrics at step ${horizon}`;
   const head=node('tr');
-  for (const column of COLUMNS) {
+  for (const column of columns) {
     const th=node('th'); th.scope='col';
     th.setAttribute('aria-sort',column.key===tableSort.key?(tableSort.descending?'descending':'ascending'):'none');
     const button=node('button',column.key==='r2'?`Test R² @${horizon} ↑`:column.key==='mse'?`Position MSE @${horizon} ↓`:column.key==='relative'?`Relative MSE @${horizon} ↓`:column.label);
@@ -314,7 +362,7 @@ function renderTable() {
   $('table-head').replaceChildren(head); $('table-body').replaceChildren();
   for (const run of runs) {
     const row=node('tr');
-    for (const column of COLUMNS) {
+    for (const column of columns) {
       const cell=node('td'), value=column.value(run);
       if (column.key==='model') {
         const details=node('details'), summary=node('summary'), swatch=node('i',undefined,'swatch'); swatch.style.background=color(run.model);
@@ -333,11 +381,11 @@ function renderTable() {
     }
     $('table-body').append(row);
   }
-  if (!runs.length) {const row=node('tr'),cell=node('td','No runs match these filters.','empty');cell.colSpan=COLUMNS.length;row.append(cell);$('table-body').append(row);}
+  if (!runs.length) {const row=node('tr'),cell=node('td','No runs match these filters.','empty');cell.colSpan=columns.length;row.append(cell);$('table-body').append(row);}
   updateURL();
 }
 function downloadCSV() {
-  const columns=['dataset','mode','training_mode','rollout_schedule','detach_rollout','comparison_id','model','seed','hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`,`position_mse_${horizon}`,`relative_mse_${horizon}`];
+  const columns=['dataset','mode','training_mode','rollout_schedule','detach_rollout','comparison_id','model','seed',...(learning() ? ['split_seed','train_networks','split_id'] : []),'hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`,`position_mse_${horizon}`,`relative_mse_${horizon}`];
   const quote=value=>'"'+String(value ?? '').replaceAll('"','""')+'"';
   const rows=tableRuns().map(run=>columns.map(key=>quote(['hyperparameters','rollout_schedule'].includes(key)?JSON.stringify(run[key]):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:key.startsWith('position_mse_')?metricValues(run,'position_mse_by_step')[horizon]:key.startsWith('relative_mse_')?metricValues(run,'relative_mse_by_step')[horizon]:run[key])).join(','));
   const url=URL.createObjectURL(new Blob([[columns.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'}));
@@ -350,15 +398,16 @@ function setTheme(dark) {
 }
 setTheme(false);
 $('theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
-fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}).then(payload=>{
-  data={...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')};
-  $('generated').textContent=`Updated ${new Date(data.generated).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})} · ${data.runs.length} runs`;
+Promise.all(['results.json','learning-curves.json'].map(path => fetch(path).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(([payload, learningPayload])=>{
+  studies={rollouts:{...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')}, learning:learningPayload};
+  data=studies.rollouts;
   if(!data.runs.length){$('notice').textContent='No completed runs have been published yet.';return;}
-  enabled=new Set(data.runs.map(run=>run.model));
+  enabled=new Set([...data.runs,...learningPayload.runs].map(run=>run.model));
   for(const key of datasets()){const button=node('button',label(key));button.dataset.value=key;button.onclick=()=>setDataset(key);$('datasets').append(button);}
-  for(const key of datasets()){
-    for (const distribution of ['normal', 'ood']) for (const training of ['one_step', 'multi_step']) cohorts[`${key}:${distribution}:${training}`]=data.runs.find(run=>run.dataset===key && (run.mode ?? 'normal') === distribution && (run.training_mode ?? 'one_step') === training)?.comparison_id;
+  for (const [view, payload] of Object.entries(studies)) for(const key of datasets()){
+    for (const distribution of ['normal', 'ood']) for (const training of ['one_step', 'multi_step']) cohorts[`${view}:${key}:${distribution}:${training}`]=payload.runs.find(run=>run.dataset===key && (view === 'learning' || ((run.mode ?? 'normal') === distribution && (run.training_mode ?? 'one_step') === training)))?.comparison_id;
   }
+  for (const button of $('studies').children) button.onclick=()=>setStudy(button.dataset.study);
   for (const button of $('modes').children) button.onclick=()=>{mode=button.dataset.mode;setDataset(dataset);};
   for (const button of $('training-modes').children) button.onclick=()=>{trainingMode=button.dataset.training;setDataset(dataset);};
   for(const model of [...enabled].sort((a,b)=>MODELS.indexOf(a)-MODELS.indexOf(b))){
@@ -367,6 +416,8 @@ fetch('results.json').then(response=>{if(!response.ok)throw new Error(`HTTP ${re
   }
   for(const seed of [...new Set(data.runs.map(run=>run.seed))].sort((a,b)=>a-b)) for(const id of ['plot-seed','seed']) $(id).append(new Option(`Seed ${seed}`,String(seed)));
   $('cohort').onchange=()=>{cohorts[cohortKey()]=$('cohort').value;topModels=true;render();};
+  $('train-size').onchange=()=>{trainSize=Number($('train-size').value);render();};
+  $('split-seed').onchange=()=>{renderSplit();updateURL();};
   for(const id of ['bands','plot-seed','line-mode'])$(id).onchange=render;
   $('horizon').oninput=()=>{horizon=JSON.parse($('horizon').dataset.steps)[$('horizon').value];render();};
   $('top-models').onclick=()=>{topModels=true;render();};
