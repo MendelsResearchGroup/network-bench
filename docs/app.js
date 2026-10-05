@@ -301,15 +301,16 @@ function renderChart(animate, metric = 'poisson_r2') {
   if (individual) for (const group of visible) for (const run of group.runs) values.push(...(learning() ? [metricValues(run, metric)[horizon]] : Object.values(metricValues(run, metric))).filter(finite));
   const mobile = window.innerWidth < 600;
   const maximum = Math.max(0, ...values);
+  const hasResults = traces.some(trace => trace.y.some(finite));
   const layout = {
     height:mobile ? 440 : 560, margin:{l:90,r:20,t:26,b:68},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
     font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:16,color:css('--ink')},
     showlegend:false,hovermode:'x unified',dragmode:'zoom',uirevision:`${study}:${dataset}:${metric}:${learning() ? horizon : ''}`,
     hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:20,color:css('--ink')}},
-    xaxis:{title:{text:learning() ? 'TRAINING NETWORKS' : 'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
-    yaxis:{title:{text:mse ? 'POSITION MSE' : 'TEST R²',font:{size:16}},range:[0,mse ? (maximum > 0 ? maximum * 1.05 : 1) : Math.max(1,maximum)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:mse ? '.1e' : '.2f',nticks:5},
-    shapes:[{type:'line',x0:learning() ? trainSize : horizon,x1:learning() ? trainSize : horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
-    annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:emptyResults().replace(' learning curves have not been run yet. Available:', '<br>Learning curves not run yet.<br>Available:'),xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
+    xaxis:{visible:hasResults,title:{text:learning() ? 'TRAINING NETWORKS' : 'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
+    yaxis:{visible:hasResults,title:{text:mse ? 'POSITION MSE' : 'TEST R²',font:{size:16}},range:[0,mse ? (maximum > 0 ? maximum * 1.05 : 1) : Math.max(1,maximum)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:mse ? '.1e' : '.2f',nticks:5},
+    shapes:hasResults ? [{type:'line',x0:learning() ? trainSize : horizon,x1:learning() ? trainSize : horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}] : [],
+    annotations:hasResults ? [] : [{text:emptyResults().replace(' learning curves have not been run yet. Available:', '<br>Learning curves not run yet.<br>Available:'),xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
   plot.setAttribute('aria-label', `${label(dataset)}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against ${learning() ? `training networks, scored at rollout step ${horizon}` : 'rollout steps'}. Values are available in the runs table.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
