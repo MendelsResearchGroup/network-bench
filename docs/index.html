@@ -1,66 +1,194 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Compare learned simulators on spring-network compression. Explore rollout accuracy, variation across training seeds, and every benchmark run.">
-  <meta name="color-scheme" content="light dark">
-  <title>Network Bench — Results</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%231e5042'/%3E%3Cpath d='M10 28L20 10L30 28Z' fill='none' stroke='%23f2f0e9' stroke-width='2'/%3E%3Cg fill='%23f2f0e9'%3E%3Ccircle cx='10' cy='28' r='3'/%3E%3Ccircle cx='20' cy='10' r='3'/%3E%3Ccircle cx='30' cy='28' r='3'/%3E%3C/g%3E%3C/svg%3E">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8" defer></script>
-  <script src="app.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Compare learned simulators on spring-network compression. Explore rollout accuracy, learning curves, model parameters and exact benchmark splits.">
+<title>Network Bench — Results</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="designs/base.css">
+<link rel="stylesheet" href="designs/studio/style.css">
+<script src="https://cdn.plot.ly/plotly-4.1.1.min.js" defer>
+</script>
+<script src="app.js" defer>
+</script>
 </head>
-<body>
-<a class="skip" href="#explore">Skip to results</a>
-<header class="masthead wrap">
-  <a class="brand" href="./" aria-label="Network Bench home"><svg width="29" height="29" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25L16 5L27 25Z"/><circle cx="5" cy="25" r="3"/><circle cx="16" cy="5" r="3"/><circle cx="27" cy="25" r="3"/></svg>network<span>bench</span></a>
-  <nav aria-label="Main navigation"><a href="designs/">Designs ↗</a><a id="json-download" href="results.json" download>JSON ↓</a><a href="https://github.com/MendelsResearchGroup/network-bench">Source ↗</a><button id="theme" class="icon-button" aria-label="Switch to dark theme" title="Switch theme">◐</button></nav>
+<body class="design studio" data-default-view="rollouts" data-click-inspection="true" >
+<header class="design-header">
+<a class="identity" href="./">network<span>bench</span>
+</a>
+<div class="downloads">
+<button id="download">CSV ↓</button>
+<a id="json-download" href="results.json" download>JSON ↓</a>
+<button id="theme" title="Change theme">◐</button>
+</div>
 </header>
-<main class="wrap">
-  <div id="notice" role="status" aria-live="polite" class="notice">Loading the latest benchmark…</div>
-  <div id="dashboard" hidden>
-    <section id="explore" class="explore" aria-label="Dataset selection">
-      <div class="dataset-row"><div id="datasets" class="segmented" role="group" aria-label="Dataset"></div><label id="cohort-label" hidden>Comparison <select id="cohort"></select></label></div>
-      <div id="studies" class="segmented study-toggle" role="group" aria-label="Results view"><button data-study="rollouts" aria-pressed="true">Rollouts</button><button data-study="learning" aria-pressed="false">Learning curves</button></div>
-      <p id="study-note" class="footnote"></p>
-      <p id="split-rule" class="footnote"></p>
-      <p id="protocol" class="footnote"></p>
-      <details class="split-details"><summary>Exact network split <span id="split-counts"></span></summary><label id="split-seed-label" hidden>Inspect split <select id="split-seed"><option value="0">Seed 0</option><option value="1">Seed 1</option><option value="2">Seed 2</option></select></label><p id="split-note" class="footnote"></p><a id="ranking-audit" class="footnote" hidden>Full Poisson’s ratio ranking and cutoff ↗</a><div id="split-membership" class="split-membership"></div></details>
-    </section>
-    <section class="results-grid" aria-label="Model comparison">
-      <div class="panel filters-panel">
-        <h2>Models and filters</h2>
-        <div class="plot-filters"><div id="modes" class="segmented mode-toggle" role="group" aria-label="Training distribution"><button data-mode="normal" aria-pressed="true">Normal</button><button data-mode="ood" aria-pressed="false">OOD</button></div><div id="training-modes" class="segmented mode-toggle" role="group" aria-label="Training objective"><button data-training="one_step" aria-pressed="true">One-step</button><button data-training="multi_step" aria-pressed="false" title="Multi-step training">MST</button></div><label><span id="plot-seed-label">Training seed</span> <select id="plot-seed"><option value="all">All seeds</option></select></label><label>Lines <select id="line-mode"><option value="mean">Mean across seeds</option><option value="individual">Individual seeds</option></select></label><label id="train-size-label" hidden>Inspect training size <select id="train-size"></select></label></div>
-        <div id="legend" class="legend" role="group" aria-label="Show models"></div>
-        <p id="legend-note" class="footnote legend-note">The same models appear in both plots. Top 3 by mean R² at the selected horizon shown by default. Click a model to toggle both lines; numbers show parameter counts.</p>
-        <div class="chart-controls"><label><input id="bands" type="checkbox" checked> ±1 SD</label><button id="top-models" class="text-button">Show top 3</button><button id="reset-models" class="text-button">Show all models</button></div>
-        <div class="horizon-control"><div class="horizon-label"><label for="horizon">Rollout horizon</label><output id="horizon-value" for="horizon"></output></div><input id="horizon" type="range" min="0" max="9" value="9"><div class="range-labels"><span id="first-step"></span><span id="last-step"></span></div></div>
-      </div>
-      <div class="panel curve-panel">
-        <div class="panel-heading"><h2>Poisson’s ratio R²</h2><span class="direction">Higher is better ↗</span></div>
-        <div id="chart" class="chart"><div id="plot" class="plot" role="img"></div></div>
-        <p id="range-note" class="footnote"></p>
-      </div>
-      <div class="panel curve-panel">
-        <div class="panel-heading"><h2>Position MSE</h2><span class="direction">Lower is better ↘</span></div>
-        <p class="footnote">Mean squared position error per node coordinate, averaged across test networks.</p>
-        <div id="mse-chart" class="chart"><div id="mse-plot" class="plot" role="img"></div></div>
-        <p id="mse-range-note" class="footnote"></p>
-      </div>
-      <aside class="panel ranking-panel" aria-labelledby="ranking-title">
-        <h2 id="ranking-title">Model comparison</h2><p id="ranking-note" class="footnote">Ranked by mean R² at the selected horizon.</p>
-        <div class="ranking-caption"><span>MODEL</span><span>MEAN R² ± SD</span></div><ol id="ranking" class="ranking"></ol>
-      </aside>
-    </section>
-    <section class="panel runs-panel" aria-labelledby="runs-title">
-      <div class="panel-heading"><h2 id="runs-title">Runs</h2><button id="download" class="outline-button">Download CSV ↓</button></div>
-      <div class="table-controls"><label class="search-label"><span>⌕</span><input id="search" type="search" placeholder="Find a model…" aria-label="Find a model"></label><label>Seed <select id="seed"><option value="all">All seeds</option></select></label><span id="table-count" class="secondary small" aria-live="polite"></span></div>
-      <div class="table-scroll" tabindex="0" role="region" aria-label="Benchmark runs, scroll horizontally on small screens"><table><caption class="sr-only">Individual test results. Use column buttons to sort; expand a model for its settings.</caption><thead id="table-head"></thead><tbody id="table-body"></tbody></table></div>
-    </section>
-  </div>
+<main class="design-main">
+<div id="notice" class="notice">Loading benchmark results…</div>
+<div id="dashboard" hidden>
+<div class="studio-layout">
+<aside id="explore" class="instrument">
+<span class="eyebrow">Network Bench</span>
+<h1>Experiment<br>controls</h1>
+<div class="control-block dataset-control">
+<span class="control-label">Dataset</span>
+<div id="datasets" class="segmented">
+</div>
+<label id="cohort-label" hidden>Comparison <select id="cohort">
+</select>
+</label>
+</div>
+<div class="instrument-pair">
+<div class="control-block">
+<span class="control-label">Distribution</span>
+<div id="modes" class="segmented">
+<button data-mode="normal" aria-pressed="true">Normal</button>
+<button data-mode="ood" aria-pressed="false">OOD</button>
+</div>
+</div>
+<div class="control-block">
+<span class="control-label">Training</span>
+<div id="training-modes" class="segmented">
+<button data-training="one_step" aria-pressed="true">One-step</button>
+<button data-training="multi_step" aria-pressed="false">MST</button>
+</div>
+</div>
+</div>
+<div class="control-block">
+<span class="control-label">X-axis</span>
+<div id="studies" class="segmented">
+<button data-study="rollouts" aria-pressed="true">Rollout step</button>
+<button data-study="learning" aria-pressed="false">Training networks</button>
+</div>
+</div>
+<div class="horizon-control">
+<div class="horizon-label">
+<label for="horizon">Score at step</label>
+<output id="horizon-value">
+</output>
+</div>
+<input id="horizon" type="range" min="0" max="9" value="9">
+<div class="range-labels">
+<span id="first-step">
+</span>
+<span id="last-step">
+</span>
+</div>
+</div>
+<div class="models">
+<div class="models-heading">
+<span class="control-label">Models <span class="muted">· parameters beside each name</span>
+</span>
+<div>
+<button id="top-models" class="text-button">Top 3</button>
+<button id="reset-models" class="text-button">All</button>
+</div>
+</div>
+<div id="legend" class="legend">
+</div>
+</div>
+<details class="options">
+<summary>Options</summary>
+<div class="option-fields">
+<label>
+<span id="plot-seed-label">Split &amp; training seed</span>
+<select id="plot-seed">
+<option value="all">All seeds</option>
+</select>
+</label>
+<label>Lines<select id="line-mode">
+<option value="mean">Mean across seeds</option>
+<option value="individual">Individual seeds</option>
+</select>
+</label>
+<label>
+<input id="bands" type="checkbox" checked> ±1 sample SD</label>
+<label id="train-size-label" hidden>Inspect training size<select id="train-size">
+</select>
+</label>
+<p id="legend-note" class="footnote">
+</p>
+</div>
+</details>
+</aside>
+<div class="workspace">
+<div class="workspace-heading">
+<div>
+<span class="eyebrow">Network dynamics</span>
+<h2>Prediction workspace</h2>
+</div>
+<span class="live-tag">Test results</span>
+</div>
+<div class="selection-summary">
+<span id="selection-note">
+</span>
+<span id="split-counts">
+</span>
+</div>
+<section class="metric-panel r2-panel">
+<div class="metric-heading">
+<h2>Poisson’s ratio R²</h2>
+<span>Higher is better</span>
+</div>
+<div id="chart" class="chart">
+<div id="plot" class="plot">
+</div>
+</div>
+<p id="range-note" class="footnote">
+</p>
+</section>
+<section class="metric-panel mse-panel">
+<div class="metric-heading">
+<h2>Position MSE</h2>
+<span>Lower is better</span>
+</div>
+<div id="mse-chart" class="chart">
+<div id="mse-plot" class="plot">
+</div>
+</div>
+<p id="mse-range-note" class="footnote">
+</p>
+</section>
+<section class="snapshot">
+<div class="snapshot-heading">
+<h2>At this point</h2>
+<p id="ranking-note" class="footnote">
+</p>
+</div>
+<ol id="ranking" class="ranking">
+</ol>
+</section>
+<details class="methods">
+<summary>Exact split &amp; training protocol</summary>
+<p id="study-note" class="footnote">
+</p>
+<p id="split-rule" class="footnote">
+</p>
+<p id="protocol" class="footnote">
+</p>
+<label id="split-seed-label" hidden>Inspect split<select id="split-seed">
+<option value="0">Seed 0</option>
+<option value="1">Seed 1</option>
+<option value="2">Seed 2</option>
+</select>
+</label>
+<p id="split-note" class="footnote">
+</p>
+<a id="ranking-audit" hidden>Full Poisson’s ratio ranking ↗</a>
+<div id="split-membership" class="split-membership">
+</div>
+</details>
+</div>
+</div>
+</div>
 </main>
-<footer class="wrap"><span class="brand-small">network / bench</span><span id="generated"></span><a href="https://github.com/MendelsResearchGroup/network-bench">Mendels Research Group ↗</a></footer>
-<noscript><p class="wrap notice">This explorer needs JavaScript. You can still <a href="results.json">download the results JSON</a>.</p></noscript>
+<footer class="design-footer">
+<span id="generated">
+</span>
+<a href="designs/">Compare all designs ↗</a>
+<a href="https://github.com/MendelsResearchGroup/network-bench">Source ↗</a>
+</footer>
+<noscript><p class="design-main notice">This explorer needs JavaScript. You can still <a href="results.json">download the results JSON</a>.</p></noscript>
 </body>
 </html>
