@@ -88,9 +88,11 @@ Top three models are ranked at that size and horizon. Negative R² is drawn at
 zero, while hover, ranking, table and CSV retain the raw scores.
 
 The seed filter changes split and training seed together. With all seeds shown,
-the exact-split panel lets you inspect one seed explicitly. OOD and MST are
-available in the separate Rollouts view; this study used normal one-step
-training. URL parameters preserve the view, dataset, horizon, training size,
+the exact-split panel lets you inspect one seed explicitly. Normal/OOD and
+One-step/MST filters appear in both views. This study ran normal one-step
+training; other learning-curve selections show "not run yet" with empty plots,
+rankings and tables. URL parameters preserve these filters along with the view,
+dataset, horizon, training size,
 seeds, models, lines and bands. Downloaded JSON contains all 630 individual
 runs with their per-step metrics and all 90 exact splits.
 

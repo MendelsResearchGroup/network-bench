@@ -31,8 +31,12 @@ const settings = run => Object.entries(run.hyperparameters).map(([key, value]) =
 const datasets = () => [...new Set(data.runs.map(run => run.dataset))].sort();
 const cohortKey = (key = dataset) => `${study}:${key}:${mode}:${trainingMode}`;
 const learning = () => study === 'learning';
-const matchesMode = run => learning() || ((run.mode ?? 'normal') === mode && (run.training_mode ?? 'one_step') === trainingMode);
+const matchesMode = run => (run.mode ?? 'normal') === mode && (run.training_mode ?? 'one_step') === trainingMode;
 const modeRuns = (key = dataset) => data.runs.filter(run => run.dataset === key && matchesMode(run));
+const missingLearning = () => learning() && !modeRuns().length;
+const emptyResults = () => missingLearning()
+  ? `${mode === 'ood' ? 'OOD' : 'Normal'} / ${trainingMode === 'multi_step' ? 'MST' : 'One-step'} learning curves have not been run yet. Available: Normal / One-step.`
+  : 'No results for these filters.';
 function node(tag, text, className) {
   const element = document.createElement(tag);
   if (text !== undefined) element.textContent = text;
@@ -68,7 +72,6 @@ function groups(runs, metric = 'poisson_r2', trainingAxis = false) {
 function setStudy(value, resetModels = true) {
   study = value;
   data = studies[study];
-  $('modes').hidden = $('training-modes').hidden = learning();
   $('train-size-label').hidden = !learning();
   $('split-seed-label').hidden = !learning();
   $('plot-seed-label').textContent = learning() ? 'Split & training seed' : 'Training seed';
@@ -125,8 +128,8 @@ function restoreURL() {
 function updateURL() {
   const url = new URL(location.href), params = url.searchParams;
   params.set('dataset', dataset);
-  params.set('mode', learning() ? 'normal' : mode);
-  params.set('training', !learning() && trainingMode === 'multi_step' ? 'mst' : 'one_step');
+  params.set('mode', mode);
+  params.set('training', trainingMode === 'multi_step' ? 'mst' : 'one_step');
   const optional = {
     view:learning() ? 'learning' : null,
     train:learning() ? String(trainSize) : null,
@@ -156,21 +159,21 @@ function renderSplit() {
   const split = data.splits[learning() ? run?.split_id : cohorts[cohortKey()]];
   $('ranking-audit').hidden = learning() || mode !== 'ood';
   $('ranking-audit').href = `https://github.com/MendelsResearchGroup/network-bench/blob/main/configs/ood/${dataset}.ranking.json`;
-  $('split-rule').textContent = learning()
+  $('split-rule').textContent = missingLearning() ? emptyResults() : learning()
     ? 'Normal · one-step training. Each seed shuffles the full dataset roster: 100 networks in a training pool, 70 for validation and 70 for test. Training sizes use nested prefixes of the pool; validation and test stay fixed within a seed. Seeds change both membership and training randomness.'
     : mode === 'ood'
     ? 'OOD: rank networks by ground-truth Poisson’s ratio at 100 steps. Train and validate within the highest 30%; test on up to 100 networks from the lower 70%.'
     : 'Normal: shuffle networks with a fixed data-split seed, then assign separate training, validation and test networks.';
   $('split-counts').textContent = split
     ? `· ${learning() ? `seed ${split.seed} · ` : ''}${split.systems.train.length} train / ${split.systems.val.length} validation / ${split.systems.test.length} test / ${split.unused.length} unused`
-    : '· awaiting completed runs';
+    : missingLearning() ? '· not run yet' : '· awaiting completed runs';
   $('split-note').textContent = split
     ? learning()
       ? `Showing split and training seed ${split.seed} at ${trainSize} training networks. Training uses the first ${trainSize} of this seed's 100-network pool. The same 70 validation and 70 test networks are used at every training size and for every model within this seed. Other seeds have different memberships, which can overlap across seeds. Unused IDs include the unselected part of the training pool. Bands show sample SD of per-seed scores, including split and training variation; they are not confidence intervals. Checkpoints are selected using validation R² at 100 steps. IDs below match the saved runs exactly.`
       : mode === 'ood'
       ? `The upper 30% is rounded up, then shuffled with seed ${split.seed}. Its first ${split.systems.train.length} networks are training; the remaining ${split.systems.val.length} are validation. The lower 70% is shuffled using the same generator; its first ${split.systems.test.length} networks are test, and the rest are unused. Ranking uses the benchmark’s position-based ratio from initial frame 3 to frame 103; equal ratios are ordered by network ID. Checkpoints are selected only on high-ratio validation networks. Sample counts differ from Normal; R² uses this mode’s own test population. Network IDs below match the saved run exactly.`
       : `Data-split seed ${split.seed}: ${split.systems.train.length} training, ${split.systems.val.length} validation and ${split.systems.test.length} test networks; remaining networks are unused. Training seeds change model initialization, while these network assignments stay fixed. Network IDs below match the saved run exactly.`
-    : 'No completed results have been published for this split yet.';
+    : missingLearning() ? 'There are no saved splits or runs for this learning-curve selection.' : 'No completed results have been published for this split yet.';
   $('split-membership').replaceChildren();
   if (split) for (const [part, title] of [['train', 'Training'], ['val', 'Validation'], ['test', 'Test'], ['unused', 'Unused']]) {
     const ids = part === 'unused' ? split.unused : split.systems[part];
@@ -196,7 +199,7 @@ function render(animate = false) {
       : 'One-step training';
     return `${training} · ${objective} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames (${run.rollout_steps + p.history_frames} frames total)`;
   }))];
-  $('protocol').textContent = protocols.join(' / ') || `Awaiting completed ${trainingMode === 'multi_step' ? 'MST' : 'one-step'} results for this dataset and split.`;
+  $('protocol').textContent = protocols.join(' / ') || (missingLearning() ? 'Select Normal and One-step to see the completed training-size sweep.' : `Awaiting completed ${trainingMode === 'multi_step' ? 'MST' : 'one-step'} results for this dataset and split.`);
   $('protocol').title = 'Training, validation and test use separate trajectories. Checkpoints are selected on validation rollouts. Graph models use bond edges only, including on Noisy LJ.';
   const steps = [...new Set(runs.flatMap(run => Object.keys(run.poisson_r2).map(Number)))].sort((a, b) => a - b);
   const previous = horizon;
@@ -244,7 +247,7 @@ function renderRanking(grouped) {
     fill.style.width = `${Math.max(0, Math.min(1, group.score.mean ?? 0)) * 100}%`; fill.style.background = color(group.model); bar.append(fill);
     item.title = settings(group); item.append(line, meta, bar); $('ranking').append(item);
   });
-  if (!ranking.length) $('ranking').append(node('li', 'No models selected.', 'empty'));
+  if (!ranking.length) $('ranking').append(node('li', missingLearning() ? emptyResults() : 'No models selected.', 'empty'));
 }
 function rgba(hex, alpha) {
   return `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${alpha})`;
@@ -306,7 +309,7 @@ function renderChart(animate, metric = 'poisson_r2') {
     xaxis:{title:{text:learning() ? 'TRAINING NETWORKS' : 'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
     yaxis:{title:{text:mse ? 'POSITION MSE' : 'TEST R²',font:{size:16}},range:[0,mse ? (maximum > 0 ? maximum * 1.05 : 1) : Math.max(1,maximum)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:mse ? '.1e' : '.2f',nticks:5},
     shapes:[{type:'line',x0:learning() ? trainSize : horizon,x1:learning() ? trainSize : horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}],
-    annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:'No results for these filters.',xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
+    annotations:traces.some(trace => trace.y.some(finite)) ? [] : [{text:emptyResults().replace(' learning curves have not been run yet. Available:', '<br>Learning curves not run yet.<br>Available:'),xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
   plot.setAttribute('aria-label', `${label(dataset)}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against ${learning() ? `training networks, scored at rollout step ${horizon}` : 'rollout steps'}. Values are available in the runs table.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
@@ -381,7 +384,7 @@ function renderTable() {
     }
     $('table-body').append(row);
   }
-  if (!runs.length) {const row=node('tr'),cell=node('td','No runs match these filters.','empty');cell.colSpan=columns.length;row.append(cell);$('table-body').append(row);}
+  if (!runs.length) {const row=node('tr'),cell=node('td',missingLearning() ? emptyResults() : 'No runs match these filters.','empty');cell.colSpan=columns.length;row.append(cell);$('table-body').append(row);}
   updateURL();
 }
 function downloadCSV() {
@@ -405,7 +408,7 @@ Promise.all(['results.json','learning-curves.json'].map(path => fetch(path).then
   enabled=new Set([...data.runs,...learningPayload.runs].map(run=>run.model));
   for(const key of datasets()){const button=node('button',label(key));button.dataset.value=key;button.onclick=()=>setDataset(key);$('datasets').append(button);}
   for (const [view, payload] of Object.entries(studies)) for(const key of datasets()){
-    for (const distribution of ['normal', 'ood']) for (const training of ['one_step', 'multi_step']) cohorts[`${view}:${key}:${distribution}:${training}`]=payload.runs.find(run=>run.dataset===key && (view === 'learning' || ((run.mode ?? 'normal') === distribution && (run.training_mode ?? 'one_step') === training)))?.comparison_id;
+    for (const distribution of ['normal', 'ood']) for (const training of ['one_step', 'multi_step']) cohorts[`${view}:${key}:${distribution}:${training}`]=payload.runs.find(run=>run.dataset===key && (run.mode ?? 'normal') === distribution && (run.training_mode ?? 'one_step') === training)?.comparison_id;
   }
   for (const button of $('studies').children) button.onclick=()=>setStudy(button.dataset.study);
   for (const button of $('modes').children) button.onclick=()=>{mode=button.dataset.mode;setDataset(dataset);};
