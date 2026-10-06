@@ -129,7 +129,8 @@ Click a plotted training-size point to choose the model summary and exact
 membership shown below; a dotted line marks that size without hiding other sizes.
 The top four models are shown by default, ranked at that size and horizon.
 Negative R² is drawn at zero, while hover, model summary and CSV retain raw scores.
-Filter changes animate both charts. Studio is the main layout, with light mode
+Filter changes animate the R² chart; position MSE updates immediately.
+The R² axis stays fixed at 0–1. Reloading revalidates the results JSON. Studio is the main layout, with light mode
 by default; the theme toggle also offers dark mode.
 
 The seed filter changes split and training seed together. With all seeds shown,

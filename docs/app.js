@@ -36,7 +36,7 @@ const matchesMode = run => (run.mode ?? 'normal') === mode && (run.training_mode
 const modeRuns = (key = dataset) => data.runs.filter(run => run.dataset === key && matchesMode(run));
 const missingLearning = () => learning() && !modeRuns().length;
 const emptyResults = () => missingLearning()
-  ? `${mode === 'ood' ? 'OOD' : 'Normal'} / ${trainingMode === 'multi_step' ? 'MST' : 'One-step'} learning curves have not been run yet. Available: Normal / One-step.`
+  ? `No published ${mode === 'ood' ? 'OOD' : 'Normal'} / ${trainingMode === 'multi_step' ? 'MST' : 'One-step'} learning curves for these filters. Reload to check for updated results.`
   : 'No results for these filters.';
 function node(tag, text, className) {
   const element = document.createElement(tag);
@@ -205,7 +205,7 @@ function render(animate = true) {
       : 'One-step training';
     return `${training} · ${objective} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames (${run.rollout_steps + p.history_frames} frames total)`;
   }))];
-  $('protocol').textContent = protocols.join(' / ') || (missingLearning() ? 'Select Normal and One-step to see the completed training-size sweep.' : `Awaiting completed ${trainingMode === 'multi_step' ? 'MST' : 'one-step'} results for this dataset and split.`);
+  $('protocol').textContent = protocols.join(' / ') || 'No matching completed runs in the loaded data.';
   $('protocol').title = 'Training, validation and test use separate trajectories. Checkpoints are selected on validation rollouts. Graph models use bond edges only, including on Noisy LJ.';
   const steps = [...new Set(runs.flatMap(run => Object.keys(run.poisson_r2).map(Number)))].sort((a, b) => a - b);
   const previous = horizon;
@@ -316,13 +316,13 @@ function renderChart(animate, metric = 'poisson_r2') {
     showlegend:false,hovermode:'x unified',dragmode:'zoom',uirevision:`${study}:${dataset}:${metric}:${learning() ? horizon : ''}`,
     hoverlabel:{bgcolor:css('--surface'),bordercolor:css('--line'),font:{size:20,color:css('--ink')}},
     xaxis:{visible:hasResults,title:{text:learning() ? 'TRAINING NETWORKS' : 'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
-    yaxis:{visible:hasResults,title:{text:mse ? 'POSITION MSE' : 'TEST R²',font:{size:16}},range:[0,mse ? (maximum > 0 ? maximum * 1.05 : 1) : Math.max(1,maximum)+.05],gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:mse ? '.1e' : '.2f',nticks:5},
+    yaxis:{visible:hasResults,title:{text:mse ? 'POSITION MSE' : 'TEST R²',font:{size:16}},range:[0,mse ? (maximum > 0 ? maximum * 1.05 : 1) : 1],autorange:false,fixedrange:!mse,gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:mse ? '.1e' : '.2f',nticks:5},
     shapes:hasResults ? [{type:'line',x0:learning() ? trainSize : horizon,x1:learning() ? trainSize : horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}] : [],
-    annotations:hasResults ? [] : [{text:emptyResults().replace(' learning curves have not been run yet. Available:', '<br>Learning curves not run yet.<br>Available:'),xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
+    annotations:hasResults ? [] : [{text:emptyResults().replace(' learning curves', '<br>learning curves').replace('. Reload', '.<br>Reload'),xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
   plot.setAttribute('aria-label', `${label(dataset)}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against ${learning() ? `training networks, scored at rollout step ${horizon}` : 'rollout steps'}. Values are available in the downloaded CSV.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
-  if (animate && sameTraces && plot.layout.xaxis.title.text === layout.xaxis.title.text && plot.data.some(trace => trace.visible !== false && trace.y.some(finite)) && traces.some(trace => trace.visible !== false && trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (!mse && animate && sameTraces && plot.layout.xaxis.title.text === layout.xaxis.title.text && plot.data.some(trace => trace.visible !== false && trace.y.some(finite)) && traces.some(trace => trace.visible !== false && trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     Plotly.animate(plot,{data:traces,layout,traces:traces.map((_,i) => i)},
       {mode:'immediate',transition:{duration:650,easing:'cubic-in-out'},frame:{duration:650,redraw:true}});
   } else {
@@ -425,7 +425,7 @@ function setTheme(dark) {
 }
 setTheme(document.body.dataset.defaultTheme === 'dark');
 $('theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
-Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataRoot + path).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(([payload, learningPayload])=>{
+Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataRoot + path,{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(([payload, learningPayload])=>{
   studies={rollouts:{...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')}, learning:learningPayload};
   data=studies.rollouts;
   if(!data.runs.length){$('notice').textContent='No completed runs have been published yet.';return;}
