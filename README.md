@@ -21,7 +21,10 @@ Data is read directly from `/rg/mendels_prj/s.sergey/data_bench` by default:
 `node_optimized/` (381 trajectories), `stiff_optimized/` (288 trajectories), and
 `data_LJ_noisy_eps0.01_sigma1.0_cutoff1.122/` (1348 trajectories). Set
 `GNN_BENCH_DATA_ROOT=/path/to/data` to use another root with these directory names.
-The repository does not store trajectory copies.
+The repository does not store trajectory copies. The OOD split reads each
+network's Poisson's ratio from the Zenodo registry CSVs under the same root:
+`data_registry_mini.csv` (node and stiffness optimized) and
+`data_LJ_noisy_eps0.01_sigma1.0_cutoff1.122/data_registry.csv` (Noisy LJ).
 
 Existing results record their original network memberships. New seeded splits
 use the full current file roster, so expanding Noisy LJ from 200 to 1348 files
@@ -35,7 +38,8 @@ multiple models, overrides must be supported by every selected model. Without `-
 hyperparameters come from the config. Without `--seeds`, the config's training
 seed is used.
 
-The `edge_mlp` and `mlp` defaults use width 128 and depth 4.
+`gns` defaults to hidden size 64 and two message-passing layers, as in the
+GNNInverseDesign reference. The `edge_mlp` and `mlp` defaults use width 128 and depth 4.
 `edge_mlp_delta` uses the same edge-MLP architecture and parameter count, replacing
 raw velocity history with the latest velocity and successive differences before
 normalization. Run it with `--model edge_mlp_delta`; `edge_mlp` remains the original
@@ -49,29 +53,52 @@ current system, uses no future frames, and adds no message-passing rounds.
 `configs/networks.json` trains on the first **20 frames per training trajectory**:
 four input frames and 16 one-step targets. Validation and test use separate
 trajectories, with **100 predicted steps starting from their first four frames**
-(104 frames total). The split contains 50 training, 50 validation and 70 test
-trajectories; validation rollouts select the checkpoint.
+(104 frames total). The split contains 100 training, 50 validation and 70 test
+trajectories; validation rollouts select the checkpoint. A run with fewer than
+**100 training networks** prints a warning: that is too few to support a comparison.
 
-All supplied training configs enable early stopping after **five validation
-checks without improvement**. `train.epochs` is the maximum, currently 40 in the
-benchmark configs. With validation every two epochs, patience spans ten epochs.
-Stopping follows `train.select_by` (the benchmark uses `poisson_r2_100`); without
-an explicit selection metric, it follows validation loss. Evaluation restores
-the best validation checkpoint, including when training reaches the epoch cap.
-Set `train.early_stopping_patience` to `null` to disable stopping. Existing
-saved runs without this setting retain their original fixed-epoch behavior.
-Results record actual trained epochs separately from the best checkpoint epoch.
+Training runs the full **150 epochs**. Every two epochs the checkpoint is saved
+and rolled out on the validation networks; afterwards the checkpoint with the
+best `train.select_by` (the benchmark uses `poisson_r2_100`) is restored and
+tested. Early stopping is off; `train.early_stopping_patience` turns it back on.
+
+### Rollout box and Poisson's ratio
+
+The box is not predicted. In every rollout, during validation, test and
+multi-step training, the driven edge Lx keeps the per-frame increment of the last
+two seed frames, and the free edge Ly follows a Langevin-piston barostat pushed by
+the virial pressure of the predicted positions, as LAMMPS' `fix nph` did. Bond
+vectors are recomputed in each new box. Poisson's ratio is read off the box, from
+the last seed frame to each scored step, for prediction and ground truth alike.
+
+The piston constants are registered per dataset. Before training, every run
+drives the barostat with ground-truth positions on ten training trajectories and
+compares Ly with the true box. A relative error above 0.1 stops the run. The
+registered constants reach 0.02–0.05 and recover the true Poisson's ratio with
+R² ≥ 0.997. A dataset with no constants says so and has them fitted at the start
+of the run; register the printed values. Check or refit a dataset on its own:
+
+```bash
+gnn-bench barostat node_optimized        # check the registered constants
+gnn-bench barostat dePablo_random --fit  # search for new ones
+```
+
+Noisy LJ declares no force field, so it has no pressure to drive the barostat
+and cannot be rolled out until its potential is declared.
+
+### Multi-step training
 
 Multi-step training (MST) feeds predictions back into the model and averages the
-loss over every rollout step, with gradients through the entire rollout.
+loss over every rollout step. Predictions are detached before they are fed back,
+as in the reference; `--set train.detach_rollout=false` backpropagates through
+the whole rollout instead. Lx and Ly move exactly as in a rollout.
 `configs/mst/normal.json` uses the same network split as the normal benchmark;
-`configs/mst/*_ood.json` keep the exact OOD memberships. The curriculum uses
-1 step in epochs 1–2, 2 in 3–4, 3 in 5–6, 5 in 7–8, and 10 from epoch 9.
-With 16 starting windows and four input frames, MST consumes the first **29
-frames** per training trajectory. Validation and test still predict 100 steps.
-Early stopping uses five validation checks without improvement, with a 40-epoch
-cap. The frozen-position baseline has no learned dynamics and is included for
-reference in both training modes.
+`configs/mst/*_ood.json` keep the exact OOD memberships. The reference curriculum
+uses 1 step in epochs 1–10, 2 in 11–20, 3 in 21–30, 5 in 31–40, 8 in 41–50 and 10
+from epoch 51. With 16 starting windows and four input frames, MST consumes the
+first **29 frames** per training trajectory. Validation and test still predict
+100 steps. The frozen-position baseline has no learned dynamics and is included
+for reference in both training modes.
 
 ```bash
 gnn-bench train configs/mst/normal.json --dataset node_optimized \
@@ -91,9 +118,12 @@ gnn-bench train configs/networks.json \
 
 The autoregressive Noisy LJ benchmark uses the stored bond edges and stiffnesses.
 Its dataset declaration does not infer missing rest lengths or LJ parameters;
-force and stress analysis is unavailable.
+force and stress analysis is unavailable, and so, for now, are rollouts (see above).
 
 ### Noisy LJ: two-frame predictions
+
+These results predate the barostat rollout: the transverse box was frozen and
+Poisson's ratio was fitted to node displacements.
 
 **Every run seeds the rollout with exactly frames 0–3 (history 3), then predicts
 to frame 103.** The [comparison plot](configs/noisy_lj_stride/predict2_comparison.png),
@@ -150,31 +180,34 @@ Prepare a fixed split for each dataset, then train the same models and seeds:
 
 ```bash
 gnn-bench --threads 4 ood-config configs/networks.json \
-  --dataset noisy_lj --out configs/ood/noisy_lj.json
-gnn-bench --threads 4 train configs/ood/noisy_lj.json \
+  --dataset node_optimized --out configs/ood/node_optimized.json
+gnn-bench --threads 4 train configs/ood/node_optimized.json \
   --model gns mlp edge_mlp edge_mlp_delta edge_mlp_attention linear_floor frozen --seeds 0 1 2
 ```
 
-Networks are ranked by ground-truth, position-based Poisson's ratio at the
-100-step evaluation horizon: frame 3 is the reference and frame 103 is the
-target, using four initial frames. The highest 30% (rounded up) forms the
-training/validation pool. Shuffle that pool with data-split seed 42; use its
-first 30 networks for training and all the rest for validation. Shuffle the
-lower 70% using the same generator, then take at most 100 test networks. The
-remaining lower-ratio networks are unused. Equal ratios are ordered by network
-ID. `ood-config --train-networks` changes the training count.
+Networks are ranked by the Poisson's ratio the dataset's registry CSV records.
+The highest 30% (rounded up) forms the training pool and the lower 70% the test
+pool; each is shuffled with data-split seed 42. Training takes the first 100
+networks of the upper pool, and test at most 100 of the lower one. Validation
+spans the full range of ratios: 15 of its 50 networks come from what the upper
+pool has left, as many as there are, and the rest from the lower pool's
+remainder. The remaining networks are unused. Equal ratios are ordered by
+network ID. `ood-config --train-networks` and `--val-networks` change the counts.
 
-| Dataset | Training | Validation | OOD test |
-|---|---:|---:|---:|
-| Node optimized | 30 | 85 | 100 |
-| Stiffness optimized | 30 | 57 | 100 |
-| Noisy LJ | 30 | 30 | 100 |
+| Dataset | Training | Validation (upper / lower) | OOD test | Cutoff ν |
+|---|---:|---:|---:|---:|
+| Node optimized | 100 | 50 (15 / 35) | 100 | 0.129 |
+| Stiffness optimized | 87 | 50 (0 / 50) | 100 | 0.134 |
+| Noisy LJ | 100 | 50 (15 / 35) | 100 | 0.469 |
+
+The stiffness-optimized set has only 288 networks, so its upper pool holds 87:
+all of them train, the run warns about the count, and validation has no
+high-ratio networks. The full Zenodo set (1085 networks) would fill both.
 
 The configs store every network assignment explicitly; accompanying
 `*.ranking.json` files record every ratio and the cutoff. Training still uses
-the first 20 frames, and checkpoints are selected on high-ratio validation
-networks. Test trajectories do not enter training, normalization, or checkpoint
-selection. Ground-truth test responses are used to define the OOD split.
+the first 20 frames. Test trajectories do not enter training, normalization, or
+checkpoint selection. Ground-truth test responses are used to define the OOD split.
 
 The website's **Normal / OOD** toggle switches all results together. **Exact
 network split** lists every train/validation/test and unused network. Normal uses 50/50/70

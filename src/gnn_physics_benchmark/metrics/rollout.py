@@ -7,10 +7,10 @@ did no better than standing still and below 1.0 means it did.
 
 Poisson's ratio is scored along the rollout: `poisson_r2_<k>` is the R^2 across
 systems of the ratio `k` steps past the last seed frame, every `POISSON_EVERY`
-steps. It comes from the node positions, not the box: a rollout does not predict
-the box, its transverse edges stay put, so a box-based ratio would be the same
-for every model. On ground truth the position-based ratio matches the box-based
-one to R^2 >= 0.99 on the inverse-design sets.
+steps. It is read off the box, as from the ground truth: in a rollout the free
+box edges follow a barostat driven by the predicted positions (see
+`gnn_physics_benchmark.barostat`). Where the transverse box is clamped the true
+ratio is zero everywhere and the R^2 is NaN.
 
 Position MSE, the frozen baseline and relative MSE are also recorded at these
 horizons. Each position MSE averages squared errors over node coordinates first,
@@ -25,7 +25,7 @@ from __future__ import annotations
 import torch
 from torch_geometric.data import Data
 
-__all__ = ["r2_centred", "position_poisson_ratio", "rollout_errors", "summarise_rollouts"]
+__all__ = ["r2_centred", "box_poisson_ratio", "rollout_errors", "summarise_rollouts"]
 
 #: Steps between the rollout horizons Poisson's ratio is scored at.
 POISSON_EVERY = 10
@@ -50,28 +50,18 @@ def r2_centred(truth: list[float], predicted: list[float]) -> float:
     return 1.0 - residual / total if total > 0 else float("nan")
 
 
-def position_poisson_ratio(reference: Data, frame: Data, *, driven_axis: int = 0) -> float:
-    """Poisson's ratio between two frames, from how the nodes moved.
+def box_poisson_ratio(reference: Data, frame: Data, *, driven_axis: int = 0) -> float:
+    """Poisson's ratio between two frames, from their boxes.
 
-    The transverse strain is the affine stretch that best explains the node
-    displacements -- the least-squares slope of displacement against position --
-    and the axial strain is the imposed one, read off the box. Displacements are
-    taken to the nearest periodic image.
+    Minus the mean strain of the other box edges over the strain of the driven one.
     """
-    lengths = frame.box_tensor
-    axial = float((lengths[driven_axis] - reference.box_tensor[driven_axis]) / reference.box_tensor[driven_axis])
+    before, after = reference.box_tensor, frame.box_tensor
+    strain = (after - before) / before
+    axial = float(strain[driven_axis])
     if abs(axial) < 1e-12:
         return float("nan")
-    strains = []
-    for axis in range(lengths.numel()):
-        if axis == driven_axis:
-            continue
-        position = reference.pos[:, axis] - reference.pos[:, axis].mean()
-        moved = frame.pos[:, axis] - reference.pos[:, axis]
-        moved = moved - lengths[axis] * torch.round(moved / lengths[axis])
-        moved = moved - moved.mean()
-        strains.append(float((moved * position).sum() / (position * position).sum()))
-    return -sum(strains) / len(strains) / axial
+    transverse = [float(strain[axis]) for axis in range(strain.numel()) if axis != driven_axis]
+    return -sum(transverse) / len(transverse) / axial
 
 
 def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, driven_axis: int = 0) -> dict:
@@ -85,11 +75,6 @@ def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, dr
     reference = truth[:reached]
     last_true = reference[-1].pos
     seed = truth[history]
-    # A clamped transverse box has no Poisson's ratio to score.
-    clamped = all(
-        float(reference[-1].box_tensor[axis]) == float(seed.box_tensor[axis])
-        for axis in range(seed.box_tensor.numel()) if axis != driven_axis
-    )
     nu, mse = {}, {}
     for step in range(POISSON_EVERY, reached - history, POISSON_EVERY):
         target = truth[history + step].pos
@@ -97,12 +82,9 @@ def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, dr
             float(torch.nn.functional.mse_loss(predicted[history + step].pos, target)),
             float(torch.nn.functional.mse_loss(predicted[history].pos, target)),
         )
-        if clamped:
-            nu[step] = (float("nan"), float("nan"))
-            continue
         nu[step] = (
-            position_poisson_ratio(seed, truth[history + step], driven_axis=driven_axis),
-            position_poisson_ratio(predicted[history], predicted[history + step], driven_axis=driven_axis),
+            box_poisson_ratio(seed, truth[history + step], driven_axis=driven_axis),
+            box_poisson_ratio(predicted[history], predicted[history + step], driven_axis=driven_axis),
         )
     return {
         "position_mse": float(torch.nn.functional.mse_loss(predicted[-1].pos, last_true)),

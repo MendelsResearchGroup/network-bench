@@ -8,8 +8,10 @@ from .graph.features import potential_for
 from .training.rollout import rollout
 
 
-def evaluate_model(model, trajectories, config, *, split: str = "test", steps: int | None = None, sample_stride: int = 5) -> dict:
+def evaluate_model(model, trajectories, config, barostat, *, split: str = "test", steps: int | None = None, sample_stride: int = 5) -> dict:
     """Roll a model out on one split and summarise everything.
+
+    `barostat` moves the box of every rollout; Poisson's ratio is read off it.
 
     Returns the rollout metrics -- raw position MSE at the last frame reached,
     the frozen baseline it is read against, and their ratio -- together with the
@@ -32,7 +34,7 @@ def evaluate_model(model, trajectories, config, *, split: str = "test", steps: i
             min(steps, available),
             graph_spec,
             potential,
-            box_mode=config.train.box_mode,
+            barostat,
             device=config.train.device,
         )
         errors.append(

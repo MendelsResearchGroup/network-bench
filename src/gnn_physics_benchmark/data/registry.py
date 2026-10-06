@@ -14,6 +14,7 @@ use the same shared data directory.
 
 from __future__ import annotations
 
+import csv
 import json
 import os
 from dataclasses import dataclass, field
@@ -68,6 +69,14 @@ class DatasetEntry:
     key so that regenerating a manifest misses the cache instead of silently
     comparing unlike splits."""
     field_notes: str = ""
+    barostat: dict | None = None
+    """Piston constants of the transverse barostat used in rollouts: `coupling`,
+    `damping` and the LAMMPS timestep `dt`. Checked against the true box before
+    every run; see `gnn_physics_benchmark.barostat`. `None` on a dataset with free
+    axes means they are fitted when a run starts."""
+    registry: tuple[str, str] | None = None
+    """`(csv path relative to the data root, data_type)` of the registry that
+    records each system's Poisson's ratio; the OOD split ranks by it."""
 
     def root(self) -> Path:
         return resolve_root() / self.directory
@@ -80,6 +89,18 @@ class DatasetEntry:
         if not path.is_file():
             raise FileNotFoundError(f"manifest {name!r} of dataset {self.key!r} is not at {path}.")
         return json.loads(path.read_text())
+
+    def poisson_ratios(self) -> dict[str, float]:
+        """Each system's Poisson's ratio, as the dataset's registry records it."""
+        if self.registry is None:
+            raise ValueError(f"dataset {self.key!r} has no registry of Poisson's ratios.")
+        path, data_type = self.registry
+        with open(resolve_root() / path, newline="") as stream:
+            return {
+                Path(row["file_path"]).stem: float(row["poisson_ratio"])
+                for row in csv.DictReader(stream)
+                if row["data_type"] == data_type
+            }
 
     def systems(self) -> list[str]:
         """Every system stem present on disk, sorted."""
@@ -141,12 +162,15 @@ DATASETS: dict[str, DatasetEntry] = {
         frames=1500,
         driven_axis=0,
         free_axes=(1,),
+        registry=("data_LJ_noisy_eps0.01_sigma1.0_cutoff1.122/data_registry.csv", "lj_noisy"),
         field_notes=(
             "Source: data_LJ_noisy_eps0.01_sigma1.0_cutoff1.122/chunk_*.pt under the shared data root. "
             "Time is counted in stored frames; "
             "the files do not record the MD dump interval. Benchmark inputs use "
             "the stored bond graph only. No rest lengths or LJ force parameters "
-            "are inferred, and force/stress metrics are unavailable."
+            "are inferred, and force/stress metrics are unavailable. Without a force "
+            "field the rollout barostat has no pressure to follow, so this set cannot "
+            "be rolled out until its potential is declared."
         ),
     ),
     "cold_wca_fixyz_n1024": DatasetEntry(
@@ -280,6 +304,8 @@ DATASETS: dict[str, DatasetEntry] = {
         driven_axis=0,
         free_axes=(1,),
         potential=_INVERSE_DESIGN_POTENTIAL,
+        barostat={"coupling": 0.03916385820627387, "damping": 0.03701212196530892, "dt": 0.01},
+        registry=("data_registry_mini.csv", "node_optimized"),
         field_notes=(
             "The stiffness column is exactly 1/l0 on every bond (k * l0 = 1 to float32 "
             "precision), so reading the column and `inverse_rest_length` coincide here; "
@@ -307,6 +333,8 @@ DATASETS: dict[str, DatasetEntry] = {
         driven_axis=0,
         free_axes=(1,),
         potential=_INVERSE_DESIGN_POTENTIAL,
+        barostat={"coupling": 0.03482943076892936, "damping": 0.005001162812170315, "dt": 0.01},
+        registry=("data_registry_mini.csv", "stiff_optimized"),
         field_notes=(
             "The per-bond stiffnesses are the optimisation variable, so they bear no "
             "relation to the rest length any more: k runs from 3e-6 to 1.5. The optimiser "
@@ -342,6 +370,8 @@ DATASETS: dict[str, DatasetEntry] = {
         driven_axis=0,
         free_axes=(1,),
         potential=_INVERSE_DESIGN_POTENTIAL,
+        # Fitted here: the reference "noisy" constants miss this dump's box by 5.5%.
+        barostat={"coupling": 0.01, "damping": 0.0013335214321633239, "dt": 0.01},
         field_notes=(
             "The stiffness is 1/l0 with noise on part of the bonds: about 55% of them "
             "(47-63% per system) sit exactly on 1/l0 and the rest are scattered over "

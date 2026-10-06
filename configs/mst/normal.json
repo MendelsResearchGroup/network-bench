@@ -8,7 +8,7 @@
  "split": {
   "manifest": null,
   "sizes": [
-   50,
+   100,
    50,
    70
   ],
@@ -19,30 +19,6 @@
   "val_rollout_steps": 100,
   "validate_every": 2,
   "select_by": "poisson_r2_100",
-  "early_stopping_patience": 5,
-  "mode": "multi_step",
-  "rollout_schedule": [
-   [
-    0,
-    1
-   ],
-   [
-    2,
-    2
-   ],
-   [
-    4,
-    3
-   ],
-   [
-    6,
-    5
-   ],
-   [
-    8,
-    10
-   ]
-  ],
-  "detach_rollout": false
+  "mode": "multi_step"
  }
 }
