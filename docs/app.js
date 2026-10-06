@@ -1,6 +1,8 @@
 /* A static explorer: all aggregation and filtering happens in the browser. */
 const $ = id => document.getElementById(id);
 const dataRoot = document.body.dataset.dataRoot ?? '';
+const websiteVersion = document.querySelector('meta[name="website-version"]').content;
+const dataURL = path => `${dataRoot}${path}?v=${websiteVersion}`;
 const MODELS = ['gns', 'edge_mlp', 'mlp', 'tiny_mlp', 'linear_floor', 'frozen', 'edge_mlp_delta', 'edge_mlp_attention'];
 const MODEL_STYLES = [
   {symbol:'circle', glyph:'●', dash:'solid'},
@@ -85,7 +87,7 @@ function setStudy(value, resetModels = true) {
     ? `Learning curves: how accuracy changes with 10–100 training networks. Both metrics score the selected rollout horizon. The dotted line marks the training size inspected in the ${document.body.dataset.clickInspection ? 'model summary' : 'ranking and table'} and split details.`
     : 'Rollouts: how accuracy changes over prediction steps for a fixed training set.';
   $('generated').textContent = `Updated ${new Date(data.generated).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})} · ${data.runs.length} runs in this view`;
-  $('json-download').href = dataRoot + (learning() ? 'learning-curves.json' : 'results.json');
+  $('json-download').href = dataURL(learning() ? 'learning-curves.json' : 'results.json');
   setDataset(datasets().includes(dataset) ? dataset : datasets()[0], resetModels);
 }
 function setDataset(value, resetModels = true) {
@@ -425,7 +427,7 @@ function setTheme(dark) {
 }
 setTheme(document.body.dataset.defaultTheme === 'dark');
 $('theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
-Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataRoot + path,{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(([payload, learningPayload])=>{
+Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataURL(path),{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(([payload, learningPayload])=>{
   studies={rollouts:{...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')}, learning:learningPayload};
   data=studies.rollouts;
   if(!data.runs.length){$('notice').textContent='No completed runs have been published yet.';return;}

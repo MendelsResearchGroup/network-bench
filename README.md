@@ -314,9 +314,13 @@ saved split. It loads only that split, without preparing training data again.
 PBS jobs do this when they finish. The browser plots every dataset with Plotly,
 filters models and seeds, and compares seed means with sample standard deviations.
 The exported comparison ID keeps different run settings and system splits apart.
-Plotly is loaded from its versioned CDN; no build step or backend is needed.
-View it with `python -m http.server --directory docs 8000` or publish `docs/`
-from `main` with GitHub Pages.
+Plotly is loaded from its versioned CDN; no backend is needed. Preview with
+`python -m http.server --directory docs 8000`. GitHub Actions publishes the
+website when its files change on `main`. The small static build stamps local
+CSS, JavaScript, images and results URLs with the deployed commit SHA. Results
+JSON also revalidates on reload, so new deployments use fresh cache entries.
+Open tabs need a reload to receive an update. Build a deployment locally with
+`python scripts/build_website.py /tmp/network-bench-site local-preview`.
 
 Dataset layouts, force fields, difficulty measures, and scientific caveats are
 in the [data and physics reference](docs/reference.md).
