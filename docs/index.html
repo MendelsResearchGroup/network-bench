@@ -7,6 +7,7 @@
 <meta name="website-version" content="__WEBSITE_REVISION__">
 <meta name="description" content="Compare learned simulators on spring-network compression. Explore rollout accuracy, learning curves, model parameters and exact benchmark splits.">
 <title>Network Bench — Results</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="studio.css">
 <script src="https://cdn.plot.ly/plotly-4.1.1.min.js" defer>
@@ -16,7 +17,7 @@
 </head>
 <body class="design studio" data-default-view="rollouts" data-click-inspection="true" >
 <header class="design-header">
-<a class="identity" href="./">network<span>bench</span>
+<a class="identity" href="./"><svg width="29" height="29" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25L16 5L27 25Z"/><circle cx="5" cy="25" r="3"/><circle cx="16" cy="5" r="3"/><circle cx="27" cy="25" r="3"/></svg><span class="identity-name">network<span>bench</span></span>
 </a>
 <div class="downloads">
 <button id="download">CSV ↓</button>
@@ -30,9 +31,8 @@
 <div class="studio-layout">
 <aside id="explore" class="instrument">
 <div class="control-block dataset-control">
-<span class="control-label">Dataset</span>
-<div id="datasets" class="segmented">
-</div>
+<label class="control-label" for="datasets">Dataset</label>
+<select id="datasets"></select>
 <label id="cohort-label" hidden>Comparison <select id="cohort">
 </select>
 </label>

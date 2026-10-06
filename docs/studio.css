@@ -1,8 +1,9 @@
 /* Studio typography and controls. */
 .design { font-size:18px; line-height:1.5; }
 .design-header { display:flex; align-items:center; gap:32px; max-width:1500px; margin:auto; padding:24px 36px; border-bottom:1px solid var(--line); }
-.identity { font-size:24px; font-weight:700; letter-spacing:-.7px; text-decoration:none; }
-.identity span { font-weight:400; color:var(--muted); }
+.identity { display:inline-flex; align-items:center; gap:10px; font-size:24px; font-weight:700; letter-spacing:-.7px; text-decoration:none; }
+.identity svg { flex:none; stroke:var(--green); fill:var(--sidebar); stroke-width:1.7; }
+.identity-name span { font-weight:400; color:var(--muted); }
 .downloads { display:flex; align-items:center; gap:16px; margin-left:auto; font-size:16px; }
 .downloads a { text-decoration:none; }
 .downloads button { background:transparent; padding:0; }
@@ -74,30 +75,37 @@
 }
 .studio .design-header { max-width:none; background:var(--sidebar); }
 .studio .design-main { max-width:1550px; padding-top:24px; }
-.studio-layout { display:grid; grid-template-columns:310px minmax(0,1fr); gap:32px; align-items:start; }
-.instrument { position:sticky; top:24px; background:var(--sidebar); border:1px solid var(--line); padding:24px; border-radius:8px; }
-.instrument>.control-block { margin-bottom:22px; }
-.studio #datasets { width:100%; flex-direction:column; }
-.studio #datasets button { text-align:left; }
-.studio .instrument #studies { width:100%; flex-direction:column; }
-.instrument-pair { display:grid; grid-template-columns:1fr; gap:18px; margin-bottom:22px; }
-.studio .instrument .horizon-control { margin:26px 0; }
-.studio .models { padding-top:22px; border-top:1px solid var(--line); }
-.studio .legend { display:grid; gap:8px; }
-.studio .legend button { width:100%; }
+.studio-layout { display:grid; grid-template-columns:356px minmax(0,1fr); gap:24px; align-items:start; }
+.instrument { position:sticky; top:24px; background:var(--sidebar); border:1px solid var(--line); padding:16px; border-radius:8px; }
+.instrument>.control-block { margin-bottom:12px; }
+.instrument .control-label { margin-bottom:4px; }
+.studio .dataset-control { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; gap:8px; }
+.studio .dataset-control .control-label { margin:0; }
+.studio #cohort-label { grid-column:1/-1; }
+.studio #datasets { width:100%; border:1px solid var(--line); border-radius:6px; padding:7px 10px; font-size:16px; }
+.studio .instrument #studies { width:100%; flex-direction:row; }
+.studio .instrument #studies button { flex:1 1 auto; }
+.instrument-pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:12px; }
+.studio .instrument-pair .segmented button,.studio .instrument #studies button { font-size:15px; padding:4px 6px; }
+.studio .instrument .horizon-control { margin:12px 0; }
+.studio .instrument .horizon-label { margin-bottom:4px; }
+.studio .instrument .range-labels { margin-top:2px; }
+.studio .models { margin:14px 0 0; padding-top:12px; border-top:1px solid var(--line); }
+.studio .legend { display:grid; gap:4px; margin:8px 0; }
+.studio .legend button { width:100%; padding:4px 8px; line-height:1.25; }
+.studio .legend .swatch { font-size:18px; }
 .studio .model-parameters { margin-left:auto; }
-.studio .models-heading { margin-bottom:14px; }
-.studio .options { margin-top:20px; border-top:1px solid var(--line); padding-top:20px; }
+.studio .models-heading { margin-bottom:8px; }
+.studio .options { margin-top:12px; border-top:1px solid var(--line); padding-top:12px; }
 .studio .option-fields { flex-direction:column; }
 .studio .metric-panel { padding:24px; margin-bottom:24px; background:var(--surface); border:1px solid var(--line); border-radius:8px; }
+.studio .plot { height:calc(var(--plot-height) * 1px); }
 .studio .selection-summary { border-bottom:1px solid var(--line); padding-bottom:20px; }
 .studio .snapshot .ranking { grid-template-columns:repeat(2,minmax(0,1fr)); }
-@media(max-width:1100px) { .studio-layout { grid-template-columns:275px minmax(0,1fr); gap:20px; } .instrument { padding:20px; } }
+@media(max-width:1100px) { .studio-layout { gap:20px; } }
 @media(max-width:850px) {
  .studio-layout { grid-template-columns:1fr; }
  .instrument { position:static; }
- .studio #datasets { flex-direction:row; }
- .instrument-pair { grid-template-columns:1fr 1fr; }
  .studio .legend { display:flex; }
  .studio .legend button { width:auto; }
  .studio .metric-panel { padding:16px; }

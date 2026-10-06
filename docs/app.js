@@ -90,7 +90,7 @@ function setStudy(value, resetModels = true) {
 function setDataset(value, resetModels = true) {
   dataset = value;
   if (resetModels) topModels = true;
-  for (const button of $('datasets').children) button.setAttribute('aria-pressed', String(button.dataset.value === dataset));
+  $('datasets').value = dataset;
   const comparisons = [...new Set(modeRuns().map(run => run.comparison_id))];
   cohorts[cohortKey()] ??= comparisons[0];
   $('cohort-label').hidden = comparisons.length < 2;
@@ -439,7 +439,8 @@ Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataURL(pa
   data=studies.rollouts;
   if(!data.runs.length){$('notice').textContent='No completed runs have been published yet.';return;}
   enabled=new Set([...data.runs,...learningPayload.runs].map(run=>run.model));
-  for(const key of datasets()){const button=node('button',label(key));button.dataset.value=key;button.onclick=()=>setDataset(key);$('datasets').append(button);}
+  for(const key of datasets()) $('datasets').append(new Option(label(key),key));
+  $('datasets').onchange=()=>setDataset($('datasets').value);
   for (const [view, payload] of Object.entries(studies)) for(const key of datasets()){
     for (const distribution of ['normal', 'ood']) for (const training of ['one_step', 'multi_step']) cohorts[`${view}:${key}:${distribution}:${training}`]=payload.runs.find(run=>run.dataset===key && (run.mode ?? 'normal') === distribution && (run.training_mode ?? 'one_step') === training)?.comparison_id;
   }
