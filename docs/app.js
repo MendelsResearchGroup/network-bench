@@ -83,9 +83,6 @@ function setStudy(value, resetModels = true) {
   $('train-size').replaceChildren(...sizes.map(size => new Option(`${size} networks`, String(size))));
   if (sizes.length && !sizes.includes(trainSize)) trainSize = sizes.at(-1);
   $('train-size').value = String(trainSize);
-  $('study-note').textContent = learning()
-    ? `Learning curves: how accuracy changes with 10–100 training networks. Both metrics score the selected rollout horizon. The dotted line marks the training size inspected in the ${document.body.dataset.clickInspection ? 'model summary' : 'ranking and table'} and split details.`
-    : 'Rollouts: how accuracy changes over prediction steps for a fixed training set.';
   $('generated').textContent = `Updated ${new Date(data.generated).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})} · ${data.runs.length} runs in this view`;
   $('json-download').href = dataURL(learning() ? 'learning-curves.json' : 'results.json');
   setDataset(datasets().includes(dataset) ? dataset : datasets()[0], resetModels);
@@ -173,8 +170,8 @@ function renderSplit() {
     ? 'OOD: rank networks by ground-truth Poisson’s ratio at 100 steps. Train and validate within the highest 30%; test on up to 100 networks from the lower 70%.'
     : 'Normal: shuffle networks with a fixed data-split seed, then assign separate training, validation and test networks.';
   $('split-counts').textContent = split
-    ? `· ${learning() ? `seed ${split.seed} · ` : ''}${split.systems.train.length} train / ${split.systems.val.length} validation / ${split.systems.test.length} test / ${split.unused.length} unused`
-    : missingLearning() ? '· not run yet' : '· awaiting completed runs';
+    ? `${split.systems.train.length} train / ${split.systems.val.length} validation / ${split.systems.test.length} test`
+    : 'No matching results';
   $('split-note').textContent = split
     ? learning()
       ? `Showing split and training seed ${split.seed} at ${trainSize} training networks. ${mode === 'ood' ? `Training uses the highest ${trainSize} networks by Poisson’s ratio at 100 steps, from frame 3 to 103; ties are ordered by network ID. The lowest training ratio is ${number(split.cutoff_poisson_ratio, 6)}. Validation and test come from ranks 101 onward, below the reserved top-100 pool. All three seeds use the same top-N training IDs.` : `Training uses the first ${trainSize} of this seed's shuffled 100-network pool.`} The same 70 validation and 70 test networks are used at every training size and for every model within this seed. Other seeds have different held-out memberships, which can overlap across seeds. One-step and MST share these exact memberships. Unused IDs include the unselected part of the training pool. Bands show sample SD of per-seed scores, including split and training variation; they are not confidence intervals. Checkpoints are selected using validation R² at 100 steps. IDs below match the saved runs exactly.`
@@ -195,8 +192,8 @@ function renderSplit() {
 function render(animate = true) {
   const runs = selectedRuns(), grouped = groups(runs);
   renderSplit();
-  if ($('ranking-note')) $('ranking-note').textContent = `Ranked by mean R² at step ${horizon}${learning() ? ` · ${trainSize} training networks` : ''}.`;
-  $('legend-note').textContent = `The same models appear in both plots. Top 4 by mean R² at step ${horizon}${learning() ? ` and ${trainSize} training networks` : ''} shown by default. Click a model to toggle both lines; numbers show parameter counts.`;
+  if ($('ranking-note')) $('ranking-note').textContent = $('plot-seed').value === 'all' ? 'Mean R² ± sample SD' : 'R²';
+  $('legend-note').textContent = `Top 4 by R² at step ${horizon}${learning() ? ` with ${trainSize} training networks` : ''}. Model counts are parameters. Click a plotted point to inspect its scores and split.`;
   const protocols = [...new Set(runs.map(run => {
     const p = run.protocol;
     const training = p.training_frames !== null && p.first_frame === 0 && p.frame_stride === 1
@@ -217,7 +214,7 @@ function render(animate = true) {
   $('horizon').disabled = !steps.length;
   $('horizon').dataset.steps = JSON.stringify(steps);
   $('horizon-value').textContent = `${horizon} steps`;
-  if ($('selection-note')) $('selection-note').textContent = `${learning() ? `${trainSize} training networks · ` : ''}test scores at step ${horizon}${document.body.dataset.clickInspection ? ' · click a point to inspect' : ''}`;
+  if ($('selection-note')) $('selection-note').textContent = `Test at step ${horizon}`;
   $('first-step').textContent = steps.length ? `${steps[0]} steps` : '—';
   $('last-step').textContent = steps.length ? `${steps.at(-1)} steps` : '—';
   if (topModels) enabled = new Set(rankedGroups(grouped).filter(group => finite(group.score.mean)).slice(0, 4).map(group => group.model));
@@ -343,7 +340,12 @@ function renderChart(animate, metric = 'poisson_r2') {
         }
       });
   }
-  $(mse ? 'mse-range-note' : 'range-note').textContent = `${learning() ? `Test scores at step ${horizon} · ` : ''}${individual ? 'Individual seeds' : learning() ? 'Mean ± sample SD across split and training seeds' : 'Mean ± sample SD across training seeds'} · ${mse ? 'Lower MSE is better. Values use squared coordinate units.' : `Negative scores are drawn at 0; hover and ${document.body.dataset.clickInspection ? 'CSV' : 'table'} show actual values.`}`;
+  const seedCaption = $('plot-seed').value !== 'all' ? `Seed ${$('plot-seed').value}` : individual
+    ? 'Individual seeds'
+    : `Mean${$('bands').checked ? ' ± sample SD' : ''} across ${learning() ? 'split and training' : 'training'} seeds`;
+  $(mse ? 'mse-range-note' : 'range-note').textContent = mse
+    ? 'Per node coordinate, in squared coordinate units.'
+    : `${seedCaption} · Negative R² is drawn at 0; hover shows raw scores.`;
 }
 
 function tableRuns() {
