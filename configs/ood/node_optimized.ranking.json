@@ -1,1708 +1,1673 @@
 {
  "dataset": "node_optimized",
- "ranking_steps": 100,
- "history_frames": 4,
+ "ratio_source": "registry",
  "upper_fraction": 0.3,
- "train_networks": 30,
+ "train_networks": 100,
+ "val_networks": 50,
  "test_limit": 100,
- "cutoff_poisson_ratio": 0.13509471068765508,
+ "cutoff_poisson_ratio": 0.1294,
  "counts": {
-  "train": 30,
-  "val": 85,
+  "train": 100,
+  "val": 50,
   "test": 100
  },
  "unused": [
-  "chunk_1631",
-  "chunk_1306",
-  "chunk_965",
-  "chunk_30",
-  "chunk_1351",
-  "chunk_710",
-  "chunk_1618",
-  "chunk_1746",
-  "chunk_871",
-  "chunk_1612",
-  "chunk_1716",
-  "chunk_1512",
-  "chunk_539",
-  "chunk_904",
-  "chunk_1671",
-  "chunk_304",
-  "chunk_172",
-  "chunk_186",
-  "chunk_1453",
-  "chunk_455",
-  "chunk_1341",
-  "chunk_1108",
-  "chunk_1704",
-  "chunk_605",
-  "chunk_769",
-  "chunk_641",
-  "chunk_115",
-  "chunk_1022",
-  "chunk_336",
-  "chunk_1785",
-  "chunk_1740",
-  "chunk_674",
-  "chunk_606",
-  "chunk_1961",
-  "chunk_1347",
-  "chunk_678",
-  "chunk_1632",
-  "chunk_1565",
-  "chunk_1043",
-  "chunk_1909",
-  "chunk_1239",
-  "chunk_845",
-  "chunk_1418",
-  "chunk_278",
-  "chunk_694",
-  "chunk_146",
-  "chunk_667",
-  "chunk_1639",
-  "chunk_505",
-  "chunk_966",
-  "chunk_1792",
-  "chunk_713",
-  "chunk_155",
-  "chunk_750",
-  "chunk_1840",
-  "chunk_1477",
+  "chunk_1264",
   "chunk_437",
-  "chunk_57",
-  "chunk_971",
-  "chunk_853",
-  "chunk_1841",
-  "chunk_1336",
-  "chunk_1091",
-  "chunk_310",
-  "chunk_173",
-  "chunk_1216",
-  "chunk_116",
-  "chunk_809",
-  "chunk_673",
-  "chunk_1673",
-  "chunk_288",
-  "chunk_1479",
-  "chunk_431",
-  "chunk_740",
-  "chunk_972",
-  "chunk_29",
-  "chunk_1676",
-  "chunk_177",
-  "chunk_1519",
-  "chunk_1396",
-  "chunk_1827",
-  "chunk_873",
-  "chunk_1381",
-  "chunk_343",
-  "chunk_897",
-  "chunk_1416",
-  "chunk_1166",
-  "chunk_865",
-  "chunk_1280",
-  "chunk_1131",
-  "chunk_1271",
-  "chunk_1273",
-  "chunk_1072",
-  "chunk_781",
-  "chunk_580",
-  "chunk_18",
-  "chunk_1679",
-  "chunk_848",
-  "chunk_361",
+  "chunk_1816",
   "chunk_1003",
-  "chunk_725",
-  "chunk_234",
-  "chunk_1010",
-  "chunk_643",
-  "chunk_1328",
-  "chunk_40",
-  "chunk_24",
-  "chunk_959",
-  "chunk_1225",
-  "chunk_95",
-  "chunk_784",
-  "chunk_941",
-  "chunk_739",
-  "chunk_1591",
-  "chunk_457",
   "chunk_1959",
-  "chunk_1586",
-  "chunk_1284",
-  "chunk_954",
-  "chunk_909",
-  "chunk_1690",
-  "chunk_228",
-  "chunk_38",
-  "chunk_1344",
+  "chunk_347",
+  "chunk_52",
+  "chunk_763",
   "chunk_472",
-  "chunk_821",
+  "chunk_1381",
+  "chunk_972",
+  "chunk_750",
+  "chunk_1091",
+  "chunk_1673",
+  "chunk_965",
+  "chunk_1792",
+  "chunk_343",
+  "chunk_1418",
+  "chunk_694",
+  "chunk_600",
+  "chunk_1250",
+  "chunk_30",
+  "chunk_1932",
+  "chunk_1574",
+  "chunk_138",
+  "chunk_1907",
+  "chunk_1971",
+  "chunk_317",
+  "chunk_562",
+  "chunk_1164",
+  "chunk_605",
+  "chunk_1785",
+  "chunk_1478",
+  "chunk_336",
+  "chunk_1344",
+  "chunk_38",
+  "chunk_634",
+  "chunk_1128",
+  "chunk_901",
+  "chunk_848",
+  "chunk_539",
+  "chunk_1561",
+  "chunk_610",
+  "chunk_580",
+  "chunk_1484",
+  "chunk_288",
+  "chunk_278",
+  "chunk_1620",
+  "chunk_503",
+  "chunk_713",
+  "chunk_1980",
+  "chunk_285",
+  "chunk_1588",
+  "chunk_316",
+  "chunk_1983",
+  "chunk_172",
+  "chunk_228",
+  "chunk_29",
   "chunk_43",
-  "chunk_1622",
-  "chunk_1163",
+  "chunk_1479",
+  "chunk_1488",
+  "chunk_247",
+  "chunk_665",
+  "chunk_1027",
+  "chunk_17",
+  "chunk_1840",
+  "chunk_150",
+  "chunk_1754",
+  "chunk_1961",
+  "chunk_1273",
+  "chunk_485",
+  "chunk_1391",
+  "chunk_1676",
+  "chunk_1072",
+  "chunk_865",
+  "chunk_1746",
   "chunk_219",
+  "chunk_908",
+  "chunk_362",
+  "chunk_1019",
+  "chunk_1216",
+  "chunk_1068",
+  "chunk_586",
+  "chunk_1054",
+  "chunk_270",
+  "chunk_954",
+  "chunk_739",
+  "chunk_1453",
+  "chunk_1328",
+  "chunk_549",
+  "chunk_1780",
+  "chunk_484",
+  "chunk_283",
+  "chunk_1163",
+  "chunk_368",
   "chunk_1452",
   "chunk_1726",
-  "chunk_914",
-  "chunk_1478",
-  "chunk_1576",
-  "chunk_347",
-  "chunk_503",
-  "chunk_150",
-  "chunk_1816",
-  "chunk_1502",
-  "chunk_14",
-  "chunk_757",
-  "chunk_1579",
-  "chunk_1264",
-  "chunk_138",
-  "chunk_1164",
-  "chunk_1980",
-  "chunk_722",
-  "chunk_1237",
-  "chunk_562",
-  "chunk_270",
+  "chunk_1592",
   "chunk_893",
-  "chunk_1407",
-  "chunk_1893",
-  "chunk_737",
-  "chunk_1250",
-  "chunk_1754",
-  "chunk_1932",
-  "chunk_485",
-  "chunk_882",
+  "chunk_757",
+  "chunk_1731",
+  "chunk_310",
+  "chunk_909",
+  "chunk_1747",
+  "chunk_740",
+  "chunk_318",
+  "chunk_673",
+  "chunk_1579",
+  "chunk_762",
+  "chunk_1895",
+  "chunk_367",
+  "chunk_1351",
+  "chunk_99",
+  "chunk_769",
+  "chunk_641",
+  "chunk_904",
+  "chunk_1844",
+  "chunk_505",
+  "chunk_845",
+  "chunk_431",
   "chunk_1960",
-  "chunk_1356",
-  "chunk_763",
-  "chunk_1942",
-  "chunk_1489",
-  "chunk_1619"
+  "chunk_1447",
+  "chunk_678",
+  "chunk_1502",
+  "chunk_1534",
+  "chunk_1002",
+  "chunk_24",
+  "chunk_116",
+  "chunk_1946",
+  "chunk_1407",
+  "chunk_914"
  ],
  "ranking": [
   {
-   "system": "chunk_300",
-   "poisson_ratio": 0.35101130331532876
+   "system": "chunk_1343",
+   "poisson_ratio": 0.3458
   },
   {
    "system": "chunk_1385",
-   "poisson_ratio": 0.34770556625607857
-  },
-  {
-   "system": "chunk_1343",
-   "poisson_ratio": 0.3436969900721412
-  },
-  {
-   "system": "chunk_1494",
-   "poisson_ratio": 0.34117451425002027
-  },
-  {
-   "system": "chunk_1956",
-   "poisson_ratio": 0.3406119837881173
-  },
-  {
-   "system": "chunk_1165",
-   "poisson_ratio": 0.3392566967500011
+   "poisson_ratio": 0.3439
   },
   {
    "system": "chunk_761",
-   "poisson_ratio": 0.33870661031664523
-  },
-  {
-   "system": "chunk_216",
-   "poisson_ratio": 0.3345765040187526
+   "poisson_ratio": 0.3383
   },
   {
    "system": "chunk_0",
-   "poisson_ratio": 0.33193369191378
-  },
-  {
-   "system": "chunk_723",
-   "poisson_ratio": 0.33170692695687665
+   "poisson_ratio": 0.3373
   },
   {
    "system": "chunk_1475",
-   "poisson_ratio": 0.3310830293517253
+   "poisson_ratio": 0.3365
   },
   {
-   "system": "chunk_1654",
-   "poisson_ratio": 0.32888116969310854
+   "system": "chunk_300",
+   "poisson_ratio": 0.3365
   },
   {
-   "system": "chunk_1466",
-   "poisson_ratio": 0.32872477527611826
+   "system": "chunk_1494",
+   "poisson_ratio": 0.3361
   },
   {
-   "system": "chunk_1692",
-   "poisson_ratio": 0.3257980920038709
+   "system": "chunk_1956",
+   "poisson_ratio": 0.3356
   },
   {
-   "system": "chunk_144",
-   "poisson_ratio": 0.3247402944890944
-  },
-  {
-   "system": "chunk_892",
-   "poisson_ratio": 0.32426252316355864
-  },
-  {
-   "system": "chunk_647",
-   "poisson_ratio": 0.3227996724730069
-  },
-  {
-   "system": "chunk_945",
-   "poisson_ratio": 0.3217862948733097
-  },
-  {
-   "system": "chunk_218",
-   "poisson_ratio": 0.3217032786341362
-  },
-  {
-   "system": "chunk_1379",
-   "poisson_ratio": 0.3214980133127197
-  },
-  {
-   "system": "chunk_1847",
-   "poisson_ratio": 0.32071662919841537
-  },
-  {
-   "system": "chunk_268",
-   "poisson_ratio": 0.32013242024972594
-  },
-  {
-   "system": "chunk_1365",
-   "poisson_ratio": 0.31969236432067766
-  },
-  {
-   "system": "chunk_1712",
-   "poisson_ratio": 0.31848596834882575
-  },
-  {
-   "system": "chunk_1100",
-   "poisson_ratio": 0.31813355387201253
-  },
-  {
-   "system": "chunk_66",
-   "poisson_ratio": 0.3175053148016717
-  },
-  {
-   "system": "chunk_1542",
-   "poisson_ratio": 0.31681908516538587
-  },
-  {
-   "system": "chunk_1409",
-   "poisson_ratio": 0.31401354768802947
-  },
-  {
-   "system": "chunk_877",
-   "poisson_ratio": 0.31361809140574765
-  },
-  {
-   "system": "chunk_1310",
-   "poisson_ratio": 0.3132892004452868
-  },
-  {
-   "system": "chunk_591",
-   "poisson_ratio": 0.31322696600804206
-  },
-  {
-   "system": "chunk_1589",
-   "poisson_ratio": 0.3131850248335871
-  },
-  {
-   "system": "chunk_682",
-   "poisson_ratio": 0.3118748363735501
+   "system": "chunk_1165",
+   "poisson_ratio": 0.3346
   },
   {
    "system": "chunk_294",
-   "poisson_ratio": 0.31119456750101976
+   "poisson_ratio": 0.3293
   },
   {
-   "system": "chunk_1326",
-   "poisson_ratio": 0.3106187458383196
+   "system": "chunk_647",
+   "poisson_ratio": 0.3291
   },
   {
-   "system": "chunk_764",
-   "poisson_ratio": 0.3102568902218556
+   "system": "chunk_892",
+   "poisson_ratio": 0.3291
   },
   {
-   "system": "chunk_872",
-   "poisson_ratio": 0.31003861078021644
+   "system": "chunk_877",
+   "poisson_ratio": 0.3284
+  },
+  {
+   "system": "chunk_1466",
+   "poisson_ratio": 0.3283
+  },
+  {
+   "system": "chunk_1654",
+   "poisson_ratio": 0.3264
+  },
+  {
+   "system": "chunk_216",
+   "poisson_ratio": 0.325
+  },
+  {
+   "system": "chunk_1379",
+   "poisson_ratio": 0.3246
+  },
+  {
+   "system": "chunk_1692",
+   "poisson_ratio": 0.324
+  },
+  {
+   "system": "chunk_1847",
+   "poisson_ratio": 0.3239
+  },
+  {
+   "system": "chunk_1365",
+   "poisson_ratio": 0.3227
+  },
+  {
+   "system": "chunk_723",
+   "poisson_ratio": 0.3224
+  },
+  {
+   "system": "chunk_682",
+   "poisson_ratio": 0.3214
+  },
+  {
+   "system": "chunk_144",
+   "poisson_ratio": 0.3209
+  },
+  {
+   "system": "chunk_1589",
+   "poisson_ratio": 0.3203
+  },
+  {
+   "system": "chunk_945",
+   "poisson_ratio": 0.3187
+  },
+  {
+   "system": "chunk_66",
+   "poisson_ratio": 0.3168
   },
   {
    "system": "chunk_1924",
-   "poisson_ratio": 0.3099838913167935
+   "poisson_ratio": 0.3161
   },
   {
-   "system": "chunk_1608",
-   "poisson_ratio": 0.3095354989290371
+   "system": "chunk_1326",
+   "poisson_ratio": 0.3152
+  },
+  {
+   "system": "chunk_218",
+   "poisson_ratio": 0.3147
+  },
+  {
+   "system": "chunk_268",
+   "poisson_ratio": 0.3147
+  },
+  {
+   "system": "chunk_1542",
+   "poisson_ratio": 0.3146
+  },
+  {
+   "system": "chunk_1712",
+   "poisson_ratio": 0.3144
   },
   {
    "system": "chunk_60",
-   "poisson_ratio": 0.3089707287993594
+   "poisson_ratio": 0.3139
   },
   {
-   "system": "chunk_418",
-   "poisson_ratio": 0.30868788927061747
+   "system": "chunk_1100",
+   "poisson_ratio": 0.3137
   },
   {
-   "system": "chunk_662",
-   "poisson_ratio": 0.30620995230420267
+   "system": "chunk_1409",
+   "poisson_ratio": 0.3133
   },
   {
-   "system": "chunk_668",
-   "poisson_ratio": 0.30534388555804515
-  },
-  {
-   "system": "chunk_1937",
-   "poisson_ratio": 0.30524382150794005
-  },
-  {
-   "system": "chunk_1430",
-   "poisson_ratio": 0.302190546734799
-  },
-  {
-   "system": "chunk_1886",
-   "poisson_ratio": 0.301268320944853
+   "system": "chunk_764",
+   "poisson_ratio": 0.3119
   },
   {
    "system": "chunk_807",
-   "poisson_ratio": 0.3010780222934808
+   "poisson_ratio": 0.3106
   },
   {
-   "system": "chunk_2",
-   "poisson_ratio": 0.3006842397393142
+   "system": "chunk_662",
+   "poisson_ratio": 0.3102
+  },
+  {
+   "system": "chunk_872",
+   "poisson_ratio": 0.3102
+  },
+  {
+   "system": "chunk_1310",
+   "poisson_ratio": 0.3095
+  },
+  {
+   "system": "chunk_591",
+   "poisson_ratio": 0.309
+  },
+  {
+   "system": "chunk_418",
+   "poisson_ratio": 0.3076
+  },
+  {
+   "system": "chunk_1608",
+   "poisson_ratio": 0.3067
   },
   {
    "system": "chunk_341",
-   "poisson_ratio": 0.29965550345841074
+   "poisson_ratio": 0.3058
+  },
+  {
+   "system": "chunk_1937",
+   "poisson_ratio": 0.3055
+  },
+  {
+   "system": "chunk_668",
+   "poisson_ratio": 0.3048
   },
   {
    "system": "chunk_326",
-   "poisson_ratio": 0.2942115756148774
+   "poisson_ratio": 0.3043
+  },
+  {
+   "system": "chunk_1430",
+   "poisson_ratio": 0.3008
+  },
+  {
+   "system": "chunk_2",
+   "poisson_ratio": 0.3007
+  },
+  {
+   "system": "chunk_1886",
+   "poisson_ratio": 0.2995
   },
   {
    "system": "chunk_1222",
-   "poisson_ratio": 0.28061041327122327
-  },
-  {
-   "system": "chunk_734",
-   "poisson_ratio": 0.268528449763263
-  },
-  {
-   "system": "chunk_1587",
-   "poisson_ratio": 0.26659858316787793
+   "poisson_ratio": 0.2788
   },
   {
    "system": "chunk_1132",
-   "poisson_ratio": 0.26589917162942833
+   "poisson_ratio": 0.2632
   },
   {
    "system": "chunk_599",
-   "poisson_ratio": 0.2613347693653032
+   "poisson_ratio": 0.2616
+  },
+  {
+   "system": "chunk_1587",
+   "poisson_ratio": 0.2597
+  },
+  {
+   "system": "chunk_734",
+   "poisson_ratio": 0.2567
   },
   {
    "system": "chunk_547",
-   "poisson_ratio": 0.26108082561256835
-  },
-  {
-   "system": "chunk_142",
-   "poisson_ratio": 0.2604854361924926
+   "poisson_ratio": 0.2557
   },
   {
    "system": "chunk_766",
-   "poisson_ratio": 0.25600283201103746
+   "poisson_ratio": 0.2519
   },
   {
    "system": "chunk_1179",
-   "poisson_ratio": 0.2540784927532588
+   "poisson_ratio": 0.2495
   },
   {
    "system": "chunk_109",
-   "poisson_ratio": 0.24889685510870224
+   "poisson_ratio": 0.2486
+  },
+  {
+   "system": "chunk_142",
+   "poisson_ratio": 0.2468
   },
   {
    "system": "chunk_832",
-   "poisson_ratio": 0.235990777560076
+   "poisson_ratio": 0.2413
   },
   {
    "system": "chunk_1870",
-   "poisson_ratio": 0.23573325350873017
-  },
-  {
-   "system": "chunk_1717",
-   "poisson_ratio": 0.2348686606871894
+   "poisson_ratio": 0.2323
   },
   {
    "system": "chunk_540",
-   "poisson_ratio": 0.23388842474362845
+   "poisson_ratio": 0.2315
   },
   {
    "system": "chunk_415",
-   "poisson_ratio": 0.22921487600419668
-  },
-  {
-   "system": "chunk_1303",
-   "poisson_ratio": 0.22187770466708767
-  },
-  {
-   "system": "chunk_3",
-   "poisson_ratio": 0.2214696790073329
-  },
-  {
-   "system": "chunk_1658",
-   "poisson_ratio": 0.22057498288819355
-  },
-  {
-   "system": "chunk_376",
-   "poisson_ratio": 0.21794493282149488
+   "poisson_ratio": 0.2307
   },
   {
    "system": "chunk_1305",
-   "poisson_ratio": 0.2179222542093329
+   "poisson_ratio": 0.2271
+  },
+  {
+   "system": "chunk_1717",
+   "poisson_ratio": 0.2271
+  },
+  {
+   "system": "chunk_1303",
+   "poisson_ratio": 0.2237
   },
   {
    "system": "chunk_745",
-   "poisson_ratio": 0.21772469509650433
-  },
-  {
-   "system": "chunk_407",
-   "poisson_ratio": 0.21708104741318898
-  },
-  {
-   "system": "chunk_1220",
-   "poisson_ratio": 0.21544423849419336
+   "poisson_ratio": 0.2211
   },
   {
    "system": "chunk_534",
-   "poisson_ratio": 0.21277552618244452
+   "poisson_ratio": 0.22
   },
   {
-   "system": "chunk_1670",
-   "poisson_ratio": 0.21202571836337475
+   "system": "chunk_1658",
+   "poisson_ratio": 0.2191
   },
   {
-   "system": "chunk_1429",
-   "poisson_ratio": 0.2101151545544964
+   "system": "chunk_3",
+   "poisson_ratio": 0.2183
+  },
+  {
+   "system": "chunk_376",
+   "poisson_ratio": 0.2165
   },
   {
    "system": "chunk_36",
-   "poisson_ratio": 0.20817370256578363
+   "poisson_ratio": 0.2158
+  },
+  {
+   "system": "chunk_1220",
+   "poisson_ratio": 0.2148
+  },
+  {
+   "system": "chunk_407",
+   "poisson_ratio": 0.2145
+  },
+  {
+   "system": "chunk_1670",
+   "poisson_ratio": 0.214
+  },
+  {
+   "system": "chunk_1429",
+   "poisson_ratio": 0.2085
   },
   {
    "system": "chunk_1742",
-   "poisson_ratio": 0.20158685928310136
-  },
-  {
-   "system": "chunk_1904",
-   "poisson_ratio": 0.19461805230182289
+   "poisson_ratio": 0.207
   },
   {
    "system": "chunk_754",
-   "poisson_ratio": 0.19373473434530467
-  },
-  {
-   "system": "chunk_1714",
-   "poisson_ratio": 0.19290422652899059
-  },
-  {
-   "system": "chunk_556",
-   "poisson_ratio": 0.19018029784999935
-  },
-  {
-   "system": "chunk_1880",
-   "poisson_ratio": 0.19005290300980998
-  },
-  {
-   "system": "chunk_1133",
-   "poisson_ratio": 0.18794898444770025
-  },
-  {
-   "system": "chunk_1372",
-   "poisson_ratio": 0.18539564202762218
+   "poisson_ratio": 0.2023
   },
   {
    "system": "chunk_741",
-   "poisson_ratio": 0.18173041699071185
+   "poisson_ratio": 0.1918
   },
   {
-   "system": "chunk_213",
-   "poisson_ratio": 0.18050174914254125
+   "system": "chunk_1904",
+   "poisson_ratio": 0.191
   },
   {
-   "system": "chunk_1874",
-   "poisson_ratio": 0.17967651230290316
+   "system": "chunk_1714",
+   "poisson_ratio": 0.1905
+  },
+  {
+   "system": "chunk_556",
+   "poisson_ratio": 0.187
   },
   {
    "system": "chunk_696",
-   "poisson_ratio": 0.1795924143334094
+   "poisson_ratio": 0.1868
   },
   {
-   "system": "chunk_490",
-   "poisson_ratio": 0.17940164065146458
+   "system": "chunk_1372",
+   "poisson_ratio": 0.1837
+  },
+  {
+   "system": "chunk_213",
+   "poisson_ratio": 0.1825
   },
   {
    "system": "chunk_1626",
-   "poisson_ratio": 0.1782355180966026
+   "poisson_ratio": 0.1813
   },
   {
-   "system": "chunk_465",
-   "poisson_ratio": 0.17555542427366028
+   "system": "chunk_1880",
+   "poisson_ratio": 0.1807
   },
   {
-   "system": "chunk_985",
-   "poisson_ratio": 0.17393076596955326
+   "system": "chunk_1874",
+   "poisson_ratio": 0.1791
   },
   {
    "system": "chunk_876",
-   "poisson_ratio": 0.1719003418481264
+   "poisson_ratio": 0.1757
   },
   {
-   "system": "chunk_1869",
-   "poisson_ratio": 0.17116475908554843
+   "system": "chunk_985",
+   "poisson_ratio": 0.1696
   },
   {
-   "system": "chunk_1435",
-   "poisson_ratio": 0.168350480294973
+   "system": "chunk_490",
+   "poisson_ratio": 0.1693
+  },
+  {
+   "system": "chunk_465",
+   "poisson_ratio": 0.169
+  },
+  {
+   "system": "chunk_1133",
+   "poisson_ratio": 0.1683
   },
   {
    "system": "chunk_1647",
-   "poisson_ratio": 0.16779240542636173
-  },
-  {
-   "system": "chunk_1828",
-   "poisson_ratio": 0.1665715657505626
-  },
-  {
-   "system": "chunk_1568",
-   "poisson_ratio": 0.16513007520591264
-  },
-  {
-   "system": "chunk_970",
-   "poisson_ratio": 0.16394123597454435
-  },
-  {
-   "system": "chunk_1009",
-   "poisson_ratio": 0.16279744419485526
-  },
-  {
-   "system": "chunk_548",
-   "poisson_ratio": 0.1600467843214725
+   "poisson_ratio": 0.1663
   },
   {
    "system": "chunk_58",
-   "poisson_ratio": 0.15887128917679305
+   "poisson_ratio": 0.1655
+  },
+  {
+   "system": "chunk_970",
+   "poisson_ratio": 0.1653
+  },
+  {
+   "system": "chunk_1009",
+   "poisson_ratio": 0.1651
   },
   {
    "system": "chunk_366",
-   "poisson_ratio": 0.15628447173184118
+   "poisson_ratio": 0.1645
+  },
+  {
+   "system": "chunk_1869",
+   "poisson_ratio": 0.1635
+  },
+  {
+   "system": "chunk_548",
+   "poisson_ratio": 0.1592
+  },
+  {
+   "system": "chunk_1568",
+   "poisson_ratio": 0.157
+  },
+  {
+   "system": "chunk_1435",
+   "poisson_ratio": 0.1556
   },
   {
    "system": "chunk_613",
-   "poisson_ratio": 0.1536763331255084
-  },
-  {
-   "system": "chunk_1089",
-   "poisson_ratio": 0.1517771916435735
+   "poisson_ratio": 0.1527
   },
   {
    "system": "chunk_1251",
-   "poisson_ratio": 0.14863765457234743
+   "poisson_ratio": 0.1492
   },
   {
-   "system": "chunk_136",
-   "poisson_ratio": 0.14840965351216975
+   "system": "chunk_1089",
+   "poisson_ratio": 0.1479
   },
   {
    "system": "chunk_518",
-   "poisson_ratio": 0.14495282094180476
+   "poisson_ratio": 0.1465
   },
   {
-   "system": "chunk_1531",
-   "poisson_ratio": 0.1441860993682854
+   "system": "chunk_1828",
+   "poisson_ratio": 0.1448
   },
   {
-   "system": "chunk_193",
-   "poisson_ratio": 0.14400950050854006
-  },
-  {
-   "system": "chunk_72",
-   "poisson_ratio": 0.13865222825137327
-  },
-  {
-   "system": "chunk_166",
-   "poisson_ratio": 0.13753570300224183
-  },
-  {
-   "system": "chunk_665",
-   "poisson_ratio": 0.1352983017794524
-  },
-  {
-   "system": "chunk_12",
-   "poisson_ratio": 0.13509471068765508
-  },
-  {
-   "system": "chunk_1079",
-   "poisson_ratio": 0.13248709633109756
-  },
-  {
-   "system": "chunk_956",
-   "poisson_ratio": 0.12829491425115094
+   "system": "chunk_136",
+   "poisson_ratio": 0.1395
   },
   {
    "system": "chunk_146",
-   "poisson_ratio": 0.12729316360422596
+   "poisson_ratio": 0.1371
   },
   {
-   "system": "chunk_1077",
-   "poisson_ratio": 0.1262684728433255
+   "system": "chunk_72",
+   "poisson_ratio": 0.1348
+  },
+  {
+   "system": "chunk_1531",
+   "poisson_ratio": 0.134
+  },
+  {
+   "system": "chunk_1079",
+   "poisson_ratio": 0.1318
+  },
+  {
+   "system": "chunk_193",
+   "poisson_ratio": 0.1309
+  },
+  {
+   "system": "chunk_12",
+   "poisson_ratio": 0.1294
+  },
+  {
+   "system": "chunk_956",
+   "poisson_ratio": 0.1279
   },
   {
    "system": "chunk_361",
-   "poisson_ratio": 0.12332621076817307
-  },
-  {
-   "system": "chunk_1027",
-   "poisson_ratio": 0.12060664921456217
-  },
-  {
-   "system": "chunk_848",
-   "poisson_ratio": 0.11998999782081766
+   "poisson_ratio": 0.1261
   },
   {
    "system": "chunk_972",
-   "poisson_ratio": 0.11920174747175254
+   "poisson_ratio": 0.1231
+  },
+  {
+   "system": "chunk_1077",
+   "poisson_ratio": 0.1224
+  },
+  {
+   "system": "chunk_1027",
+   "poisson_ratio": 0.1223
+  },
+  {
+   "system": "chunk_166",
+   "poisson_ratio": 0.122
+  },
+  {
+   "system": "chunk_665",
+   "poisson_ratio": 0.12
+  },
+  {
+   "system": "chunk_848",
+   "poisson_ratio": 0.12
   },
   {
    "system": "chunk_1579",
-   "poisson_ratio": 0.11488610051172352
-  },
-  {
-   "system": "chunk_330",
-   "poisson_ratio": 0.1125869364663153
-  },
-  {
-   "system": "chunk_1726",
-   "poisson_ratio": 0.11045166264218162
-  },
-  {
-   "system": "chunk_1618",
-   "poisson_ratio": 0.10699080168356902
-  },
-  {
-   "system": "chunk_28",
-   "poisson_ratio": 0.10326590058331668
-  },
-  {
-   "system": "chunk_1344",
-   "poisson_ratio": 0.10285826387960847
+   "poisson_ratio": 0.1173
   },
   {
    "system": "chunk_1554",
-   "poisson_ratio": 0.10274071668328377
+   "poisson_ratio": 0.1138
+  },
+  {
+   "system": "chunk_1726",
+   "poisson_ratio": 0.1094
+  },
+  {
+   "system": "chunk_330",
+   "poisson_ratio": 0.1083
+  },
+  {
+   "system": "chunk_28",
+   "poisson_ratio": 0.1044
   },
   {
    "system": "chunk_1328",
-   "poisson_ratio": 0.1009234818129996
+   "poisson_ratio": 0.1021
   },
   {
-   "system": "chunk_1561",
-   "poisson_ratio": 0.09963567679791954
+   "system": "chunk_1618",
+   "poisson_ratio": 0.1011
   },
   {
    "system": "chunk_1273",
-   "poisson_ratio": 0.09940036403694058
-  },
-  {
-   "system": "chunk_228",
-   "poisson_ratio": 0.0971732802863897
+   "poisson_ratio": 0.0943
   },
   {
    "system": "chunk_1806",
-   "poisson_ratio": 0.09509050623377706
+   "poisson_ratio": 0.0914
   },
   {
-   "system": "chunk_1673",
-   "poisson_ratio": 0.08759150465881585
-  },
-  {
-   "system": "chunk_1676",
-   "poisson_ratio": 0.08656130253369582
-  },
-  {
-   "system": "chunk_1489",
-   "poisson_ratio": 0.08649518193943788
+   "system": "chunk_228",
+   "poisson_ratio": 0.0888
   },
   {
    "system": "chunk_739",
-   "poisson_ratio": 0.08009779965900028
-  },
-  {
-   "system": "chunk_908",
-   "poisson_ratio": 0.07847309301051061
-  },
-  {
-   "system": "chunk_1407",
-   "poisson_ratio": 0.07379330566634973
-  },
-  {
-   "system": "chunk_505",
-   "poisson_ratio": 0.07234328559832963
-  },
-  {
-   "system": "chunk_959",
-   "poisson_ratio": 0.07091936684211249
+   "poisson_ratio": 0.0831
   },
   {
    "system": "chunk_674",
-   "poisson_ratio": 0.06922721099815059
+   "poisson_ratio": 0.0811
   },
   {
-   "system": "chunk_1841",
-   "poisson_ratio": 0.06890050414545204
+   "system": "chunk_1344",
+   "poisson_ratio": 0.0803
+  },
+  {
+   "system": "chunk_1561",
+   "poisson_ratio": 0.08
+  },
+  {
+   "system": "chunk_1407",
+   "poisson_ratio": 0.078
+  },
+  {
+   "system": "chunk_908",
+   "poisson_ratio": 0.0778
+  },
+  {
+   "system": "chunk_1489",
+   "poisson_ratio": 0.0755
+  },
+  {
+   "system": "chunk_505",
+   "poisson_ratio": 0.0706
+  },
+  {
+   "system": "chunk_1673",
+   "poisson_ratio": 0.0702
+  },
+  {
+   "system": "chunk_1676",
+   "poisson_ratio": 0.0654
   },
   {
    "system": "chunk_853",
-   "poisson_ratio": 0.06686417290845409
-  },
-  {
-   "system": "chunk_138",
-   "poisson_ratio": 0.0623791279683127
-  },
-  {
-   "system": "chunk_1547",
-   "poisson_ratio": 0.06149328485032479
-  },
-  {
-   "system": "chunk_1369",
-   "poisson_ratio": 0.06098024694261059
+   "poisson_ratio": 0.0574
   },
   {
    "system": "chunk_1907",
-   "poisson_ratio": 0.06073834865090408
+   "poisson_ratio": 0.0555
   },
   {
-   "system": "chunk_775",
-   "poisson_ratio": 0.057662061957270305
+   "system": "chunk_138",
+   "poisson_ratio": 0.0548
   },
   {
    "system": "chunk_1895",
-   "poisson_ratio": 0.0575479112562415
+   "poisson_ratio": 0.0545
   },
   {
-   "system": "chunk_1612",
-   "poisson_ratio": 0.055862426873269505
+   "system": "chunk_1841",
+   "poisson_ratio": 0.0538
+  },
+  {
+   "system": "chunk_1369",
+   "poisson_ratio": 0.0493
+  },
+  {
+   "system": "chunk_775",
+   "poisson_ratio": 0.0493
   },
   {
    "system": "chunk_632",
-   "poisson_ratio": 0.05452204735784782
+   "poisson_ratio": 0.0482
   },
   {
-   "system": "chunk_1131",
-   "poisson_ratio": 0.05211528360931853
+   "system": "chunk_1612",
+   "poisson_ratio": 0.0476
   },
   {
    "system": "chunk_1148",
-   "poisson_ratio": 0.04985190233412881
+   "poisson_ratio": 0.0462
   },
   {
-   "system": "chunk_485",
-   "poisson_ratio": 0.04952664952755896
-  },
-  {
-   "system": "chunk_1418",
-   "poisson_ratio": 0.048978383469040536
+   "system": "chunk_959",
+   "poisson_ratio": 0.0434
   },
   {
    "system": "chunk_1983",
-   "poisson_ratio": 0.047404140528042406
+   "poisson_ratio": 0.043
   },
   {
-   "system": "chunk_901",
-   "poisson_ratio": 0.043917015484411404
-  },
-  {
-   "system": "chunk_1586",
-   "poisson_ratio": 0.043612862624539776
-  },
-  {
-   "system": "chunk_1068",
-   "poisson_ratio": 0.041271289921841016
-  },
-  {
-   "system": "chunk_155",
-   "poisson_ratio": 0.04127105084691704
-  },
-  {
-   "system": "chunk_763",
-   "poisson_ratio": 0.04053167166796384
+   "system": "chunk_1547",
+   "poisson_ratio": 0.0425
   },
   {
    "system": "chunk_1502",
-   "poisson_ratio": 0.035952692312393446
+   "poisson_ratio": 0.04
+  },
+  {
+   "system": "chunk_763",
+   "poisson_ratio": 0.0395
+  },
+  {
+   "system": "chunk_155",
+   "poisson_ratio": 0.0375
   },
   {
    "system": "chunk_40",
-   "poisson_ratio": 0.03445680483143457
+   "poisson_ratio": 0.0331
   },
   {
-   "system": "chunk_247",
-   "poisson_ratio": 0.027572843471613366
+   "system": "chunk_1068",
+   "poisson_ratio": 0.026
+  },
+  {
+   "system": "chunk_1586",
+   "poisson_ratio": 0.0249
+  },
+  {
+   "system": "chunk_1418",
+   "poisson_ratio": 0.0241
   },
   {
    "system": "chunk_116",
-   "poisson_ratio": 0.026497190523540055
-  },
-  {
-   "system": "chunk_1230",
-   "poisson_ratio": 0.025396210593606413
-  },
-  {
-   "system": "chunk_1853",
-   "poisson_ratio": 0.02385239402693458
-  },
-  {
-   "system": "chunk_1534",
-   "poisson_ratio": 0.02272866186738232
-  },
-  {
-   "system": "chunk_1785",
-   "poisson_ratio": 0.021263647305540975
-  },
-  {
-   "system": "chunk_882",
-   "poisson_ratio": 0.01897395117439227
+   "poisson_ratio": 0.024
   },
   {
    "system": "chunk_740",
-   "poisson_ratio": 0.01848726680827753
+   "poisson_ratio": 0.0214
   },
   {
-   "system": "chunk_1679",
-   "poisson_ratio": 0.014787391948532258
+   "system": "chunk_485",
+   "poisson_ratio": 0.0176
   },
   {
-   "system": "chunk_1716",
-   "poisson_ratio": 0.009804967029489445
+   "system": "chunk_882",
+   "poisson_ratio": 0.0136
   },
   {
-   "system": "chunk_1239",
-   "poisson_ratio": 0.009555929289303577
+   "system": "chunk_1785",
+   "poisson_ratio": 0.0129
   },
   {
-   "system": "chunk_1731",
-   "poisson_ratio": 0.008270689893058443
-  },
-  {
-   "system": "chunk_1671",
-   "poisson_ratio": 0.005929732104555807
-  },
-  {
-   "system": "chunk_148",
-   "poisson_ratio": 0.005263399700818549
-  },
-  {
-   "system": "chunk_553",
-   "poisson_ratio": 0.004759587824744432
-  },
-  {
-   "system": "chunk_347",
-   "poisson_ratio": 0.003398039029502465
-  },
-  {
-   "system": "chunk_173",
-   "poisson_ratio": 0.0028669300435158565
-  },
-  {
-   "system": "chunk_1164",
-   "poisson_ratio": -0.00048187555323538805
-  },
-  {
-   "system": "chunk_722",
-   "poisson_ratio": -0.0011809512414925995
+   "system": "chunk_1131",
+   "poisson_ratio": 0.0124
   },
   {
    "system": "chunk_643",
-   "poisson_ratio": -0.0019989119909613402
+   "poisson_ratio": 0.0121
   },
   {
-   "system": "chunk_1391",
-   "poisson_ratio": -0.007700259248062464
+   "system": "chunk_1230",
+   "poisson_ratio": 0.0111
   },
   {
-   "system": "chunk_318",
-   "poisson_ratio": -0.009744229899215395
+   "system": "chunk_1671",
+   "poisson_ratio": 0.0106
   },
   {
-   "system": "chunk_1074",
-   "poisson_ratio": -0.01124114358404615
+   "system": "chunk_1534",
+   "poisson_ratio": 0.0099
   },
   {
-   "system": "chunk_1452",
-   "poisson_ratio": -0.011506269746494043
+   "system": "chunk_901",
+   "poisson_ratio": 0.009
   },
   {
-   "system": "chunk_604",
-   "poisson_ratio": -0.012187928752645709
+   "system": "chunk_247",
+   "poisson_ratio": 0.0072
   },
   {
-   "system": "chunk_1961",
-   "poisson_ratio": -0.01382977012129139
+   "system": "chunk_722",
+   "poisson_ratio": 0.0043
   },
   {
-   "system": "chunk_99",
-   "poisson_ratio": -0.013977002707939914
+   "system": "chunk_347",
+   "poisson_ratio": 0.0035
   },
   {
-   "system": "chunk_606",
-   "poisson_ratio": -0.01482515476653213
+   "system": "chunk_1239",
+   "poisson_ratio": -0.002
   },
   {
-   "system": "chunk_14",
-   "poisson_ratio": -0.019010213439902925
+   "system": "chunk_1853",
+   "poisson_ratio": -0.0029
   },
   {
-   "system": "chunk_24",
-   "poisson_ratio": -0.020904801914542633
+   "system": "chunk_1716",
+   "poisson_ratio": -0.0032
   },
   {
-   "system": "chunk_1356",
-   "poisson_ratio": -0.032698840496891486
+   "system": "chunk_553",
+   "poisson_ratio": -0.0068
+  },
+  {
+   "system": "chunk_1731",
+   "poisson_ratio": -0.0128
+  },
+  {
+   "system": "chunk_1164",
+   "poisson_ratio": -0.0133
   },
   {
    "system": "chunk_367",
-   "poisson_ratio": -0.03367286578892597
+   "poisson_ratio": -0.015
+  },
+  {
+   "system": "chunk_99",
+   "poisson_ratio": -0.016
+  },
+  {
+   "system": "chunk_1961",
+   "poisson_ratio": -0.017
+  },
+  {
+   "system": "chunk_1679",
+   "poisson_ratio": -0.0202
+  },
+  {
+   "system": "chunk_1074",
+   "poisson_ratio": -0.0214
+  },
+  {
+   "system": "chunk_606",
+   "poisson_ratio": -0.0218
+  },
+  {
+   "system": "chunk_1452",
+   "poisson_ratio": -0.0264
+  },
+  {
+   "system": "chunk_173",
+   "poisson_ratio": -0.0283
+  },
+  {
+   "system": "chunk_604",
+   "poisson_ratio": -0.0309
+  },
+  {
+   "system": "chunk_14",
+   "poisson_ratio": -0.0349
   },
   {
    "system": "chunk_1632",
-   "poisson_ratio": -0.03781198664054781
+   "poisson_ratio": -0.0358
   },
   {
-   "system": "chunk_431",
-   "poisson_ratio": -0.038165912340373816
+   "system": "chunk_318",
+   "poisson_ratio": -0.0363
   },
   {
-   "system": "chunk_1128",
-   "poisson_ratio": -0.041675284552476426
+   "system": "chunk_1391",
+   "poisson_ratio": -0.0394
   },
   {
-   "system": "chunk_710",
-   "poisson_ratio": -0.04278043544083296
-  },
-  {
-   "system": "chunk_1620",
-   "poisson_ratio": -0.04395056409506617
-  },
-  {
-   "system": "chunk_1565",
-   "poisson_ratio": -0.04471171660062018
+   "system": "chunk_24",
+   "poisson_ratio": -0.0411
   },
   {
    "system": "chunk_231",
-   "poisson_ratio": -0.046145268709356244
-  },
-  {
-   "system": "chunk_1381",
-   "poisson_ratio": -0.047803188323416866
-  },
-  {
-   "system": "chunk_750",
-   "poisson_ratio": -0.050503211843742186
+   "poisson_ratio": -0.0416
   },
   {
    "system": "chunk_437",
-   "poisson_ratio": -0.05278196428396819
+   "poisson_ratio": -0.0431
   },
   {
-   "system": "chunk_904",
-   "poisson_ratio": -0.05368487531322734
-  },
-  {
-   "system": "chunk_1816",
-   "poisson_ratio": -0.05410422101067991
-  },
-  {
-   "system": "chunk_667",
-   "poisson_ratio": -0.05450451526708094
-  },
-  {
-   "system": "chunk_737",
-   "poisson_ratio": -0.05565403384738238
+   "system": "chunk_1128",
+   "poisson_ratio": -0.0436
   },
   {
    "system": "chunk_1485",
-   "poisson_ratio": -0.05600159397527866
+   "poisson_ratio": -0.0488
   },
   {
-   "system": "chunk_1153",
-   "poisson_ratio": -0.06094315755133684
+   "system": "chunk_148",
+   "poisson_ratio": -0.0495
   },
   {
-   "system": "chunk_30",
-   "poisson_ratio": -0.06195391911096707
+   "system": "chunk_1356",
+   "poisson_ratio": -0.0548
   },
   {
-   "system": "chunk_1631",
-   "poisson_ratio": -0.0619676594184341
+   "system": "chunk_1816",
+   "poisson_ratio": -0.0552
   },
   {
-   "system": "chunk_1398",
-   "poisson_ratio": -0.06253735361660423
+   "system": "chunk_737",
+   "poisson_ratio": -0.0585
+  },
+  {
+   "system": "chunk_1620",
+   "poisson_ratio": -0.0611
   },
   {
    "system": "chunk_694",
-   "poisson_ratio": -0.06300334505976522
+   "poisson_ratio": -0.0617
   },
   {
-   "system": "chunk_909",
-   "poisson_ratio": -0.06548407227875844
+   "system": "chunk_30",
+   "poisson_ratio": -0.0681
   },
   {
-   "system": "chunk_150",
-   "poisson_ratio": -0.07043003987224862
-  },
-  {
-   "system": "chunk_713",
-   "poisson_ratio": -0.07197371047943
+   "system": "chunk_710",
+   "poisson_ratio": -0.0704
   },
   {
    "system": "chunk_1747",
-   "poisson_ratio": -0.07440754432565908
+   "poisson_ratio": -0.0761
   },
   {
-   "system": "chunk_914",
-   "poisson_ratio": -0.0747091850050218
+   "system": "chunk_750",
+   "poisson_ratio": -0.0762
   },
   {
-   "system": "chunk_1592",
-   "poisson_ratio": -0.07670891510349313
-  },
-  {
-   "system": "chunk_430",
-   "poisson_ratio": -0.07716819629341361
-  },
-  {
-   "system": "chunk_1619",
-   "poisson_ratio": -0.07775323265199692
-  },
-  {
-   "system": "chunk_270",
-   "poisson_ratio": -0.07848349169855798
-  },
-  {
-   "system": "chunk_897",
-   "poisson_ratio": -0.07971559007892956
-  },
-  {
-   "system": "chunk_503",
-   "poisson_ratio": -0.0811555372275069
-  },
-  {
-   "system": "chunk_1591",
-   "poisson_ratio": -0.08183447239120901
-  },
-  {
-   "system": "chunk_343",
-   "poisson_ratio": -0.08255235716827597
+   "system": "chunk_431",
+   "poisson_ratio": -0.0771
   },
   {
    "system": "chunk_1306",
-   "poisson_ratio": -0.08430220105389465
+   "poisson_ratio": -0.0779
   },
   {
-   "system": "chunk_362",
-   "poisson_ratio": -0.08505497307600346
+   "system": "chunk_1398",
+   "poisson_ratio": -0.078
   },
   {
-   "system": "chunk_1959",
-   "poisson_ratio": -0.0945174061316241
+   "system": "chunk_1565",
+   "poisson_ratio": -0.0829
   },
   {
-   "system": "chunk_605",
-   "poisson_ratio": -0.09531116751871745
+   "system": "chunk_667",
+   "poisson_ratio": -0.0855
   },
   {
-   "system": "chunk_845",
-   "poisson_ratio": -0.09600652229890752
+   "system": "chunk_1619",
+   "poisson_ratio": -0.086
   },
   {
-   "system": "chunk_1216",
-   "poisson_ratio": -0.10214319576324161
+   "system": "chunk_1381",
+   "poisson_ratio": -0.088
+  },
+  {
+   "system": "chunk_270",
+   "poisson_ratio": -0.0886
+  },
+  {
+   "system": "chunk_909",
+   "poisson_ratio": -0.0888
+  },
+  {
+   "system": "chunk_343",
+   "poisson_ratio": -0.089
+  },
+  {
+   "system": "chunk_1153",
+   "poisson_ratio": -0.0908
+  },
+  {
+   "system": "chunk_1592",
+   "poisson_ratio": -0.0961
+  },
+  {
+   "system": "chunk_1591",
+   "poisson_ratio": -0.1
   },
   {
    "system": "chunk_1744",
-   "poisson_ratio": -0.10365376811570584
+   "poisson_ratio": -0.1015
   },
   {
-   "system": "chunk_1859",
-   "poisson_ratio": -0.1041275415581262
+   "system": "chunk_914",
+   "poisson_ratio": -0.1028
   },
   {
-   "system": "chunk_484",
-   "poisson_ratio": -0.10603768011056881
+   "system": "chunk_904",
+   "poisson_ratio": -0.1058
   },
   {
-   "system": "chunk_640",
-   "poisson_ratio": -0.10609844868589222
-  },
-  {
-   "system": "chunk_234",
-   "poisson_ratio": -0.10777526830437502
-  },
-  {
-   "system": "chunk_115",
-   "poisson_ratio": -0.11101443720566383
-  },
-  {
-   "system": "chunk_304",
-   "poisson_ratio": -0.11358473557692307
+   "system": "chunk_713",
+   "poisson_ratio": -0.1073
   },
   {
    "system": "chunk_310",
-   "poisson_ratio": -0.11543784124635298
+   "poisson_ratio": -0.1074
+  },
+  {
+   "system": "chunk_362",
+   "poisson_ratio": -0.1076
+  },
+  {
+   "system": "chunk_503",
+   "poisson_ratio": -0.1104
+  },
+  {
+   "system": "chunk_1631",
+   "poisson_ratio": -0.113
+  },
+  {
+   "system": "chunk_115",
+   "poisson_ratio": -0.1182
+  },
+  {
+   "system": "chunk_1216",
+   "poisson_ratio": -0.1224
+  },
+  {
+   "system": "chunk_430",
+   "poisson_ratio": -0.1235
   },
   {
    "system": "chunk_52",
-   "poisson_ratio": -0.11897548347811127
+   "poisson_ratio": -0.1237
   },
   {
-   "system": "chunk_562",
-   "poisson_ratio": -0.11987761582268543
+   "system": "chunk_605",
+   "poisson_ratio": -0.1237
   },
   {
-   "system": "chunk_545",
-   "poisson_ratio": -0.12089355941157154
+   "system": "chunk_304",
+   "poisson_ratio": -0.1238
   },
   {
-   "system": "chunk_1909",
-   "poisson_ratio": -0.1218574379691478
-  },
-  {
-   "system": "chunk_1893",
-   "poisson_ratio": -0.12205582381725402
+   "system": "chunk_897",
+   "poisson_ratio": -0.1243
   },
   {
    "system": "chunk_1704",
-   "poisson_ratio": -0.13265053884793324
+   "poisson_ratio": -0.1247
   },
   {
-   "system": "chunk_1827",
-   "poisson_ratio": -0.13340044097924353
+   "system": "chunk_234",
+   "poisson_ratio": -0.1259
   },
   {
-   "system": "chunk_586",
-   "poisson_ratio": -0.13372389601980766
+   "system": "chunk_150",
+   "poisson_ratio": -0.128
+  },
+  {
+   "system": "chunk_1859",
+   "poisson_ratio": -0.1314
   },
   {
    "system": "chunk_781",
-   "poisson_ratio": -0.13520883632079755
+   "poisson_ratio": -0.1317
   },
   {
-   "system": "chunk_1571",
-   "poisson_ratio": -0.13797975708973315
+   "system": "chunk_562",
+   "poisson_ratio": -0.1356
   },
   {
-   "system": "chunk_219",
-   "poisson_ratio": -0.13860368232384207
-  },
-  {
-   "system": "chunk_43",
-   "poisson_ratio": -0.13937899522435654
-  },
-  {
-   "system": "chunk_1284",
-   "poisson_ratio": -0.14006040891111468
-  },
-  {
-   "system": "chunk_336",
-   "poisson_ratio": -0.14018503832152177
-  },
-  {
-   "system": "chunk_424",
-   "poisson_ratio": -0.1407795702116534
-  },
-  {
-   "system": "chunk_368",
-   "poisson_ratio": -0.14274326666643386
-  },
-  {
-   "system": "chunk_757",
-   "poisson_ratio": -0.14345484860562777
-  },
-  {
-   "system": "chunk_1163",
-   "poisson_ratio": -0.14458567517671433
-  },
-  {
-   "system": "chunk_846",
-   "poisson_ratio": -0.14557775430515874
-  },
-  {
-   "system": "chunk_804",
-   "poisson_ratio": -0.14670205215706159
-  },
-  {
-   "system": "chunk_1588",
-   "poisson_ratio": -0.15206425929784656
-  },
-  {
-   "system": "chunk_865",
-   "poisson_ratio": -0.15880041743640963
+   "system": "chunk_640",
+   "poisson_ratio": -0.1369
   },
   {
    "system": "chunk_641",
-   "poisson_ratio": -0.16276756654757682
+   "poisson_ratio": -0.137
   },
   {
-   "system": "chunk_1576",
-   "poisson_ratio": -0.16393195515587847
+   "system": "chunk_1893",
+   "poisson_ratio": -0.1388
   },
   {
-   "system": "chunk_1022",
-   "poisson_ratio": -0.16601403344530505
+   "system": "chunk_1959",
+   "poisson_ratio": -0.1393
   },
   {
-   "system": "chunk_673",
-   "poisson_ratio": -0.16645110411563535
+   "system": "chunk_845",
+   "poisson_ratio": -0.1412
+  },
+  {
+   "system": "chunk_545",
+   "poisson_ratio": -0.1432
   },
   {
    "system": "chunk_288",
-   "poisson_ratio": -0.1682699885430861
+   "poisson_ratio": -0.1479
+  },
+  {
+   "system": "chunk_804",
+   "poisson_ratio": -0.159
+  },
+  {
+   "system": "chunk_43",
+   "poisson_ratio": -0.1594
+  },
+  {
+   "system": "chunk_1284",
+   "poisson_ratio": -0.1601
+  },
+  {
+   "system": "chunk_368",
+   "poisson_ratio": -0.1659
+  },
+  {
+   "system": "chunk_484",
+   "poisson_ratio": -0.1667
+  },
+  {
+   "system": "chunk_586",
+   "poisson_ratio": -0.1689
+  },
+  {
+   "system": "chunk_1022",
+   "poisson_ratio": -0.1714
+  },
+  {
+   "system": "chunk_1827",
+   "poisson_ratio": -0.172
+  },
+  {
+   "system": "chunk_1571",
+   "poisson_ratio": -0.1786
+  },
+  {
+   "system": "chunk_673",
+   "poisson_ratio": -0.182
+  },
+  {
+   "system": "chunk_1163",
+   "poisson_ratio": -0.1847
+  },
+  {
+   "system": "chunk_1909",
+   "poisson_ratio": -0.1881
   },
   {
    "system": "chunk_1111",
-   "poisson_ratio": -0.1713767757017451
+   "poisson_ratio": -0.1882
   },
   {
    "system": "chunk_1602",
-   "poisson_ratio": -0.17688155955460655
+   "poisson_ratio": -0.1885
   },
   {
-   "system": "chunk_1091",
-   "poisson_ratio": -0.17817265405282076
-  },
-  {
-   "system": "chunk_1166",
-   "poisson_ratio": -0.1850204433989543
+   "system": "chunk_1588",
+   "poisson_ratio": -0.189
   },
   {
    "system": "chunk_873",
-   "poisson_ratio": -0.18645156968139337
+   "poisson_ratio": -0.1934
   },
   {
-   "system": "chunk_1639",
-   "poisson_ratio": -0.18779406031486492
+   "system": "chunk_757",
+   "poisson_ratio": -0.1938
   },
   {
-   "system": "chunk_600",
-   "poisson_ratio": -0.1880016255502413
+   "system": "chunk_846",
+   "poisson_ratio": -0.198
   },
   {
-   "system": "chunk_1488",
-   "poisson_ratio": -0.19101343866791112
-  },
-  {
-   "system": "chunk_95",
-   "poisson_ratio": -0.19492683837087588
-  },
-  {
-   "system": "chunk_1347",
-   "poisson_ratio": -0.1955556790760101
-  },
-  {
-   "system": "chunk_18",
-   "poisson_ratio": -0.19592255865878477
-  },
-  {
-   "system": "chunk_1840",
-   "poisson_ratio": -0.19796585084256527
-  },
-  {
-   "system": "chunk_317",
-   "poisson_ratio": -0.20134772213575142
-  },
-  {
-   "system": "chunk_1367",
-   "poisson_ratio": -0.20725146775764117
-  },
-  {
-   "system": "chunk_1905",
-   "poisson_ratio": -0.20730777576352527
-  },
-  {
-   "system": "chunk_941",
-   "poisson_ratio": -0.20765060217822073
-  },
-  {
-   "system": "chunk_1762",
-   "poisson_ratio": -0.21007680910973817
-  },
-  {
-   "system": "chunk_725",
-   "poisson_ratio": -0.21106612099968092
-  },
-  {
-   "system": "chunk_1750",
-   "poisson_ratio": -0.21220793182890454
+   "system": "chunk_336",
+   "poisson_ratio": -0.2031
   },
   {
    "system": "chunk_38",
-   "poisson_ratio": -0.21342672403005175
+   "poisson_ratio": -0.2055
   },
   {
-   "system": "chunk_1512",
-   "poisson_ratio": -0.21874073089335913
+   "system": "chunk_424",
+   "poisson_ratio": -0.2073
   },
   {
-   "system": "chunk_549",
-   "poisson_ratio": -0.22007845312909785
+   "system": "chunk_1576",
+   "poisson_ratio": -0.2101
   },
   {
-   "system": "chunk_1341",
-   "poisson_ratio": -0.2241691809314989
+   "system": "chunk_317",
+   "poisson_ratio": -0.2118
   },
   {
    "system": "chunk_285",
-   "poisson_ratio": -0.227979809532457
-  },
-  {
-   "system": "chunk_1453",
-   "poisson_ratio": -0.22925115730272072
-  },
-  {
-   "system": "chunk_983",
-   "poisson_ratio": -0.23053153250056255
-  },
-  {
-   "system": "chunk_610",
-   "poisson_ratio": -0.23086404838866081
+   "poisson_ratio": -0.2149
   },
   {
    "system": "chunk_278",
-   "poisson_ratio": -0.23094228751336077
+   "poisson_ratio": -0.2192
   },
   {
-   "system": "chunk_1980",
-   "poisson_ratio": -0.23096417606402328
+   "system": "chunk_1091",
+   "poisson_ratio": -0.2213
   },
   {
-   "system": "chunk_1032",
-   "poisson_ratio": -0.23307099487770958
+   "system": "chunk_1639",
+   "poisson_ratio": -0.2218
   },
   {
-   "system": "chunk_1351",
-   "poisson_ratio": -0.23545781875459013
+   "system": "chunk_18",
+   "poisson_ratio": -0.2245
   },
   {
-   "system": "chunk_472",
-   "poisson_ratio": -0.23692840758221564
+   "system": "chunk_865",
+   "poisson_ratio": -0.2255
   },
   {
-   "system": "chunk_177",
-   "poisson_ratio": -0.23719688943714495
+   "system": "chunk_1347",
+   "poisson_ratio": -0.2259
   },
   {
-   "system": "chunk_1280",
-   "poisson_ratio": -0.2392408403841466
+   "system": "chunk_1488",
+   "poisson_ratio": -0.2265
   },
   {
-   "system": "chunk_172",
-   "poisson_ratio": -0.24056255504018187
+   "system": "chunk_600",
+   "poisson_ratio": -0.2268
   },
   {
-   "system": "chunk_1808",
-   "poisson_ratio": -0.24330427143698274
+   "system": "chunk_725",
+   "poisson_ratio": -0.2292
   },
   {
-   "system": "chunk_457",
-   "poisson_ratio": -0.24692764883809942
+   "system": "chunk_1367",
+   "poisson_ratio": -0.2294
   },
   {
-   "system": "chunk_975",
-   "poisson_ratio": -0.24821341866379582
+   "system": "chunk_1166",
+   "poisson_ratio": -0.2383
+  },
+  {
+   "system": "chunk_219",
+   "poisson_ratio": -0.2406
+  },
+  {
+   "system": "chunk_941",
+   "poisson_ratio": -0.2431
+  },
+  {
+   "system": "chunk_1840",
+   "poisson_ratio": -0.2493
   },
   {
    "system": "chunk_1416",
-   "poisson_ratio": -0.24881511567253178
+   "poisson_ratio": -0.2543
   },
   {
-   "system": "chunk_769",
-   "poisson_ratio": -0.24908045523417324
+   "system": "chunk_1453",
+   "poisson_ratio": -0.2549
   },
   {
-   "system": "chunk_954",
-   "poisson_ratio": -0.24938306376604488
+   "system": "chunk_1808",
+   "poisson_ratio": -0.2584
   },
   {
-   "system": "chunk_1574",
-   "poisson_ratio": -0.2502791212096731
-  },
-  {
-   "system": "chunk_1019",
-   "poisson_ratio": -0.25101299228299456
-  },
-  {
-   "system": "chunk_1396",
-   "poisson_ratio": -0.251224417693684
-  },
-  {
-   "system": "chunk_871",
-   "poisson_ratio": -0.25265827600344665
-  },
-  {
-   "system": "chunk_1054",
-   "poisson_ratio": -0.2548418281239923
-  },
-  {
-   "system": "chunk_1706",
-   "poisson_ratio": -0.259602606451685
-  },
-  {
-   "system": "chunk_896",
-   "poisson_ratio": -0.2603882572891371
+   "system": "chunk_1750",
+   "poisson_ratio": -0.2599
   },
   {
    "system": "chunk_1468",
-   "poisson_ratio": -0.26109744408425006
+   "poisson_ratio": -0.26
   },
   {
-   "system": "chunk_186",
-   "poisson_ratio": -0.2612130320685488
+   "system": "chunk_983",
+   "poisson_ratio": -0.2618
   },
   {
-   "system": "chunk_1271",
-   "poisson_ratio": -0.2773113684882763
+   "system": "chunk_871",
+   "poisson_ratio": -0.2628
   },
   {
-   "system": "chunk_1942",
-   "poisson_ratio": -0.27891475769361057
+   "system": "chunk_1341",
+   "poisson_ratio": -0.2636
   },
   {
-   "system": "chunk_971",
-   "poisson_ratio": -0.2795142821754344
+   "system": "chunk_1032",
+   "poisson_ratio": -0.2638
   },
   {
-   "system": "chunk_443",
-   "poisson_ratio": -0.27987071115557904
+   "system": "chunk_472",
+   "poisson_ratio": -0.2647
   },
   {
-   "system": "chunk_1192",
-   "poisson_ratio": -0.28024785893080584
+   "system": "chunk_1351",
+   "poisson_ratio": -0.2649
   },
   {
-   "system": "chunk_1484",
-   "poisson_ratio": -0.281285169795173
+   "system": "chunk_95",
+   "poisson_ratio": -0.2667
+  },
+  {
+   "system": "chunk_1762",
+   "poisson_ratio": -0.2671
+  },
+  {
+   "system": "chunk_549",
+   "poisson_ratio": -0.2682
+  },
+  {
+   "system": "chunk_610",
+   "poisson_ratio": -0.269
   },
   {
    "system": "chunk_316",
-   "poisson_ratio": -0.28324300557449317
+   "poisson_ratio": -0.2756
   },
   {
-   "system": "chunk_1946",
-   "poisson_ratio": -0.28332021415344155
+   "system": "chunk_457",
+   "poisson_ratio": -0.2764
   },
   {
-   "system": "chunk_784",
-   "poisson_ratio": -0.2854060774107709
+   "system": "chunk_1512",
+   "poisson_ratio": -0.2774
   },
   {
-   "system": "chunk_1237",
-   "poisson_ratio": -0.2865150685652283
+   "system": "chunk_1019",
+   "poisson_ratio": -0.2784
   },
   {
-   "system": "chunk_57",
-   "poisson_ratio": -0.28655854097365274
+   "system": "chunk_896",
+   "poisson_ratio": -0.2798
   },
   {
-   "system": "chunk_1780",
-   "poisson_ratio": -0.2929563853296617
+   "system": "chunk_1980",
+   "poisson_ratio": -0.283
   },
   {
-   "system": "chunk_1225",
-   "poisson_ratio": -0.29525671427289285
+   "system": "chunk_1280",
+   "poisson_ratio": -0.2854
   },
   {
-   "system": "chunk_893",
-   "poisson_ratio": -0.29568286311097824
+   "system": "chunk_1054",
+   "poisson_ratio": -0.2889
+  },
+  {
+   "system": "chunk_1905",
+   "poisson_ratio": -0.2903
+  },
+  {
+   "system": "chunk_975",
+   "poisson_ratio": -0.2939
+  },
+  {
+   "system": "chunk_1484",
+   "poisson_ratio": -0.2947
+  },
+  {
+   "system": "chunk_1706",
+   "poisson_ratio": -0.2955
   },
   {
    "system": "chunk_1477",
-   "poisson_ratio": -0.29691418061388114
+   "poisson_ratio": -0.2961
   },
   {
-   "system": "chunk_1971",
-   "poisson_ratio": -0.3002032157148054
+   "system": "chunk_784",
+   "poisson_ratio": -0.2964
   },
   {
-   "system": "chunk_1072",
-   "poisson_ratio": -0.30096059892593957
+   "system": "chunk_1192",
+   "poisson_ratio": -0.2969
   },
   {
-   "system": "chunk_1740",
-   "poisson_ratio": -0.3101771508766571
+   "system": "chunk_1942",
+   "poisson_ratio": -0.3001
   },
   {
-   "system": "chunk_821",
-   "poisson_ratio": -0.31111308427055495
+   "system": "chunk_1271",
+   "poisson_ratio": -0.3007
   },
   {
-   "system": "chunk_1844",
-   "poisson_ratio": -0.3120678698540469
+   "system": "chunk_172",
+   "poisson_ratio": -0.3011
   },
   {
-   "system": "chunk_1002",
-   "poisson_ratio": -0.3121490654453111
+   "system": "chunk_1946",
+   "poisson_ratio": -0.3015
   },
   {
-   "system": "chunk_1932",
-   "poisson_ratio": -0.3123153077801079
+   "system": "chunk_1574",
+   "poisson_ratio": -0.3063
   },
   {
-   "system": "chunk_168",
-   "poisson_ratio": -0.31276872202773576
+   "system": "chunk_1396",
+   "poisson_ratio": -0.3185
   },
   {
-   "system": "chunk_1478",
-   "poisson_ratio": -0.3133524238561692
+   "system": "chunk_971",
+   "poisson_ratio": -0.3199
   },
   {
-   "system": "chunk_1690",
-   "poisson_ratio": -0.3161238413137001
+   "system": "chunk_1237",
+   "poisson_ratio": -0.3204
   },
   {
-   "system": "chunk_1826",
-   "poisson_ratio": -0.31682124239538634
+   "system": "chunk_186",
+   "poisson_ratio": -0.3206
   },
   {
-   "system": "chunk_455",
-   "poisson_ratio": -0.3172942789289018
+   "system": "chunk_177",
+   "poisson_ratio": -0.3253
   },
   {
    "system": "chunk_1746",
-   "poisson_ratio": -0.31971294882122586
+   "poisson_ratio": -0.3311
   },
   {
-   "system": "chunk_809",
-   "poisson_ratio": -0.32359992740819193
+   "system": "chunk_769",
+   "poisson_ratio": -0.3327
   },
   {
-   "system": "chunk_1336",
-   "poisson_ratio": -0.3251789303086209
+   "system": "chunk_1932",
+   "poisson_ratio": -0.3336
+  },
+  {
+   "system": "chunk_1740",
+   "poisson_ratio": -0.3351
+  },
+  {
+   "system": "chunk_1072",
+   "poisson_ratio": -0.3354
+  },
+  {
+   "system": "chunk_1844",
+   "poisson_ratio": -0.3356
   },
   {
    "system": "chunk_1250",
-   "poisson_ratio": -0.32688090769368133
+   "poisson_ratio": -0.337
   },
   {
-   "system": "chunk_1960",
-   "poisson_ratio": -0.3303322871123439
-  },
-  {
-   "system": "chunk_678",
-   "poisson_ratio": -0.332338607649458
-  },
-  {
-   "system": "chunk_425",
-   "poisson_ratio": -0.33313490548334873
+   "system": "chunk_57",
+   "poisson_ratio": -0.3394
   },
   {
    "system": "chunk_29",
-   "poisson_ratio": -0.3339023021206218
+   "poisson_ratio": -0.3433
+  },
+  {
+   "system": "chunk_443",
+   "poisson_ratio": -0.3438
+  },
+  {
+   "system": "chunk_1780",
+   "poisson_ratio": -0.3442
+  },
+  {
+   "system": "chunk_1225",
+   "poisson_ratio": -0.3443
+  },
+  {
+   "system": "chunk_455",
+   "poisson_ratio": -0.3454
+  },
+  {
+   "system": "chunk_678",
+   "poisson_ratio": -0.346
+  },
+  {
+   "system": "chunk_809",
+   "poisson_ratio": -0.3461
+  },
+  {
+   "system": "chunk_893",
+   "poisson_ratio": -0.3475
+  },
+  {
+   "system": "chunk_954",
+   "poisson_ratio": -0.3524
+  },
+  {
+   "system": "chunk_168",
+   "poisson_ratio": -0.3538
+  },
+  {
+   "system": "chunk_1690",
+   "poisson_ratio": -0.3538
+  },
+  {
+   "system": "chunk_1826",
+   "poisson_ratio": -0.3583
+  },
+  {
+   "system": "chunk_1478",
+   "poisson_ratio": -0.3599
+  },
+  {
+   "system": "chunk_1971",
+   "poisson_ratio": -0.3604
+  },
+  {
+   "system": "chunk_1960",
+   "poisson_ratio": -0.3679
+  },
+  {
+   "system": "chunk_1002",
+   "poisson_ratio": -0.3683
   },
   {
    "system": "chunk_1264",
-   "poisson_ratio": -0.3347288317682867
-  },
-  {
-   "system": "chunk_1551",
-   "poisson_ratio": -0.3384347760593211
-  },
-  {
-   "system": "chunk_421",
-   "poisson_ratio": -0.3407849334516663
-  },
-  {
-   "system": "chunk_283",
-   "poisson_ratio": -0.3447030643803443
-  },
-  {
-   "system": "chunk_159",
-   "poisson_ratio": -0.34559798293705746
-  },
-  {
-   "system": "chunk_762",
-   "poisson_ratio": -0.3469530355564066
-  },
-  {
-   "system": "chunk_1792",
-   "poisson_ratio": -0.34713265579087865
-  },
-  {
-   "system": "chunk_1003",
-   "poisson_ratio": -0.34719798180561184
-  },
-  {
-   "system": "chunk_169",
-   "poisson_ratio": -0.3502928316061404
+   "poisson_ratio": -0.3696
   },
   {
    "system": "chunk_1108",
-   "poisson_ratio": -0.35368437117264484
-  },
-  {
-   "system": "chunk_1622",
-   "poisson_ratio": -0.35779976364088034
-  },
-  {
-   "system": "chunk_1043",
-   "poisson_ratio": -0.36077376824681034
-  },
-  {
-   "system": "chunk_1447",
-   "poisson_ratio": -0.3610533793454277
-  },
-  {
-   "system": "chunk_966",
-   "poisson_ratio": -0.36190203788276437
+   "poisson_ratio": -0.3728
   },
   {
    "system": "chunk_539",
-   "poisson_ratio": -0.36464459270049576
+   "poisson_ratio": -0.3729
   },
   {
-   "system": "chunk_965",
-   "poisson_ratio": -0.36472569731017135
+   "system": "chunk_762",
+   "poisson_ratio": -0.373
   },
   {
-   "system": "chunk_1519",
-   "poisson_ratio": -0.3657734992370521
+   "system": "chunk_821",
+   "poisson_ratio": -0.3739
+  },
+  {
+   "system": "chunk_1622",
+   "poisson_ratio": -0.3868
+  },
+  {
+   "system": "chunk_1551",
+   "poisson_ratio": -0.3875
+  },
+  {
+   "system": "chunk_966",
+   "poisson_ratio": -0.396
   },
   {
    "system": "chunk_1212",
-   "poisson_ratio": -0.36633289797020674
+   "poisson_ratio": -0.3971
   },
   {
-   "system": "chunk_1010",
-   "poisson_ratio": -0.3663904247196654
-  },
-  {
-   "system": "chunk_1754",
-   "poisson_ratio": -0.3685429358063239
+   "system": "chunk_1792",
+   "poisson_ratio": -0.3975
   },
   {
    "system": "chunk_17",
-   "poisson_ratio": -0.3704551444414617
+   "poisson_ratio": -0.403
   },
   {
-   "system": "chunk_1479",
-   "poisson_ratio": -0.39918032347972293
+   "system": "chunk_1336",
+   "poisson_ratio": -0.4031
   },
   {
-   "system": "chunk_634",
-   "poisson_ratio": -0.4036914402466986
+   "system": "chunk_169",
+   "poisson_ratio": -0.4031
+  },
+  {
+   "system": "chunk_283",
+   "poisson_ratio": -0.4036
+  },
+  {
+   "system": "chunk_1003",
+   "poisson_ratio": -0.4097
+  },
+  {
+   "system": "chunk_1010",
+   "poisson_ratio": -0.4102
+  },
+  {
+   "system": "chunk_965",
+   "poisson_ratio": -0.4112
+  },
+  {
+   "system": "chunk_425",
+   "poisson_ratio": -0.4128
+  },
+  {
+   "system": "chunk_159",
+   "poisson_ratio": -0.4168
   },
   {
    "system": "chunk_580",
-   "poisson_ratio": -0.4056675200199664
+   "poisson_ratio": -0.417
+  },
+  {
+   "system": "chunk_1043",
+   "poisson_ratio": -0.4183
+  },
+  {
+   "system": "chunk_1754",
+   "poisson_ratio": -0.4243
+  },
+  {
+   "system": "chunk_1447",
+   "poisson_ratio": -0.4261
+  },
+  {
+   "system": "chunk_1519",
+   "poisson_ratio": -0.4293
+  },
+  {
+   "system": "chunk_634",
+   "poisson_ratio": -0.4379
+  },
+  {
+   "system": "chunk_421",
+   "poisson_ratio": -0.4419
+  },
+  {
+   "system": "chunk_1479",
+   "poisson_ratio": -0.4531
   }
  ]
 }

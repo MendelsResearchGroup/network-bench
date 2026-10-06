@@ -8,13 +8,13 @@ Two conventions, kept distinct:
   systems, not an R^2 at all.
 """
 
-from .rollout import position_poisson_ratio, r2_centred, rollout_errors, summarise_rollouts
+from .rollout import box_poisson_ratio, r2_centred, rollout_errors, summarise_rollouts
 from .stress import slope, stress_along, stress_dim, stress_entry, summarise_stress
 
 __all__ = [
     "rollout_errors",
     "summarise_rollouts",
-    "position_poisson_ratio",
+    "box_poisson_ratio",
     "r2_centred",
     "stress_along",
     "stress_entry",

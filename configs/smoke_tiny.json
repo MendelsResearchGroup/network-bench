@@ -28,7 +28,6 @@
  },
  "train": {
   "accumulation_steps": 4,
-  "box_mode": "deform_x",
   "cache_windows": true,
   "detach_rollout": false,
   "device": "cpu",

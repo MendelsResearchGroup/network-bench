@@ -200,9 +200,10 @@ target; `r2_ceiling` is the best R² any predictor could reach.
   number that survives a change of system size or dimensionality; the raw MSE is
   kept beside it so the ratio can be audited rather than trusted.
 - `poisson_r2_10`, `poisson_r2_20`, ... — R² across systems of Poisson's ratio
-  10, 20, ... rollout steps past the seed. It is fitted to the node positions (the
-  affine transverse stretch), because a rollout does not predict the box. NaN
-  wherever the transverse box is clamped.
+  10, 20, ... rollout steps past the seed, read off the box. In a rollout the
+  driven edge moves at the seed's rate and the free edges follow a Langevin-piston
+  barostat pushed by the virial pressure of the predicted positions, as in LAMMPS.
+  NaN wherever the transverse box is clamped.
 - `ratio_r2`, `sxx_slope_r2`, `stress_rel_mse` — the stress response, from the
   force field's own virial on a neighbour list rebuilt at the full cutoff. Off
   unless `train.stress_metrics` is set, since it costs a virial per sampled frame.
@@ -223,6 +224,17 @@ the checkpoint of the validation epoch that did best on it instead; the test spl
 plays no part in the choice. `metrics.json` then records `selected_epoch` and the
 validation score it was chosen on.
 
+**The barostat.** Its piston constants (`coupling`, `damping`, LAMMPS `dt`) are
+registered per dataset (`DatasetEntry.barostat`). Before every run the benchmark
+drives the barostat with ground-truth positions on ten training trajectories and
+compares the free box edges with the true ones; a relative error above 0.1 stops
+the run. A dataset with free axes but no registered constants has them fitted by
+a grid search at the start of the run, and the run prints them for registration.
+`gnn-bench barostat <dataset> [--fit]` runs the same check or fit on its own. The
+pressure uses the LAMMPS harmonic convention, bond force `2K(r - l0)`, which is
+what the constants were fitted with. A dataset with a free axis and no declared
+force field (`noisy_lj`) cannot be rolled out.
+
 ## Provenance
 
 Extracted from the `KG_chains` research repository, trimmed to what a benchmark
@@ -232,6 +244,6 @@ the potential energy to seven (6779.0783 vs 6779.0779); the stress-strain slopes
 over the first hundred frames agree to four (C11 −104.26 vs −104.32), giving
 nu = 0.4451 from the ratio.
 
-Not included in this version: the Langevin-piston barostat (so a rollout's
-transverse box is frozen), input-noise injection, the auxiliary edge-decoder
-head, and hyperparameter search.
+The barostat is ported from `GNNInverseDesign/barostat_utils.py`. Not included in
+this version: input-noise injection, the auxiliary edge-decoder head, and
+hyperparameter search.

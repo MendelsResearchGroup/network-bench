@@ -20,8 +20,9 @@ rollout and computes the metrics.
 loss reads it back from there: positions are O(3) sigma while the acceleration is
 O(1e-6), so recovering it by differencing float32 positions would lose digits.
 
-The box is not predicted. Compression is imposed externally, so the next frame
-carries the input frame's box and the rollout advances it.
+The box is not predicted. Compression is imposed externally and the free axes
+follow a barostat, so the next frame carries the input frame's box and the
+rollout replaces it; see `gnn_physics_benchmark.barostat`.
 
 A model whose whole idea is a different target normalisation may also define
 `normalize_target(acceleration, *, accumulate) -> Tensor`; the loss is then taken
@@ -111,15 +112,19 @@ def integrate_acceleration(graph: Data, acceleration: Tensor) -> Data:
     return frame
 
 
-def frame_from_positions(graph: Data, position: Tensor, frame_offset: int) -> Data:
-    """Build a raw frame at given positions, carrying topology and identity."""
+def frame_from_positions(graph: Data, position: Tensor, frame_offset: int, box: Tensor | None = None) -> Data:
+    """Build a raw frame at given positions, carrying topology and identity.
+
+    `box` is the new frame's box; by default it keeps the input graph's.
+    """
 
     # Recompute the raw bond features at the new positions, under the minimum
     # image. Imported here to keep this module free of the graph machinery.
     from ..graph.build import minimum_image
 
+    box = graph.box_tensor if box is None else box
     source, target = graph.bond_index
-    vectors = minimum_image(position[source] - position[target], graph.box_tensor)
+    vectors = minimum_image(position[source] - position[target], box)
     lengths = torch.linalg.vector_norm(vectors, dim=1, keepdim=True)
 
     frame = Data(
@@ -134,6 +139,7 @@ def frame_from_positions(graph: Data, position: Tensor, frame_offset: int) -> Da
         value = getattr(graph, field, None)
         if value is not None:
             setattr(frame, field, value)
+    frame.box_tensor = box
     return frame
 
 

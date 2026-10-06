@@ -4,6 +4,7 @@
     gnn-bench schema                       the raw frame schema and the input graph
     gnn-bench models                       registered models and their defaults
     gnn-bench difficulty <dataset>         measure a dataset before training on it
+    gnn-bench barostat <dataset>           check a dataset's barostat against the true box, or fit it
     gnn-bench ood-config <config.json>     prepare a highest-30% Poisson split
     gnn-bench learning-curve-config <config.json>  prepare nested training subsets
     gnn-bench train <config.json>          train and score models across seeds
@@ -171,12 +172,29 @@ def cmd_ood_config(args) -> None:
     if args.dataset:
         config = replace(config, dataset=args.dataset)
     torch.set_num_threads(args.threads)
-    config, audit = prepare_ood(config, args.train_networks)
+    config, audit = prepare_ood(config, args.train_networks, args.val_networks)
     path = Path(args.out)
     path.parent.mkdir(parents=True, exist_ok=True)
     config.to_json(path)
     path.with_suffix(".ranking.json").write_text(json.dumps(audit, indent=1))
     print(f"{config.dataset}: {audit['counts']} -> {path}")
+
+
+def cmd_barostat(args) -> None:
+    from . import barostat
+    from .data import loading
+    from .graph.potential import from_dataset
+
+    entry = registry.get(args.dataset)
+    if args.fit and entry.barostat is not None:
+        print(f"ignoring the registered parameters {entry.barostat}")
+        entry = replace(entry, barostat=None)
+    torch.set_num_threads(args.threads)
+    stems = entry.systems()[: args.systems]
+    trajectories = loading.load_trajectories(entry, stems, max_frames=args.window + args.steps)
+    potential = from_dataset(entry) if entry.potential else None
+    resolved, _ = barostat.resolve(entry, potential, trajectories, args.window, systems=args.systems)
+    print(json.dumps(resolved.params, indent=1))
 
 
 def cmd_learning_curve_config(args) -> None:
@@ -192,6 +210,8 @@ def cmd_learning_curve_config(args) -> None:
 
 
 def cmd_evaluate(args) -> None:
+    from .barostat import resolve
+    from .graph.features import potential_for
     from .training.loop import load_checkpoint
     from .normalization import Normalizer
 
@@ -210,8 +230,11 @@ def cmd_evaluate(args) -> None:
     model = models.build(config.model, config.graph, scale, **config.model_hyperparameters).to(config.train.device)
     model.load_state_dict(state)
     data = benchmark.load_data(config, saved["split"][args.split])
+    entry = registry.get(config.dataset)
+    potential = potential_for(config.graph, entry)
+    barostat, _ = resolve(entry, potential, data, config.graph.window_length)
     print(f"{checkpoint.name} on split {args.split!r}\n")
-    print(json.dumps(evaluation.evaluate_model(model, data, config, split=args.split), indent=1))
+    print(json.dumps(evaluation.evaluate_model(model, data, config, barostat, split=args.split), indent=1))
 
 
 def cmd_report(args) -> None:
@@ -290,9 +313,19 @@ def main(argv: list[str] | None = None) -> None:
     ood = sub.add_parser("ood-config", help="prepare an explicit highest-30%% Poisson train/validation split")
     ood.add_argument("config")
     ood.add_argument("--dataset", help="override the config's dataset")
-    ood.add_argument("--train-networks", type=int, default=30, help="training networks from the upper pool (default: 30)")
+    ood.add_argument("--train-networks", type=int, default=100, help="training networks from the upper pool (default: 100)")
+    ood.add_argument("--val-networks", type=int, default=50,
+                     help="validation networks, drawn from the full range of ratios (default: 50)")
     ood.add_argument("--out", required=True, help="output config; also writes a .ranking.json audit")
     ood.set_defaults(func=cmd_ood_config)
+
+    baro = sub.add_parser("barostat", help="check a dataset's barostat with ground-truth positions, or fit it")
+    baro.add_argument("dataset")
+    baro.add_argument("--fit", action="store_true", help="search for new parameters even if some are registered")
+    baro.add_argument("--systems", type=int, default=10, help="trajectories to check or fit on (default: 10)")
+    baro.add_argument("--window", type=int, default=4, help="seed frames (default: 4)")
+    baro.add_argument("--steps", type=int, default=100, help="frames to advance (default: 100)")
+    baro.set_defaults(func=cmd_barostat)
 
     curve = sub.add_parser('learning-curve-config', help='prepare seed-specific splits and nested training sizes')
     curve.add_argument('config')

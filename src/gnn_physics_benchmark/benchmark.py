@@ -9,6 +9,7 @@ from pathlib import Path
 
 import torch
 
+from . import barostat as barostats
 from . import models
 from .data import loading, registry
 from .graph.features import build_input_graph, potential_for, prepare_window
@@ -19,7 +20,10 @@ from .training.config import RunConfig
 from .training.loop import load_checkpoint, train
 from .training.loss import fit_target_scale
 
-__all__ = ["run", "select_epoch"]
+__all__ = ["run", "select_epoch", "MIN_TRAIN_NETWORKS"]
+
+#: Fewer training networks than this are too few to support a comparison.
+MIN_TRAIN_NETWORKS = 100
 
 
 def select_epoch(history: dict, key: str) -> dict:
@@ -56,27 +60,33 @@ def run(
             print(f"{directory.name}: already done, skipping")
         return cache.read_result(directory)
 
+    if len(resolved["train"]) < MIN_TRAIN_NETWORKS:
+        print(f"[warning] training on {len(resolved['train'])} networks; fewer than "
+              f"{MIN_TRAIN_NETWORKS} are too few to support a comparison.", flush=True)
+
     try:
         data = {part: load_data(config, systems) for part, systems in resolved.items()}
+        potential = potential_for(config.graph, entry)
+        barostat, box_error = barostats.resolve(entry, potential, data["train"], config.graph.window_length)
         scale = fit_target_scale(
             data["train"], config.graph, config.train,
             max_windows=config.train.target_scale_windows, device=config.train.device,
         )
         torch.manual_seed(config.train.seed)
         model = models.build(config.model, config.graph, scale, **config.model_hyperparameters).to(config.train.device)
-        potential = potential_for(config.graph, entry)
         window = data["train"][0][:config.graph.window_length]
         graph = build_input_graph(prepare_window(window, config.graph, potential), config.graph, potential)
         model.eval()
         with torch.no_grad():
             validate_raw_frame(model(graph.to(config.train.device)), entry.schema, name=f"{config.model} output")
-        history = train(model, data, config, scale, save_dir=directory / "checkpoints", verbose=verbose)
+        history = train(model, data, config, scale, barostat, save_dir=directory / "checkpoints", verbose=verbose)
         selection = config.train.selection_metric
         if selection is not None:
             selected = select_epoch(history, selection)
             state, _, _ = load_checkpoint(directory / "checkpoints" / f"epoch_{selected['epoch']:04d}.pt")
             model.load_state_dict(state)
-        measured = evaluate_model(model, data[split], config, split=split)
+        measured = evaluate_model(model, data[split], config, barostat, split=split)
+        measured["barostat"] = {"params": barostat.params, "box_error": box_error}
         measured["trained_epochs"] = len(history["epochs"])
         measured["early_stopped"] = history["early_stopped"]
         if selection is not None:

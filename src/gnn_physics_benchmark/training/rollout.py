@@ -6,10 +6,11 @@ prepare the window exactly as training prepares it. There is no separate
 inference path to keep in step with the training path, which is where the
 reference implementation had to duplicate its box handling.
 
-The box is not predicted. Compression is imposed externally, so `box_mode`
-decides how it moves: `"deform_x"` keeps the per-frame increment seen in the last
-two seed frames, reproducing `fix deform ... erate` at a constant rate with the
-transverse edges frozen; `"none"` holds it still.
+The box is not predicted. The driven edge keeps the per-frame increment seen in
+the last two seed frames, reproducing `fix deform ... erate`, and the free edges
+follow a barostat driven by the predicted positions; see
+`gnn_physics_benchmark.barostat`. Each new frame's bond vectors are computed in
+its new box.
 """
 
 from __future__ import annotations
@@ -17,12 +18,13 @@ from __future__ import annotations
 import torch
 from torch_geometric.data import Data
 
+from ..barostat import Barostat, BoxDriver
 from ..graph.features import build_input_graph, prepare_window
 from ..graph.potential import KGPotential
 from ..interfaces.graph import InputGraphSpec
 from ..interfaces.model import frame_from_positions
 
-__all__ = ["diverged", "advance_box", "prediction_frames", "rollout"]
+__all__ = ["diverged", "prediction_frames", "rollout"]
 
 
 def diverged(frame: Data) -> bool:
@@ -41,27 +43,18 @@ def diverged(frame: Data) -> bool:
     )
 
 
-def advance_box(frame: Data, box_delta_x: torch.Tensor, box_mode: str) -> Data:
-    """Move the box one rollout step."""
-    if box_mode == "deform_x":
-        box = frame.box_tensor.clone()
-        box[0] = box[0] + box_delta_x
-        frame.box_tensor = box
-    return frame
+def prediction_frames(graph: Data, predicted: Data, stride: int, driver: BoxDriver) -> list[Data]:
+    """The frames up to the predicted endpoint, each in its own box.
 
-
-def prediction_frames(graph: Data, predicted: Data, stride: int, box_delta_x: torch.Tensor, box_mode: str) -> list[Data]:
-    """Fill skipped frames using the predicted endpoint, never future truth.
-
-    This keeps the next input's velocity history on consecutive stored-frame
+    Skipped frames are filled from the predicted endpoint, never future truth,
+    which keeps the next input's velocity history on consecutive stored-frame
     intervals even when the model predicts two intervals in one call.
     """
     frames = []
-    for offset in range(1, stride):
-        position = graph.pos + (predicted.pos - graph.pos) * (offset / stride)
-        frame = frame_from_positions(graph, position, offset)
-        frames.append(advance_box(frame, offset * box_delta_x, box_mode))
-    frames.append(advance_box(predicted, stride * box_delta_x, box_mode))
+    for offset in range(1, stride + 1):
+        position = graph.pos + (predicted.pos - graph.pos) * (offset / stride) if offset < stride else predicted.pos
+        box = driver.advance(position, graph.bond_index, graph.bond_attr)
+        frames.append(frame_from_positions(graph, position, offset, box))
     return frames
 
 
@@ -71,8 +64,8 @@ def rollout(
     num_steps: int,
     spec: InputGraphSpec,
     potential: KGPotential | None,
+    barostat: Barostat,
     *,
-    box_mode: str = "deform_x",
     device: str = "cpu",
 ) -> list[Data]:
     """Roll `model` forward `num_steps` frames from a seed of raw frames.
@@ -86,7 +79,7 @@ def rollout(
     """
     trajectory = [frame.clone().to(device) for frame in seed]
     window = trajectory[-spec.window_length :]
-    box_delta_x = window[-1].box_tensor[0] - window[-2].box_tensor[0]
+    driver = barostat.drive(window)
 
     was_training = getattr(model, "training", False)
     model.eval()
@@ -95,12 +88,11 @@ def rollout(
             stride = spec.prediction_stride
             for step in range(0, num_steps, stride):
                 graph = build_input_graph(prepare_window(window, spec, potential), spec, potential)
-                frames = prediction_frames(graph, model(graph), stride, box_delta_x, box_mode)
-                predicted = frames[-1]
-                if diverged(predicted):
+                frames = prediction_frames(graph, model(graph), stride, driver)
+                if diverged(frames[-1]):
                     print(f"[warning] rollout diverged after {step} steps.")
                     break
-                frames = [frame.detach() for frame in frames[:num_steps - step]]
+                frames = frames[: num_steps - step]
                 window = (window + frames)[-spec.window_length:]
                 trajectory.extend(frames)
     finally:

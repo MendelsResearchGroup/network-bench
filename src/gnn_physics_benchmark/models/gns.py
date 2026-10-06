@@ -63,7 +63,7 @@ class GNS(SimulatorModel):
         target_scale: Normalizer,
         *,
         hidden_size: int = 64,
-        n_layers: int = 10,
+        n_layers: int = 2,
         num_mlp: int = 3,
     ):
         super().__init__(spec, target_scale, hidden_size=hidden_size, n_layers=n_layers, num_mlp=num_mlp)

@@ -8,7 +8,7 @@
  "split": {
   "manifest": null,
   "sizes": [
-   50,
+   100,
    50,
    70
   ],
@@ -18,7 +18,6 @@
   "windows_per_sim": 16,
   "val_rollout_steps": 100,
   "validate_every": 2,
-  "select_by": "poisson_r2_100",
-  "early_stopping_patience": 5
+  "select_by": "poisson_r2_100"
  }
 }

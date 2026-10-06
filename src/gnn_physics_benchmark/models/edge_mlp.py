@@ -6,7 +6,7 @@ sum, next to the node's velocity history, feeds a node MLP that predicts the
 acceleration. The node sees how its springs are stretched, but never its
 neighbours' velocities and never anything two bonds away.
 
-It sits between `tiny_mlp` (the node alone) and `gns` (ten rounds of message
+It sits between `tiny_mlp` (the node alone) and `gns` (two rounds of message
 passing). As in `tiny_mlp`, the output layer is zero-initialised, so an untrained
 model predicts zero acceleration -- pure velocity persistence.
 """

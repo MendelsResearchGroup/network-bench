@@ -6,7 +6,10 @@ Two loops share almost everything:
   loss is designed for and what most runs use.
 * **multi-step** feeds the model's own predictions back in and scores every
   rolled-out step, so the graphs it trains on are the graphs it will meet at
-  inference. The rollout schedule grows the horizon as training proceeds.
+  inference, boxes included: the barostat moves them as in a rollout. The
+  rollout schedule grows the horizon as training proceeds. Predictions are
+  detached before they are fed back unless `detach_rollout` is off, which
+  backpropagates through the whole rollout.
 
 Neither injects input noise; that is deliberately out of this version.
 """
@@ -82,7 +85,7 @@ def validate_one_step(model, trajectories, graph_spec, potential, spec: TrainSpe
     return total / max(count, 1)
 
 
-def validate_rollout(model, trajectories, graph_spec, potential, spec: TrainSpec, *, driven_axis: int = 0) -> dict:
+def validate_rollout(model, trajectories, graph_spec, potential, barostat, spec: TrainSpec, *, driven_axis: int = 0) -> dict:
     """Roll the model out on every validation system and summarise the errors."""
     steps = spec.val_rollout_steps
     shortest = min((len(t) for t in trajectories), default=graph_spec.window_length)
@@ -98,7 +101,7 @@ def validate_rollout(model, trajectories, graph_spec, potential, spec: TrainSpec
             min(steps, available),
             graph_spec,
             potential,
-            box_mode=spec.box_mode,
+            barostat,
             device=spec.device,
         )
         errors.append(rollout_errors(predicted, trajectory, graph_spec.history, driven_axis=driven_axis))
@@ -125,6 +128,7 @@ def train(
     data: dict[str, list[list[Data]]],
     config: RunConfig,
     scale,
+    barostat,
     *,
     save_dir: str | Path | None = None,
     verbose: bool = True,
@@ -132,7 +136,8 @@ def train(
     """Train `model` and return its per-epoch history.
 
     `data` maps split names to lists of raw trajectories; `scale` is the frozen
-    acceleration normaliser the model was built with.
+    acceleration normaliser the model was built with; `barostat` moves the box
+    of every rollout, in validation and in multi-step training.
     """
     spec, graph_spec = config.train, config.graph
     from ..data import registry
@@ -166,7 +171,7 @@ def train(
             starts = window_starts(len(trajectory), span, spec.windows_per_sim, spec.window_mode, rng)
             for position, start in enumerate(starts):
                 loss, taken, stopped = _window_loss(
-                    model, trajectory, start, steps, graph_spec, spec, potential, scale, cache, index
+                    model, trajectory, start, steps, graph_spec, spec, potential, barostat, scale, cache, index
                 )
                 truncated += int(stopped)
                 (loss / spec.accumulation_steps).backward()
@@ -184,7 +189,7 @@ def train(
         if due and data.get("val"):
             metrics["val_loss"] = validate_one_step(model, data["val"], graph_spec, potential, spec, scale)
             metrics.update(
-                validate_rollout(model, data["val"], graph_spec, potential, spec, driven_axis=entry.driven_axis)
+                validate_rollout(model, data["val"], graph_spec, potential, barostat, spec, driven_axis=entry.driven_axis)
             )
             if save_dir is not None:
                 Path(save_dir).mkdir(parents=True, exist_ok=True)
@@ -218,7 +223,7 @@ def train(
     return history
 
 
-def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, scale, cache, index):
+def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, barostat, scale, cache, index):
     """Loss for one training window: one step, or a short rollout of `steps`."""
     window = cache.get(("train", index, start), trajectory, start)
     graph = build_input_graph(window, graph_spec, potential)
@@ -229,11 +234,11 @@ def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, s
     if steps == 1:
         return loss, 1, False
 
-    box_delta_x = graph.box_tensor[0] - window[-2].box_tensor[0]
     raw = [g.clone().to(spec.device) for g in trajectory[start : start + graph_spec.window_length]]
+    driver = barostat.drive(raw)
     taken = 1
     for step in range(1, steps):
-        frames = prediction_frames(graph, frame, stride, box_delta_x, spec.box_mode)
+        frames = prediction_frames(graph, frame, stride, driver)
         if diverged(frames[-1]):
             return loss / taken, taken, True
         frames = [frame.detach() if spec.detach_rollout else frame for frame in frames]

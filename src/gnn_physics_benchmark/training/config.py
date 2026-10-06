@@ -31,7 +31,7 @@ class SplitSpec:
 class TrainSpec:
     """Training settings; defaults also work for CPU runs."""
 
-    epochs: int = 40
+    epochs: int = 150
     learning_rate: float = 1e-3
     gamma: float = 0.995  # Learning-rate multiplier per epoch.
     weight_decay: float = 0.0
@@ -44,13 +44,13 @@ class TrainSpec:
     target_scale_windows: int | None = None  # None uses every training window.
     validate_every: int = 5
     val_rollout_steps: int = 50  # Input-frame intervals, independent of prediction_stride.
-    select_by: str | None = None  # None uses val_loss with early stopping, otherwise the last epoch.
+    select_by: str | None = None  # Validation metric that picks the checkpoint; None: last epoch.
     early_stopping_patience: int | None = None  # Validation checks without improvement; None disables stopping.
     stress_metrics: bool = False
     mode: str = "one_step"  # one_step, multi_step
-    rollout_schedule: tuple[tuple[int, int], ...] = ((0, 1),)  # (first epoch, steps)
-    detach_rollout: bool = False
-    box_mode: str = "deform_x"  # deform_x, none
+    # (first epoch, steps) for multi-step training; the reference GNNInverseDesign schedule.
+    rollout_schedule: tuple[tuple[int, int], ...] = ((0, 1), (10, 2), (20, 3), (30, 5), (40, 8), (50, 10))
+    detach_rollout: bool = True  # False backpropagates through the whole rollout (BPTT).
     device: str = "cpu"
     seed: int = 0
     cache_windows: bool = True
@@ -94,7 +94,9 @@ class RunConfig:
         payload = dict(payload)
         graph = InputGraphSpec(**payload.pop("graph", {}))
         split = SplitSpec(**payload.pop("split", {}))
-        train = TrainSpec(**payload.pop("train", {}))
+        train = dict(payload.pop("train", {}))
+        train.pop("box_mode", None)  # Older runs chose a box mode; the barostat is now the only one.
+        train = TrainSpec(**train)
         return cls(graph=graph, split=split, train=train, **payload)
 
     @classmethod
