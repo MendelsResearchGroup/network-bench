@@ -72,8 +72,8 @@
 }
 .studio .design-header { max-width:none; background:var(--sidebar); }
 .studio .design-main { max-width:1550px; padding-top:24px; }
-.studio-layout { display:grid; grid-template-columns:356px minmax(0,1fr); gap:24px; align-items:start; }
-.instrument { position:sticky; top:24px; background:var(--sidebar); border:1px solid var(--line); padding:16px; border-radius:8px; }
+.studio-layout { display:grid; grid-template-columns:320px minmax(0,1fr); gap:24px; align-items:start; }
+.instrument { position:sticky; top:24px; background:var(--sidebar); border:1px solid var(--line); padding:12px; border-radius:8px; }
 .instrument>.control-block { margin-bottom:12px; }
 .instrument .control-label { margin-bottom:4px; }
 .studio .dataset-control { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:center; gap:8px; }
@@ -82,15 +82,15 @@
 .studio #datasets { width:100%; border:1px solid var(--line); border-radius:6px; padding:7px 10px; font-size:16px; }
 .studio .instrument #studies { width:100%; flex-direction:row; }
 .studio .instrument #studies button { flex:1 1 auto; }
-.instrument-pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:12px; }
+.instrument-pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin-bottom:12px; }
 .studio .instrument-pair .segmented button,.studio .instrument #studies button { font-size:15px; padding:4px 6px; }
 .studio .instrument .horizon-control { margin:12px 0; }
 .studio .instrument .horizon-label { margin-bottom:4px; }
 .studio .instrument .range-labels { margin-top:2px; }
 .studio .models { margin:14px 0 0; padding-top:12px; border-top:1px solid var(--line); }
 .studio .legend { display:grid; gap:4px; margin:8px 0; }
-.studio .legend button { width:100%; padding:4px 8px; line-height:1.25; }
-.studio .legend .swatch { font-size:18px; }
+.studio .legend button { width:100%; padding:4px; gap:4px; line-height:1.25; }
+.studio .legend .swatch { width:18px; font-size:18px; }
 .studio .model-parameters { margin-left:auto; }
 .studio .models-heading { margin-bottom:8px; }
 .studio .options { margin-top:12px; border-top:1px solid var(--line); padding-top:12px; }
