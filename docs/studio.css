@@ -97,6 +97,9 @@
 .studio .option-fields { flex-direction:column; }
 .studio .metric-panel { padding:24px; margin-bottom:24px; background:var(--surface); border:1px solid var(--line); border-radius:8px; }
 .studio .plot { height:calc(var(--plot-height) * 1px); }
+.chart-legend { display:flex; flex-wrap:wrap; gap:8px 20px; margin:4px 0 12px; font-size:16px; }
+.chart-legend>span { display:inline-flex; align-items:center; gap:7px; }
+.chart-legend .legend-symbol { font-size:18px; }
 .studio .selection-summary { border-bottom:1px solid var(--line); padding-bottom:20px; }
 .studio .snapshot .ranking { grid-template-columns:repeat(2,minmax(0,1fr)); }
 @media(max-width:1100px) { .studio-layout { gap:20px; } }

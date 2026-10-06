@@ -287,7 +287,7 @@ function renderChart(animate, metric = 'poisson_r2') {
         traces.push({...base, uid:`${uid}-${seed}`, y:scores.map(plottedScore), customdata:scores,
           mode:'lines+markers', name:`${template.model} · seed ${seed}`,
           line:{color:c,width:2.4,dash:['solid','dash','dot'][seed % 3],simplify:false},marker:{size:6,symbol:appearance.symbol},
-          hovertemplate:`${learning() ? '%{x} training networks · ' : ''}%{customdata:${mse ? '.3e' : '.3f'}}<extra>%{fullData.name}</extra>`});
+          hovertemplate:`%{customdata:${mse ? '.3e' : '.3f'}}<extra>%{fullData.name}</extra>`});
       }
     } else {
       const points = x.map(step => group?.points[step] ?? stats([]));
@@ -296,11 +296,19 @@ function renderChart(animate, metric = 'poisson_r2') {
         {...base,uid:`${uid}-upper`,y:band(1),mode:'lines',line:{width:0,simplify:false},fill:'tonexty',fillcolor:rgba(c,.12),hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-mean`,y:points.map(point => plottedScore(point.mean)),mode:'lines+markers',name:template.model,
           line:{color:c,width:3,dash:appearance.dash,simplify:false},marker:{size:7,symbol:appearance.symbol},customdata:points.map(point => [(mse ? scientific : number)(point.sd),point.n,point.mean]),
-          hovertemplate:`${learning() ? '%{x} training networks · ' : ''}%{customdata[2]:${mse ? '.3e' : '.3f'}} ± %{customdata[0]} (n=%{customdata[1]})<extra>%{fullData.name}</extra>`});
+          hovertemplate:`%{customdata[2]:${mse ? '.3e' : '.3f'}}<extra>%{fullData.name}</extra>`});
     }
   }
   // Shared axes and stable trace slots let each model morph into itself.
   const visible = all.filter(group => group.dataset === dataset && enabled.has(group.model));
+  const legend = $(mse ? 'mse-chart-legend' : 'chart-legend');
+  legend.replaceChildren();
+  for (const model of MODELS.filter(model => visible.some(group => group.model === model))) {
+    const item = node('span'), symbol = node('span', modelStyle(model).glyph, 'legend-symbol');
+    symbol.style.color = color(model);
+    item.append(symbol, node('span', model));
+    legend.append(item);
+  }
   for (const group of visible) for (const point of Object.values(group.points)) {
     if (finite(point.mean)) values.push(point.mean + ($('bands').checked ? point.sd ?? 0 : 0));
 
