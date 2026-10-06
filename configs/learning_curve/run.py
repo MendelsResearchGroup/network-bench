@@ -29,7 +29,11 @@ def main():
         (results / name).mkdir(parents=True, exist_ok=True)
     try:
         result = benchmark.run(config, root=results / 'runs')
-        record = {**job, 'index': index, 'directory': result['directory'],
+        record = {**job, 'mode': 'ood' if config.split.ood else 'normal',
+                  'training_mode': config.train.mode,
+                  'validation_networks': len(config.split.explicit['val']),
+                  'test_networks': len(config.split.explicit['test']),
+                  'index': index, 'directory': result['directory'],
                   'seconds': time.monotonic()-started, 'metrics': result['metrics']}
         (results / 'done' / f'{index}.json').write_text(json.dumps(record, indent=1)+'\n')
         (results / 'failed' / f'{index}.txt').unlink(missing_ok=True)

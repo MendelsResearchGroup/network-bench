@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -N learning-rank
+#PBS -q mendels_q
+#PBS -l select=1:ncpus=4:mem=16gb
+#PBS -l place=free:shared
+#PBS -l walltime=02:00:00
+#PBS -j oe
+set -e
+cd "$PBS_O_WORKDIR"
+export GNN_BENCH_DATA_ROOT=/rg/mendels_prj/s.sergey/data_bench
+export OMP_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+exec >"results/learning-curve/logs/rank-$PBS_ARRAY_INDEX.log" 2>&1
+.venv/bin/python configs/learning_curve/rank.py "$PBS_ARRAY_INDEX"

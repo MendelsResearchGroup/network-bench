@@ -5,7 +5,7 @@ validation networks and 70 test networks**. Seeds **0, 1, 2** change both split
 membership and training randomness. The experiment reads the shared
 `/rg/mendels_prj/s.sergey/data_bench` data directly.
 
-For each dataset and seed, shuffle the sorted full file roster with a local
+For Normal, for each dataset and seed, shuffle the sorted full file roster with a local
 PyTorch generator. Select 100 training-pool networks, 70 validation networks,
 and 70 test networks. Training size N uses the **first N of that seed's training
 pool**. Therefore the training subsets are nested, and validation/test membership
@@ -25,14 +25,57 @@ explicit membership and record **both split seed and training seed**.
 
 Seven trainable models participate: `gns`, `mlp`, `tiny_mlp`, `edge_mlp`,
 `edge_mlp_delta`, `edge_mlp_attention`, and the linear baseline `linear_floor`.
-That is **630 runs**. The elastic-response model is outside this experiment.
+All four variants are complete: **630 runs each**, for **2,520 total**, with
+no failed runs or divergent test trajectories. The elastic-response model
+is outside this experiment.
 
 The existing one-step training recipe is used: 16 head windows, history 3,
 learning rate 0.001, maximum 40 epochs, validation every two epochs, and early
 stopping after five checks without improvement. Validation Poisson R² at 100
 steps selects each checkpoint; test data never selects checkpoints. Every test
 rollout observes exactly **frames 0–3** and predicts **frames 4–103**. These are
-normal-distribution splits; MST and OOD are separate existing protocols.
+normal-distribution splits. The new variants follow the protocols below.
+
+## MST and highest-N OOD
+
+Normal MST keeps every original normal split exactly. Its curriculum predicts
+1 step in epochs 1–2, 2 in 3–4, 3 in 5–6, 5 in 7–8, and 10 from epoch 9,
+with gradients through predictions. It consumes 29 training frames per
+trajectory at the maximum curriculum horizon. Epoch cap, early stopping,
+validation selection and test rollout seeds remain the same.
+
+OOD learning curves use **highest counts rather than the earlier highest-30%
+rule**. Rank the full current roster by the ground-truth position-based ratio
+from frame 3 to frame 103, descending, with network ID breaking ties. Reserve
+ranks 1–100 for training. Size N uses ranks 1–N, identical across seeds. The
+unselected training-pool remainder is unused, never validation or test.
+
+For each seed, shuffle ranks 101 onward with a local PyTorch generator; the
+first 70 are validation, the next 70 test, and the rest unused. These held-out
+IDs stay fixed across sizes, models and One-step/MST within a seed. Validation
+and test therefore have lower ratios than the reserved top-100 training pool.
+Both held-out membership and training randomness vary across seeds, while
+top-N training membership does not. Checkpoint selection uses lower-ratio
+validation R² at 100 steps. This differs from the old fixed-size OOD protocol,
+where validation also came from the upper 30%.
+
+Fresh full-roster rankings are in `ood_rankings/<dataset>.json`. Exact split
+audits and configs are under `normal_mst/`, `ood_one_step/`, and
+`ood_multi_step/`. All four variants have 70 validation and 70 test networks
+per seed, but their held-out populations differ between Normal and OOD.
+
+```bash
+qsub -J '0-2' configs/learning_curve/rank.pbs
+# After the ranking array finishes:
+.venv/bin/python configs/learning_curve/prepare_variants.py
+```
+
+The preparation script preserves existing `jobs.json` indices and appends
+missing variants. It writes the job list atomically so queued workers can read
+it while the OOD cells are added. Old indices 0–629 stay the completed normal
+one-step sweep; 630–1259 are normal MST, 1260–1889 OOD one-step, and 1890–2519
+OOD MST. `report.py` groups by distribution and training objective as well as
+dataset, model and training size, so variants are never averaged together.
 
 Generate the configs from the repository root:
 
@@ -49,7 +92,7 @@ Run one cell normally, without overriding its already specified training seed:
   configs/learning_curve/noisy_lj/seed-0_train-010.json --model gns
 ```
 
-`jobs.json` lists all 630 cells. The CPU-only PBS script runs an array index
+`jobs.json` lists the cells for all prepared variants. The CPU-only PBS script runs an array index
 through `run.py`; results live in `results/learning-curve/runs/`, with individual
 completion records and logs beside them. PBS concurrency is capped when the
 array is submitted. `benchmark.run` reuses a completed cell when its config and
@@ -82,19 +125,22 @@ network membership.
 Select **Learning curves** on the results page. Both R² and position MSE use
 training-network count on the x-axis and score the selected rollout horizon.
 Dataset, models, seed, mean/individual lines and SD bands control both plots.
-The training-size selector chooses the ranking, table and exact membership
-shown below; it marks that size with a dotted line without hiding other sizes.
-Top three models are ranked at that size and horizon. Negative R² is drawn at
-zero, while hover, ranking, table and CSV retain the raw scores.
+Click a plotted training-size point to choose the model summary and exact
+membership shown below; a dotted line marks that size without hiding other sizes.
+The top four models are shown by default, ranked at that size and horizon.
+Negative R² is drawn at zero, while hover, model summary and CSV retain raw scores.
+Filter changes animate both charts. Studio is the main layout, with light mode
+by default; the theme toggle also offers dark mode.
 
 The seed filter changes split and training seed together. With all seeds shown,
 the exact-split panel lets you inspect one seed explicitly. Normal/OOD and
-One-step/MST filters appear in both views. This study ran normal one-step
-training; other learning-curve selections show "not run yet" with empty plots,
-rankings and tables. URL parameters preserve these filters along with the view,
+One-step/MST filters appear in both views. Selections without published runs
+show "not run yet" with empty plots, rankings and tables. URL parameters
+preserve these filters along with the view,
 dataset, horizon, training size,
-seeds, models, lines and bands. Downloaded JSON contains all 630 individual
-runs with their per-step metrics and all 90 exact splits.
+seeds, models, lines and bands. Downloaded JSON contains individual published
+runs with their per-step metrics and exact splits. Distribution and training
+objective have separate comparison IDs, so their scores are never mixed.
 
 Export the completed study independently of the original `docs/results.json`:
 

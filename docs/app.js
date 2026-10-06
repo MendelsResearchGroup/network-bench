@@ -89,7 +89,6 @@ function setStudy(value, resetModels = true) {
   setDataset(datasets().includes(dataset) ? dataset : datasets()[0], resetModels);
 }
 function setDataset(value, resetModels = true) {
-  const changed = dataset !== value;
   dataset = value;
   if (resetModels) topModels = true;
   for (const button of $('datasets').children) button.setAttribute('aria-pressed', String(button.dataset.value === dataset));
@@ -100,7 +99,7 @@ function setDataset(value, resetModels = true) {
   $('cohort').value = cohorts[cohortKey()] ?? '';
   for (const button of $('modes').children) button.setAttribute('aria-pressed', String(button.dataset.mode === mode));
   for (const button of $('training-modes').children) button.setAttribute('aria-pressed', String(button.dataset.training === trainingMode));
-  render(changed);
+  render();
 }
 function restoreURL() {
   const params = new URL(location.href).searchParams;
@@ -191,11 +190,11 @@ function renderSplit() {
     section.append(list); $('split-membership').append(section);
   }
 }
-function render(animate = false) {
+function render(animate = true) {
   const runs = selectedRuns(), grouped = groups(runs);
   renderSplit();
   if ($('ranking-note')) $('ranking-note').textContent = `Ranked by mean R² at step ${horizon}${learning() ? ` · ${trainSize} training networks` : ''}.`;
-  $('legend-note').textContent = `The same models appear in both plots. Top 3 by mean R² at step ${horizon}${learning() ? ` and ${trainSize} training networks` : ''} shown by default. Click a model to toggle both lines; numbers show parameter counts.`;
+  $('legend-note').textContent = `The same models appear in both plots. Top 4 by mean R² at step ${horizon}${learning() ? ` and ${trainSize} training networks` : ''} shown by default. Click a model to toggle both lines; numbers show parameter counts.`;
   const protocols = [...new Set(runs.map(run => {
     const p = run.protocol;
     const training = p.training_frames !== null && p.first_frame === 0 && p.frame_stride === 1
@@ -219,7 +218,7 @@ function render(animate = false) {
   if ($('selection-note')) $('selection-note').textContent = `${learning() ? `${trainSize} training networks · ` : ''}test scores at step ${horizon}${document.body.dataset.clickInspection ? ' · click a point to inspect' : ''}`;
   $('first-step').textContent = steps.length ? `${steps[0]} steps` : '—';
   $('last-step').textContent = steps.length ? `${steps.at(-1)} steps` : '—';
-  if (topModels) enabled = new Set(rankedGroups(grouped).filter(group => finite(group.score.mean)).slice(0, 3).map(group => group.model));
+  if (topModels) enabled = new Set(rankedGroups(grouped).filter(group => finite(group.score.mean)).slice(0, 4).map(group => group.model));
   renderRanking(grouped);
   renderChart(animate === true);
   renderChart(animate === true, 'position_mse_by_step');
@@ -268,9 +267,9 @@ function renderChart(animate, metric = 'poisson_r2') {
   const individual = $('line-mode').value === 'individual';
   const plottedScore = value => finite(value) ? Math.max(0, value) : null;
   const all = groups(data.runs.filter(run => matchesMode(run) && run.comparison_id === cohorts[cohortKey(run.dataset)]
-    && enabled.has(run.model) && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)), metric, learning());
+    && ($('plot-seed').value === 'all' || String(run.seed) === $('plot-seed').value)), metric, learning());
   const identity = group => JSON.stringify([group.model, Object.entries(group.hyperparameters).sort()]);
-  const slots = [...new Map(all.map(group => [identity(group), group])).entries()].sort((a,b) => a[0].localeCompare(b[0]));
+  const slots = [...new Map(data.runs.map(run => [identity(run), run])).entries()].sort((a,b) => a[0].localeCompare(b[0]));
   const x = [...new Set(data.runs.flatMap(run => learning() ? [run.train_networks] : Object.keys(run.poisson_r2).map(Number)))].sort((a,b) => a-b);
   const values = [];
   for (const [id, template] of slots) {
@@ -278,7 +277,7 @@ function renderChart(animate, metric = 'poisson_r2') {
     const c = color(template.model);
     const appearance = modelStyle(template.model);
     const uid = 'model-' + [...id].map(char => char.codePointAt(0).toString(16)).join('-');
-    const base = {x, ids:x.map(String), type:'scatter', connectgaps:false};
+    const base = {x, ids:x.map(String), type:'scatter', connectgaps:false, visible:enabled.has(template.model)};
     if (individual) {
       const seeds = [...new Set(data.runs.filter(run => identity(run) === id).map(run => run.seed))].sort((a,b) => a-b);
       for (const seed of seeds) {
@@ -302,7 +301,7 @@ function renderChart(animate, metric = 'poisson_r2') {
     }
   }
   // Shared axes and stable trace slots let each model morph into itself.
-  const visible = all.filter(group => group.dataset === dataset);
+  const visible = all.filter(group => group.dataset === dataset && enabled.has(group.model));
   for (const group of visible) for (const point of Object.values(group.points)) {
     if (finite(point.mean)) values.push(point.mean + ($('bands').checked ? point.sd ?? 0 : 0));
 
@@ -310,7 +309,7 @@ function renderChart(animate, metric = 'poisson_r2') {
   if (individual) for (const group of visible) for (const run of group.runs) values.push(...(learning() ? [metricValues(run, metric)[horizon]] : Object.values(metricValues(run, metric))).filter(finite));
   const mobile = window.innerWidth < 600;
   const maximum = Math.max(0, ...values);
-  const hasResults = traces.some(trace => trace.y.some(finite));
+  const hasResults = traces.some(trace => trace.visible !== false && trace.y.some(finite));
   const layout = {
     height:Number(css('--plot-height')) || (mobile ? 440 : 560), margin:{l:90,r:20,t:26,b:68},paper_bgcolor:css('--surface'),plot_bgcolor:css('--surface'),
     font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',size:16,color:css('--ink')},
@@ -321,10 +320,10 @@ function renderChart(animate, metric = 'poisson_r2') {
     shapes:hasResults ? [{type:'line',x0:learning() ? trainSize : horizon,x1:learning() ? trainSize : horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}] : [],
     annotations:hasResults ? [] : [{text:emptyResults().replace(' learning curves have not been run yet. Available:', '<br>Learning curves not run yet.<br>Available:'),xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
   };
-  plot.setAttribute('aria-label', `${label(dataset)}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against ${learning() ? `training networks, scored at rollout step ${horizon}` : 'rollout steps'}. Values are available in the runs table.`);
+  plot.setAttribute('aria-label', `${label(dataset)}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against ${learning() ? `training networks, scored at rollout step ${horizon}` : 'rollout steps'}. Values are available in the downloaded CSV.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
-  if (!learning() && !mse && animate && sameTraces && plot.data.some(trace => trace.y.some(finite)) && traces.some(trace => trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    Plotly.animate(plot,{data:traces,traces:traces.map((_,i) => i)},
+  if (animate && sameTraces && plot.layout.xaxis.title.text === layout.xaxis.title.text && plot.data.some(trace => trace.visible !== false && trace.y.some(finite)) && traces.some(trace => trace.visible !== false && trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    Plotly.animate(plot,{data:traces,layout,traces:traces.map((_,i) => i)},
       {mode:'immediate',transition:{duration:650,easing:'cubic-in-out'},frame:{duration:650,redraw:true}});
   } else {
     Plotly.react(plot,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,displayModeBar:true,
@@ -419,7 +418,10 @@ function downloadCSV() {
 function setTheme(dark) {
   document.documentElement.dataset.theme=dark?'dark':'light';
   $('theme').setAttribute('aria-label',`Switch to ${dark?'light':'dark'} theme`);
-  if(data) render();
+  $('theme').title = document.body.classList.contains('studio')
+    ? `Switch to Tokyo Night ${dark ? 'Light' : 'Storm'}`
+    : `Switch to ${dark ? 'light' : 'dark'} theme`;
+  if(data) render(false);
 }
 setTheme(document.body.dataset.defaultTheme === 'dark');
 $('theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
@@ -443,7 +445,7 @@ Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataRoot +
   $('cohort').onchange=()=>{cohorts[cohortKey()]=$('cohort').value;topModels=true;render();};
   $('train-size').onchange=()=>{trainSize=Number($('train-size').value);render();};
   $('split-seed').onchange=()=>{renderSplit();updateURL();};
-  for(const id of ['bands','plot-seed','line-mode'])$(id).onchange=render;
+  for(const id of ['bands','plot-seed','line-mode'])$(id).onchange=()=>render();
   $('horizon').oninput=()=>{horizon=JSON.parse($('horizon').dataset.steps)[$('horizon').value];render();};
   $('top-models').onclick=()=>{topModels=true;render();};
   $('reset-models').onclick=()=>{topModels=false;enabled=new Set(data.runs.map(run=>run.model));render();};

@@ -1,10 +1,23 @@
-:root { --plot-height:450; }
-:root[data-theme=dark] { --paper:#111720; --surface:#17212c; --soft:#1f2b39; --ink:#f0f5fa; --muted:#becbd9; --line:#344355; --grid:#2c3949; --green:#8ccff0; }
-.studio .design-header { max-width:none; background:var(--surface); }
+/* Tokyo Night Light / Storm, with stronger secondary text for chart readability.
+   Palette: https://github.com/tokyo-night/tokyo-night-vscode-theme */
+:root {
+ --plot-height:450;
+ --paper:#e6e7ed; --surface:#eff0f5; --sidebar:#d6d8df; --soft:#dfe2ec;
+ --ink:#343b59; --muted:#505970; --line:#bac0ce; --grid:#d8dce6; --green:#2959aa;
+ --s1:#2959aa; --s2:#965027; --s3:#33635c; --s4:#8f5e15;
+ --s5:#5a3e8e; --s6:#505970; --s7:#8c4351; --s8:#006c86;
+}
+:root[data-theme=dark] {
+ --paper:#24283b; --surface:#24283b; --sidebar:#1f2335; --soft:#292e42;
+ --ink:#c0caf5; --muted:#a9b1d6; --line:#414868; --grid:#343b58; --green:#7aa2f7;
+ --s1:#7aa2f7; --s2:#ff9e64; --s3:#73daca; --s4:#e0af68;
+ --s5:#bb9af7; --s6:#a9b1d6; --s7:#f7768e; --s8:#7dcfff;
+}
+.studio .design-header { max-width:none; background:var(--sidebar); }
 .studio .design-main { max-width:1550px; padding-top:24px; }
 .studio .design-nav a[href*='/studio/'] { color:var(--green); font-weight:700; }
 .studio-layout { display:grid; grid-template-columns:310px minmax(0,1fr); gap:32px; align-items:start; }
-.instrument { position:sticky; top:24px; background:var(--surface); border:1px solid var(--line); padding:24px; border-radius:8px; }
+.instrument { position:sticky; top:24px; background:var(--sidebar); border:1px solid var(--line); padding:24px; border-radius:8px; }
 .studio .instrument h1 { font-size:30px; letter-spacing:-.8px; margin-bottom:28px; }
 .instrument>.control-block { margin-bottom:22px; }
 .studio #datasets { width:100%; flex-direction:column; }

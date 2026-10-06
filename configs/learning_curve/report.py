@@ -22,12 +22,15 @@ def main():
     rows = [json.loads(p.read_text()) for p in sorted((results/'done').glob('*.json'))]
     groups = {}
     for row in rows:
-        key = (row['dataset'], row['model'], row['train_networks'])
+        key = (row['dataset'], row.get('mode', 'normal'), row.get('training_mode', 'one_step'),
+               row['model'], row['train_networks'])
         groups.setdefault(key, []).append(row)
     summary = []
-    for (dataset, model, size), runs in sorted(groups.items()):
-        record = {'dataset': dataset, 'model': model, 'train_networks': size,
-                  'validation_networks': 70, 'test_networks': 70,
+    for (dataset, mode, training_mode, model, size), runs in sorted(groups.items()):
+        record = {'dataset': dataset, 'mode': mode, 'training_mode': training_mode,
+                  'model': model, 'train_networks': size,
+                  'validation_networks': runs[0].get('validation_networks', 70),
+                  'test_networks': runs[0].get('test_networks', 70),
                   'seeds_completed': sorted(r['seed'] for r in runs)}
         for metric in METRICS:
             values = [r['metrics'][metric] for r in runs
@@ -47,9 +50,11 @@ def main():
     csv_rows = []
     for row in rows:
         csv_rows.append({**{k:row[k] for k in ['dataset','model','seed','train_networks']},
+                         'mode': row.get('mode', 'normal'),
+                         'training_mode': row.get('training_mode', 'one_step'),
                          **{k:row['metrics'].get(k) for k in METRICS}})
     with (results/'runs.csv').open('w') as stream:
-        writer = csv.DictWriter(stream, fieldnames=['dataset','model','seed','train_networks',*METRICS])
+        writer = csv.DictWriter(stream, fieldnames=['dataset','mode','training_mode','model','seed','train_networks',*METRICS])
         writer.writeheader(); writer.writerows(csv_rows)
     print(f"{len(rows)}/{len(jobs)} completed, {payload['failed_runs']} failed")
 
