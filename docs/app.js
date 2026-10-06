@@ -189,7 +189,7 @@ function renderSplit() {
     section.append(list); $('split-membership').append(section);
   }
 }
-function render(animate = true) {
+function render(animate = true, animateMSE = false) {
   const runs = selectedRuns(), grouped = groups(runs);
   renderSplit();
   if ($('ranking-note')) $('ranking-note').textContent = $('plot-seed').value === 'all' ? 'Mean R² ± sample SD' : 'R²';
@@ -220,7 +220,7 @@ function render(animate = true) {
   if (topModels) enabled = new Set(rankedGroups(grouped).filter(group => finite(group.score.mean)).slice(0, 4).map(group => group.model));
   renderRanking(grouped);
   renderChart(animate === true);
-  renderChart(animate === true, 'position_mse_by_step');
+  renderChart(animateMSE === true, 'position_mse_by_step');
   renderTable();
   for (const button of $('legend').children) {
     const model = button.dataset.model;
@@ -321,9 +321,14 @@ function renderChart(animate, metric = 'poisson_r2') {
   };
   plot.setAttribute('aria-label', `${label(dataset)}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against ${learning() ? `training networks, scored at rollout step ${horizon}` : 'rollout steps'}. Values are available in the downloaded CSV.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
-  if (!mse && animate && sameTraces && plot.layout.xaxis.title.text === layout.xaxis.title.text && plot.data.some(trace => trace.visible !== false && trace.y.some(finite)) && traces.some(trace => trace.visible !== false && trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    Plotly.animate(plot,{data:traces,layout,traces:traces.map((_,i) => i)},
-      {mode:'immediate',transition:{duration:650,easing:'cubic-in-out'},frame:{duration:650,redraw:true}});
+  if (animate && sameTraces && plot.layout.xaxis.title.text === layout.xaxis.title.text && plot.data.some(trace => trace.visible !== false && trace.y.some(finite)) && traces.some(trace => trace.visible !== false && trace.y.some(finite)) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const animateCurves = () => Plotly.animate(plot,{data:traces,layout:mse ? {} : layout,traces:traces.map((_,i) => i)},
+      {mode:'immediate',transition:{duration:650,easing:'cubic-in-out'},frame:{duration:650,redraw:true}})
+      // Rapid inputs cancel the previous animation with an undefined rejection.
+      .catch(error => { if (error !== undefined) throw error; });
+    // Plotly cannot interpolate changing axes and scatter data together.
+    if (mse) Plotly.relayout(plot, layout).then(animateCurves);
+    else animateCurves();
   } else {
     Plotly.react(plot,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,displayModeBar:true,
       modeBarButtonsToRemove:['select2d','lasso2d','zoomIn2d','zoomOut2d','autoScale2d'],
@@ -450,7 +455,7 @@ Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataURL(pa
   $('train-size').onchange=()=>{trainSize=Number($('train-size').value);render();};
   $('split-seed').onchange=()=>{renderSplit();updateURL();};
   for(const id of ['bands','plot-seed','line-mode'])$(id).onchange=()=>render();
-  $('horizon').oninput=()=>{horizon=JSON.parse($('horizon').dataset.steps)[$('horizon').value];render();};
+  $('horizon').oninput=()=>{horizon=JSON.parse($('horizon').dataset.steps)[$('horizon').value];render(true, true);};
   $('top-models').onclick=()=>{topModels=true;render();};
   $('reset-models').onclick=()=>{topModels=false;enabled=new Set(data.runs.map(run=>run.model));render();};
   if ($('search')) $('search').oninput=renderTable;
