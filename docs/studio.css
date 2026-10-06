@@ -58,14 +58,11 @@
  .design-footer { padding:20px!important; }
 }
 
-/* Tokyo Night Light / Storm, with stronger secondary text for chart readability.
+/* Original light palette from style.css; Tokyo Night Storm for dark mode.
    Palette: https://github.com/tokyo-night/tokyo-night-vscode-theme */
 :root {
  --plot-height:450;
- --paper:#e6e7ed; --surface:#eff0f5; --sidebar:#f8f9fd; --soft:#dfe2ec;
- --ink:#343b59; --muted:#505970; --line:#bac0ce; --grid:#d8dce6; --green:#2959aa;
- --s1:#2959aa; --s2:#965027; --s3:#33635c; --s4:#8f5e15;
- --s5:#5a3e8e; --s6:#505970; --s7:#8c4351; --s8:#006c86;
+ --sidebar:#ffffff;
 }
 :root[data-theme=dark] {
  --paper:#24283b; --surface:#24283b; --sidebar:#1f2335; --soft:#292e42;
