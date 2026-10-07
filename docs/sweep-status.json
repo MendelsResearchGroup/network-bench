@@ -1,5 +1,5 @@
 {
- "state": "preparing",
+ "state": "queued",
  "recipe": "sweep-v2",
  "training_jobs": 4200,
  "control_jobs": 600,
@@ -89,5 +89,51 @@
   "initialization": "Real seed frames0-3; predict4-103. No ITPO, simulator bootstrap, or added input noise.",
   "splits": "Original exact learning_curve split membership. OOD reserves ranks1-100; trainN uses highestN; heldout shuffled ranks101 onward. Train-pool remainder unused.",
   "data_root": "/rg/mendels_prj/s.sergey/data_bench"
- }
+ },
+ "arrays": [
+  {
+   "job": "4747999[].zeus-master",
+   "queue": "mendels_q",
+   "start": 0,
+   "end": 799,
+   "concurrency": 20
+  },
+  {
+   "job": "4748000[].zeus-master",
+   "queue": "mendels_comb_q",
+   "start": 800,
+   "end": 1599,
+   "concurrency": 20
+  },
+  {
+   "job": "4748001[].zeus-master",
+   "queue": "mendels_q",
+   "start": 1600,
+   "end": 2399,
+   "concurrency": 20
+  },
+  {
+   "job": "4748002[].zeus-master",
+   "queue": "mendels_comb_q",
+   "start": 2400,
+   "end": 3199,
+   "concurrency": 20
+  },
+  {
+   "job": "4748003[].zeus-master",
+   "queue": "mendels_q",
+   "start": 3200,
+   "end": 3999,
+   "concurrency": 20
+  },
+  {
+   "job": "4748004[].zeus-master",
+   "queue": "mendels_comb_q",
+   "start": 4000,
+   "end": 4799,
+   "concurrency": 20
+  }
+ ],
+ "publish_job": "4748005.zeus-master",
+ "source_commit": "8fdbd977fb59ab02aea4e09d2939b87d6ea95777"
 }
