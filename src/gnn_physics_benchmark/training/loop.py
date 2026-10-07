@@ -82,7 +82,8 @@ def validate_one_step(model, trajectories, graph_spec, potential, spec: TrainSpe
     return total / max(count, 1)
 
 
-def validate_rollout(model, trajectories, graph_spec, potential, spec: TrainSpec, *, driven_axis: int = 0) -> dict:
+def validate_rollout(model, trajectories, graph_spec, potential, spec: TrainSpec, *, driven_axis: int = 0,
+                     barostat=None, poisson_method="affine") -> dict:
     """Roll the model out on every validation system and summarise the errors."""
     steps = spec.val_rollout_steps
     shortest = min((len(t) for t in trajectories), default=graph_spec.window_length)
@@ -100,8 +101,10 @@ def validate_rollout(model, trajectories, graph_spec, potential, spec: TrainSpec
             potential,
             box_mode=spec.box_mode,
             device=spec.device,
+            barostat=barostat,
         )
-        errors.append(rollout_errors(predicted, trajectory, graph_spec.history, driven_axis=driven_axis))
+        errors.append(rollout_errors(predicted, trajectory, graph_spec.history, driven_axis=driven_axis,
+                                     poisson_method=poisson_method))
     return summarise_rollouts(errors, requested)
 
 
@@ -128,6 +131,7 @@ def train(
     *,
     save_dir: str | Path | None = None,
     verbose: bool = True,
+    barostat=None,
 ) -> dict:
     """Train `model` and return its per-epoch history.
 
@@ -166,7 +170,7 @@ def train(
             starts = window_starts(len(trajectory), span, spec.windows_per_sim, spec.window_mode, rng)
             for position, start in enumerate(starts):
                 loss, taken, stopped = _window_loss(
-                    model, trajectory, start, steps, graph_spec, spec, potential, scale, cache, index
+                    model, trajectory, start, steps, graph_spec, spec, potential, scale, cache, index, barostat
                 )
                 truncated += int(stopped)
                 (loss / spec.accumulation_steps).backward()
@@ -184,12 +188,13 @@ def train(
         if due and data.get("val"):
             metrics["val_loss"] = validate_one_step(model, data["val"], graph_spec, potential, spec, scale)
             metrics.update(
-                validate_rollout(model, data["val"], graph_spec, potential, spec, driven_axis=entry.driven_axis)
+                validate_rollout(model, data["val"], graph_spec, potential, spec, driven_axis=entry.driven_axis,
+                                 barostat=barostat, poisson_method=config.poisson_method)
             )
             if save_dir is not None:
                 Path(save_dir).mkdir(parents=True, exist_ok=True)
                 save_checkpoint(model, config, scale, Path(save_dir) / f"epoch_{epoch + 1:04d}.pt")
-            if spec.early_stopping_patience is not None:
+            if spec.early_stopping_patience is not None and epoch + 1 >= spec.selection_start_epoch:
                 score = metrics[selection]
                 improved = best_score is None or (score < best_score if lower else score > best_score)
                 if math.isfinite(score) and improved:
@@ -218,7 +223,7 @@ def train(
     return history
 
 
-def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, scale, cache, index):
+def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, scale, cache, index, barostat=None):
     """Loss for one training window: one step, or a short rollout of `steps`."""
     window = cache.get(("train", index, start), trajectory, start)
     graph = build_input_graph(window, graph_spec, potential)
@@ -231,9 +236,10 @@ def _window_loss(model, trajectory, start, steps, graph_spec, spec, potential, s
 
     box_delta_x = graph.box_tensor[0] - window[-2].box_tensor[0]
     raw = [g.clone().to(spec.device) for g in trajectory[start : start + graph_spec.window_length]]
+    driver = barostat.drive(raw) if barostat is not None else None
     taken = 1
     for step in range(1, steps):
-        frames = prediction_frames(graph, frame, stride, box_delta_x, spec.box_mode)
+        frames = prediction_frames(graph, frame, stride, box_delta_x, spec.box_mode, driver)
         if diverged(frames[-1]):
             return loss / taken, taken, True
         frames = [frame.detach() if spec.detach_rollout else frame for frame in frames]

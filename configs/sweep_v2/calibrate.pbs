@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -N barostat-v2
+#PBS -q mendels_comb_q
+#PBS -l select=1:ncpus=1:mem=8gb
+#PBS -l place=free:shared
+#PBS -l walltime=01:00:00
+#PBS -j oe
+set -e
+cd "$PBS_O_WORKDIR"
+export GNN_BENCH_DATA_ROOT=/rg/mendels_prj/s.sergey/data_bench
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+exec >"results/sweep-v2/logs/calibration-$PBS_ARRAY_INDEX.log" 2>&1
+.venv/bin/python configs/sweep_v2/calibrate.py "$PBS_ARRAY_INDEX"

@@ -1,0 +1,82 @@
+{
+ "recipe": "sweep-v2",
+ "datasets": [
+  "node_optimized",
+  "stiff_optimized",
+  "noisy_lj"
+ ],
+ "models": [
+  "gns",
+  "mlp",
+  "tiny_mlp",
+  "edge_mlp",
+  "edge_mlp_delta",
+  "edge_mlp_attention",
+  "linear_floor"
+ ],
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "train_sizes": [
+  10,
+  20,
+  30,
+  40,
+  50,
+  60,
+  70,
+  80,
+  90,
+  100
+ ],
+ "validation": 70,
+ "test": 70,
+ "training_jobs": 4200,
+ "control_jobs": 600,
+ "blocked_training_jobs": 840,
+ "gns_message_passing": 2,
+ "mst": {
+  "epochs": 100,
+  "detach_rollout": true,
+  "early_stopping": false,
+  "schedule": [
+   [
+    0,
+    1
+   ],
+   [
+    10,
+    2
+   ],
+   [
+    20,
+    3
+   ],
+   [
+    30,
+    5
+   ],
+   [
+    40,
+    8
+   ],
+   [
+    50,
+    10
+   ]
+  ],
+  "selection_start_epoch": 51,
+  "selection": "validation reported Poisson R2@100"
+ },
+ "one_step": {
+  "epochs": 40,
+  "early_stopping_patience": 5
+ },
+ "calibration": "PR #2 first10 TRAIN trajectories, coarse/fine grid search, dt0.01. Same first10 membership across nested sizes; reuse fixed parameters across sizes/models/training modes. No evaluation fitting.",
+ "metrics": "GT box strain; prediction box with barostat, unchanged group graph_utils sides without. Plain per-coordinate position MSE. Mean/sampleSD of per-seed scores.",
+ "initialization": "Real seed frames0-3; predict4-103. No ITPO, simulator bootstrap, or added input noise.",
+ "splits": "Original exact learning_curve split membership. OOD reserves ranks1-100; trainN uses highestN; heldout shuffled ranks101 onward. Train-pool remainder unused.",
+ "data_root": "/rg/mendels_prj/s.sergey/data_bench"
+}

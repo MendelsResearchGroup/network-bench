@@ -63,6 +63,7 @@ class DatasetEntry:
     modelled, which then supports bond-only graphs and no stress metrics. The
     constants are a property of the data, not of a run."""
     manifests: dict[str, str] = field(default_factory=dict)
+    barostat: dict | None = None  # Optional fixed dataset calibration; sweep fits TRAIN only.
     """Named lists of usable systems, e.g. "clean" -> "clean_1024.json". A run
     selects one by name; the resulting membership list is hashed into the result
     key so that regenerating a manifest misses the cache instead of silently

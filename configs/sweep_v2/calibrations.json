@@ -1,0 +1,50 @@
+[
+ {
+  "name": "node_optimized-normal-seed0",
+  "config": "configs/sweep_v2/configs/node_optimized/normal/one_step/barostat-0/seed-0_train-100.json"
+ },
+ {
+  "name": "node_optimized-normal-seed1",
+  "config": "configs/sweep_v2/configs/node_optimized/normal/one_step/barostat-0/seed-1_train-100.json"
+ },
+ {
+  "name": "node_optimized-normal-seed2",
+  "config": "configs/sweep_v2/configs/node_optimized/normal/one_step/barostat-0/seed-2_train-100.json"
+ },
+ {
+  "name": "node_optimized-ood-seed0",
+  "config": "configs/sweep_v2/configs/node_optimized/ood/one_step/barostat-0/seed-0_train-100.json"
+ },
+ {
+  "name": "node_optimized-ood-seed1",
+  "config": "configs/sweep_v2/configs/node_optimized/ood/one_step/barostat-0/seed-1_train-100.json"
+ },
+ {
+  "name": "node_optimized-ood-seed2",
+  "config": "configs/sweep_v2/configs/node_optimized/ood/one_step/barostat-0/seed-2_train-100.json"
+ },
+ {
+  "name": "stiff_optimized-normal-seed0",
+  "config": "configs/sweep_v2/configs/stiff_optimized/normal/one_step/barostat-0/seed-0_train-100.json"
+ },
+ {
+  "name": "stiff_optimized-normal-seed1",
+  "config": "configs/sweep_v2/configs/stiff_optimized/normal/one_step/barostat-0/seed-1_train-100.json"
+ },
+ {
+  "name": "stiff_optimized-normal-seed2",
+  "config": "configs/sweep_v2/configs/stiff_optimized/normal/one_step/barostat-0/seed-2_train-100.json"
+ },
+ {
+  "name": "stiff_optimized-ood-seed0",
+  "config": "configs/sweep_v2/configs/stiff_optimized/ood/one_step/barostat-0/seed-0_train-100.json"
+ },
+ {
+  "name": "stiff_optimized-ood-seed1",
+  "config": "configs/sweep_v2/configs/stiff_optimized/ood/one_step/barostat-0/seed-1_train-100.json"
+ },
+ {
+  "name": "stiff_optimized-ood-seed2",
+  "config": "configs/sweep_v2/configs/stiff_optimized/ood/one_step/barostat-0/seed-2_train-100.json"
+ }
+]

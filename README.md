@@ -35,6 +35,7 @@ multiple models, overrides must be supported by every selected model. Without `-
 hyperparameters come from the config. Without `--seeds`, the config's training
 seed is used.
 
+GNS defaults to two message-passing layers with width 64.
 The `edge_mlp` and `mlp` defaults use width 128 and depth 4.
 `edge_mlp_delta` uses the same edge-MLP architecture and parameter count, replacing
 raw velocity history with the latest velocity and successive differences before
@@ -324,3 +325,14 @@ Open tabs need a reload to receive an update. Build a deployment locally with
 
 Dataset layouts, force fields, difficulty measures, and scientific caveats are
 in the [data and physics reference](docs/reference.md).
+
+### Detached MST and barostat retraining
+
+The [new full sweep](configs/sweep_v2/README.md) uses explicit GNS2 message-passing
+layers, detached MST with a100-epoch1/2/3/5/8/10-step curriculum, and separate
+barostat-off/on variants. Checkpoints are selected on validation only after
+MST reaches its final10-step stage. The PR barostat is calibrated on the first
+10 TRAIN trajectories; its parameters remain fixed for validation and testing.
+Box/side-node Poisson ratios and plain position MSE are reported. Noisy LJ
+barostat variants await a verified force field. The website filter is shared
+by both plots and Learning Curves and is included in shareable URLs.

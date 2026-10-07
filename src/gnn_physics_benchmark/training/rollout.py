@@ -50,12 +50,21 @@ def advance_box(frame: Data, box_delta_x: torch.Tensor, box_mode: str) -> Data:
     return frame
 
 
-def prediction_frames(graph: Data, predicted: Data, stride: int, box_delta_x: torch.Tensor, box_mode: str) -> list[Data]:
+def prediction_frames(graph: Data, predicted: Data, stride: int, box_delta_x: torch.Tensor, box_mode: str,
+                      driver=None) -> list[Data]:
     """Fill skipped frames using the predicted endpoint, never future truth.
 
     This keeps the next input's velocity history on consecutive stored-frame
     intervals even when the model predicts two intervals in one call.
     """
+    if driver is not None:
+        frames = []
+        for offset in range(1, stride + 1):
+            position = graph.pos + (predicted.pos - graph.pos) * (offset / stride)
+            current = graph.clone()
+            current.box_tensor = driver.advance(position, graph.bond_index, graph.bond_attr)
+            frames.append(frame_from_positions(current, position, offset))
+        return frames
     frames = []
     for offset in range(1, stride):
         position = graph.pos + (predicted.pos - graph.pos) * (offset / stride)
@@ -74,6 +83,7 @@ def rollout(
     *,
     box_mode: str = "deform_x",
     device: str = "cpu",
+    barostat=None,
 ) -> list[Data]:
     """Roll `model` forward `num_steps` frames from a seed of raw frames.
 
@@ -87,6 +97,7 @@ def rollout(
     trajectory = [frame.clone().to(device) for frame in seed]
     window = trajectory[-spec.window_length :]
     box_delta_x = window[-1].box_tensor[0] - window[-2].box_tensor[0]
+    driver = barostat.drive(window) if barostat is not None else None
 
     was_training = getattr(model, "training", False)
     model.eval()
@@ -95,7 +106,7 @@ def rollout(
             stride = spec.prediction_stride
             for step in range(0, num_steps, stride):
                 graph = build_input_graph(prepare_window(window, spec, potential), spec, potential)
-                frames = prediction_frames(graph, model(graph), stride, box_delta_x, box_mode)
+                frames = prediction_frames(graph, model(graph), stride, box_delta_x, box_mode, driver)
                 predicted = frames[-1]
                 if diverged(predicted):
                     print(f"[warning] rollout diverged after {step} steps.")

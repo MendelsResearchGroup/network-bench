@@ -27,7 +27,7 @@ from ..interfaces.graph import InputGraphSpec
 from ..interfaces.model import SimulatorModel, current_velocity
 from ..normalization import Normalizer
 
-__all__ = ["Frozen"]
+__all__ = ["Frozen", "ZeroAcceleration"]
 
 
 class Frozen(SimulatorModel):
@@ -41,3 +41,10 @@ class Frozen(SimulatorModel):
 
     def predict_acceleration(self, graph: Data) -> Tensor:
         return -current_velocity(graph) / getattr(graph, "prediction_stride", 1) + 0.0 * self.unused
+
+
+class ZeroAcceleration(SimulatorModel):
+    """Carry observed seed velocity, without a neural acceleration proposal."""
+
+    def predict_acceleration(self, graph: Data) -> Tensor:
+        return torch.zeros_like(graph.pos)

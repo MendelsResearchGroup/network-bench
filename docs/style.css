@@ -17,6 +17,7 @@
   --s6:#656b73;
   --s7:#d55e00;
   --s8:#268ab7;
+  --s9:#864ead;
 }
 :root[data-theme=dark] {
   color-scheme:dark;
@@ -37,6 +38,7 @@
   --s6:#b6bdc4;
   --s7:#f08c56;
   --s8:#b7ddf4;
+  --s9:#bb9af7;
 }
 * {
   box-sizing:border-box;

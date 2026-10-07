@@ -1,4 +1,7 @@
 /* Studio typography and controls. */
+.metric-heading .barostat-toggle { display:inline-flex; align-items:center; gap:7px; margin-left:auto; font-size:16px; white-space:nowrap; }
+.metric-heading .barostat-toggle input { accent-color:var(--green); width:18px; height:18px; }
+.metric-heading { flex-wrap:wrap; }
 .design { font-size:18px; line-height:1.5; }
 .design-header { display:flex; align-items:center; gap:32px; max-width:1500px; margin:auto; padding:24px 36px; border-bottom:1px solid var(--line); }
 .identity { display:inline-flex; align-items:center; gap:10px; font-size:24px; font-weight:700; letter-spacing:-.7px; text-decoration:none; }

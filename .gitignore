@@ -18,3 +18,9 @@ wheels/
 
 # PBS job logs from train.pbs
 gnn-bench.o*
+
+# Reproducible sweep configs are generated from the tracked original splits.
+/configs/sweep_v2/configs/
+bench-v2.o*
+barostat-v2.o*
+publish-bench-v2.o*

@@ -3,7 +3,7 @@ const $ = id => document.getElementById(id);
 const dataRoot = document.body.dataset.dataRoot ?? '';
 const websiteVersion = document.querySelector('meta[name="website-version"]').content;
 const dataURL = path => `${dataRoot}${path}?v=${websiteVersion}`;
-const MODELS = ['gns', 'edge_mlp', 'mlp', 'tiny_mlp', 'linear_floor', 'frozen', 'edge_mlp_delta', 'edge_mlp_attention'];
+const MODELS = ['gns', 'edge_mlp', 'mlp', 'tiny_mlp', 'linear_floor', 'frozen', 'edge_mlp_delta', 'edge_mlp_attention', 'zero_acceleration'];
 const MODEL_STYLES = [
   {symbol:'circle', glyph:'●', dash:'solid'},
   {symbol:'square', glyph:'■', dash:'dash'},
@@ -12,14 +12,17 @@ const MODEL_STYLES = [
   {symbol:'triangle-down', glyph:'▼', dash:'longdash'},
   {symbol:'cross', glyph:'✚', dash:'longdashdot'},
   {symbol:'star', glyph:'★', dash:'solid'},
-  {symbol:'hexagon', glyph:'⬡', dash:'dash'}
+  {symbol:'hexagon', glyph:'⬡', dash:'dash'},
+  {symbol:'triangle-right', glyph:'▶', dash:'dot'}
 ];
 const DATASETS = {node_optimized: 'Node optimized', stiff_optimized: 'Stiffness optimized', noisy_lj: 'Noisy LJ'};
 const DESCRIPTIONS = {gns: 'Graph message passing', edge_mlp: 'Local bond encodings', mlp: 'Node features only', tiny_mlp: 'Single hidden layer', linear_floor: 'Linear velocity predictor', frozen: 'Frozen-position baseline'};
 DESCRIPTIONS.edge_mlp_delta = 'Edge MLP with latest velocity and velocity differences; same parameter count';
 DESCRIPTIONS.edge_mlp_attention = 'Velocity-difference edge MLP with a 32-channel attention-pooled global context';
+DESCRIPTIONS.zero_acceleration = 'Carry seed velocity, with zero acceleration; no neural model or ITPO';
 let data, studies, study = 'rollouts', trainSize = 100, dataset = 'node_optimized', mode = 'normal', trainingMode = 'one_step', cohorts = {}, enabled = new Set(), horizon = 100, topModels = true;
 let tableSort = {key: 'r2', descending: true};
+let barostat = false, sweepStatus;
 const finite = x => typeof x === 'number' && Number.isFinite(x);
 const number = (v, digits = 3) => finite(v) ? v.toFixed(digits) : '—';
 const scientific = v => finite(v) ? v.toExponential(3) : '—';
@@ -32,12 +35,17 @@ const color = model => css(`--s${Math.max(0, MODELS.indexOf(model)) + 1}`);
 const modelStyle = model => MODEL_STYLES[Math.max(0, MODELS.indexOf(model))];
 const settings = run => Object.entries(run.hyperparameters).map(([key, value]) => `${key}=${value}`).join(', ') || 'No hyperparameters';
 const datasets = () => [...new Set(data.runs.map(run => run.dataset))].sort();
-const cohortKey = (key = dataset) => `${study}:${key}:${mode}:${trainingMode}`;
+const cohortKey = (key = dataset) => `${study}:${key}:${mode}:${trainingMode}:${barostat}`;
 const learning = () => study === 'learning';
-const matchesMode = run => (run.mode ?? 'normal') === mode && (run.training_mode ?? 'one_step') === trainingMode;
+const matchesMode = run => (run.mode ?? 'normal') === mode && (run.training_mode ?? 'one_step') === trainingMode
+  && Boolean(run.barostat) === barostat;
 const modeRuns = (key = dataset) => data.runs.filter(run => run.dataset === key && matchesMode(run));
 const missingLearning = () => learning() && !modeRuns().length;
-const emptyResults = () => missingLearning()
+const emptyResults = () => barostat && !modeRuns().length
+  ? dataset === 'noisy_lj'
+    ? 'Noisy LJ barostat runs await a verified force field and rest lengths.'
+    : 'The barostat sweep is running. Results will appear when the new sweep is published.'
+  : missingLearning()
   ? `No published ${mode === 'ood' ? 'OOD' : 'Normal'} / ${trainingMode === 'multi_step' ? 'MST' : 'One-step'} learning curves for these filters. Reload to check for updated results.`
   : 'No results for these filters.';
 function node(tag, text, className) {
@@ -91,6 +99,7 @@ function setDataset(value, resetModels = true) {
   dataset = value;
   if (resetModels) topModels = true;
   $('datasets').value = dataset;
+  $('barostat').checked = barostat;
   const comparisons = [...new Set(modeRuns().map(run => run.comparison_id))];
   cohorts[cohortKey()] ??= comparisons[0];
   $('cohort-label').hidden = comparisons.length < 2;
@@ -109,6 +118,7 @@ function restoreURL() {
   dataset = datasets().includes(params.get('dataset')) ? params.get('dataset') : datasets()[0];
   mode = params.get('mode') === 'ood' ? 'ood' : 'normal';
   trainingMode = params.get('training') === 'mst' ? 'multi_step' : 'one_step';
+  barostat = ['on', 'true'].includes(params.get('barostat'));
   const step = Number(params.get('step') ?? 100);
   horizon = finite(step) ? step : 100;
   const comparisons = modeRuns().map(run => run.comparison_id);
@@ -131,6 +141,7 @@ function updateURL() {
   params.set('mode', mode);
   params.set('training', trainingMode === 'multi_step' ? 'mst' : 'one_step');
   const optional = {
+    barostat:barostat ? 'on' : null,
     view:learning() ? 'learning' : document.body.dataset.defaultView === 'learning' ? 'rollouts' : null,
     train:learning() ? String(trainSize) : null,
     split_seed:learning() ? $('split-seed').value : null,
@@ -158,11 +169,16 @@ function renderSplit() {
     if ($('plot-seed').value !== 'all') $('split-seed').value = $('plot-seed').value;
     $('split-seed').disabled = $('plot-seed').value !== 'all';
   }
-  const run = learning() ? modeRuns().find(run => run.train_networks === trainSize && String(run.split_seed) === $('split-seed').value) : null;
-  const split = data.splits[learning() ? run?.split_id : cohorts[cohortKey()]];
-  $('ranking-audit').hidden = learning() || mode !== 'ood';
-  $('ranking-audit').href = `https://github.com/MendelsResearchGroup/network-bench/blob/main/configs/ood/${dataset}.ranking.json`;
-  $('split-rule').textContent = missingLearning() ? emptyResults() : learning()
+  const run = learning() ? modeRuns().find(run => run.train_networks === trainSize && String(run.split_seed) === $('split-seed').value)
+    : selectedRuns().find(run => String(run.split_seed) === $('split-seed').value) ?? selectedRuns()[0];
+  const learningProtocol = learning() || run?.recipe === 'sweep-v2';
+  const activeSize = learning() ? trainSize : run?.train_networks;
+  if (!learning()) $('split-seed').disabled = false;
+  $('split-seed-label').hidden = !learningProtocol;
+  const split = data.splits[run?.split_id ?? cohorts[cohortKey()]];
+  $('ranking-audit').hidden = mode !== 'ood';
+  $('ranking-audit').href = `https://github.com/MendelsResearchGroup/network-bench/blob/main/configs/${learningProtocol ? `learning_curve/ood_rankings/${dataset}.json` : `ood/${dataset}.ranking.json`}`;
+  $('split-rule').textContent = !modeRuns().length ? emptyResults() : learningProtocol
     ? mode === 'ood'
       ? `OOD · ${trainingMode === 'multi_step' ? 'MST' : 'one-step'} training. Rank the full dataset by ground-truth Poisson’s ratio at 100 steps. Train on the highest 10, 20, …, 100 networks. Reserve ranks 1–100 for training; each seed selects 70 validation and 70 test networks from ranks 101 onward, fixed across training sizes. Top-N training membership is identical across seeds.`
       : `Normal · ${trainingMode === 'multi_step' ? 'MST' : 'one-step'} training. Each seed shuffles the full dataset roster: 100 networks in a training pool, 70 for validation and 70 for test. Training sizes use nested prefixes of the pool; validation and test stay fixed within a seed. Seeds change both membership and training randomness.`
@@ -173,8 +189,8 @@ function renderSplit() {
     ? `${split.systems.train.length} train / ${split.systems.val.length} validation / ${split.systems.test.length} test`
     : 'No matching results';
   $('split-note').textContent = split
-    ? learning()
-      ? `Showing split and training seed ${split.seed} at ${trainSize} training networks. ${mode === 'ood' ? `Training uses the highest ${trainSize} networks by Poisson’s ratio at 100 steps, from frame 3 to 103; ties are ordered by network ID. The lowest training ratio is ${number(split.cutoff_poisson_ratio, 6)}. Validation and test come from ranks 101 onward, below the reserved top-100 pool. All three seeds use the same top-N training IDs.` : `Training uses the first ${trainSize} of this seed's shuffled 100-network pool.`} The same 70 validation and 70 test networks are used at every training size and for every model within this seed. Other seeds have different held-out memberships, which can overlap across seeds. One-step and MST share these exact memberships. Unused IDs include the unselected part of the training pool. Bands show sample SD of per-seed scores, including split and training variation; they are not confidence intervals. Checkpoints are selected using validation R² at 100 steps. IDs below match the saved runs exactly.`
+    ? learningProtocol
+      ? `Showing split and training seed ${split.seed} at ${activeSize} training networks. ${mode === 'ood' ? `Training uses the highest ${activeSize} networks by Poisson’s ratio at 100 steps, from frame 3 to 103; ties are ordered by network ID. The lowest training ratio is ${number(split.cutoff_poisson_ratio, 6)}. Validation and test come from ranks 101 onward, below the reserved top-100 pool. All three seeds use the same top-N training IDs.` : `Training uses the first ${activeSize} of this seed's shuffled 100-network pool.`} The same 70 validation and 70 test networks are used at every training size and for every model within this seed. Other seeds have different held-out memberships, which can overlap across seeds. One-step and MST share these exact memberships. Unused IDs include the unselected part of the training pool. Bands show sample SD of per-seed scores, including split and training variation; they are not confidence intervals. Checkpoints are selected using validation R² at 100 steps. IDs below match the saved runs exactly.`
       : mode === 'ood'
       ? `The upper 30% is rounded up, then shuffled with seed ${split.seed}. Its first ${split.systems.train.length} networks are training; the remaining ${split.systems.val.length} are validation. The lower 70% is shuffled using the same generator; its first ${split.systems.test.length} networks are test, and the rest are unused. Ranking uses the benchmark’s position-based ratio from initial frame 3 to frame 103; equal ratios are ordered by network ID. Checkpoints are selected only on high-ratio validation networks. Sample counts differ from Normal; R² uses this mode’s own test population. Network IDs below match the saved run exactly.`
       : `Data-split seed ${split.seed}: ${split.systems.train.length} training, ${split.systems.val.length} validation and ${split.systems.test.length} test networks; remaining networks are unused. Training seeds change model initialization, while these network assignments stay fixed. Network IDs below match the saved run exactly.`
@@ -191,18 +207,26 @@ function renderSplit() {
 }
 function render(animate = true, animateMSE = false) {
   const runs = selectedRuns(), grouped = groups(runs);
+  $('sweep-note').hidden = !sweepStatus || runs.some(run => run.recipe === 'sweep-v2') || barostat;
+  $('sweep-note').textContent = sweepStatus?.state === 'complete'
+    ? '' : 'Retraining is in progress. These existing results use the previous training recipe.';
+  if (sweepStatus?.state === 'complete') $('sweep-note').hidden = true;
   renderSplit();
   if ($('ranking-note')) $('ranking-note').textContent = $('plot-seed').value === 'all' ? 'Mean R² ± sample SD' : 'R²';
   $('legend-note').textContent = `Top 4 by R² at step ${horizon}${learning() ? ` with ${trainSize} training networks` : ''}. Model counts are parameters. Click a plotted point to inspect its scores and split.`;
   const protocols = [...new Set(runs.map(run => {
     const p = run.protocol;
-    const training = p.training_frames !== null && p.first_frame === 0 && p.frame_stride === 1
+    const control = ['frozen', 'zero_acceleration'].includes(run.model);
+    const training = control ? 'Untrained baseline' : p.training_frames !== null && p.first_frame === 0 && p.frame_stride === 1
       ? `Train: first ${p.training_frames} frames per trajectory`
       : `Train: ${p.window_mode} windows · start frame ${p.first_frame} · stride ${p.frame_stride}`;
-    const objective = (run.training_mode ?? 'one_step') === 'multi_step'
+    const objective = control ? 'Same baseline in both training views' : (run.training_mode ?? 'one_step') === 'multi_step'
       ? `MST: ${run.rollout_schedule.map(([epoch, steps]) => `${steps} steps from epoch ${epoch + 1}`).join(', ')}; ${run.detach_rollout ? 'detached predictions' : 'gradients through rollout'}`
       : 'One-step training';
-    return `${training} · ${objective} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames (${run.rollout_steps + p.history_frames} frames total)`;
+    const physics = run.poisson_method
+      ? ` · Barostat ${run.barostat ? 'on (first 10 TRAIN calibration)' : 'off'} · Poisson ratio: ${run.poisson_method}` : '';
+    const selection = run.selection_start_epoch > 1 ? ` · checkpoints eligible from epoch ${run.selection_start_epoch}` : '';
+    return `${training} · ${objective} · ${run.rollout_steps}-step ${p.evaluation_split} rollout from ${p.history_frames} initial frames (${run.rollout_steps + p.history_frames} frames total)${physics}${selection}`;
   }))];
   $('protocol').textContent = protocols.join(' / ') || 'No matching completed runs in the loaded data.';
   $('protocol').title = 'Training, validation and test use separate trajectories. Checkpoints are selected on validation rollouts. Graph models use bond edges only, including on Noisy LJ.';
@@ -325,7 +349,7 @@ function renderChart(animate, metric = 'poisson_r2') {
     xaxis:{visible:hasResults,title:{text:learning() ? 'TRAINING NETWORKS' : 'ROLLOUT STEP',font:{size:16}},range:[x[0] ?? 0,x.at(-1) ?? 100],gridcolor:css('--grid'),zeroline:false,nticks:mobile?4:10},
     yaxis:{visible:hasResults,title:{text:mse ? 'POSITION MSE' : 'TEST R²',font:{size:16}},range:[0,mse ? (maximum > 0 ? maximum * 1.05 : 1) : 1],autorange:false,fixedrange:!mse,gridcolor:css('--grid'),zerolinecolor:css('--muted'),tickformat:mse ? '.1e' : '.2f',nticks:5},
     shapes:hasResults ? [{type:'line',x0:learning() ? trainSize : horizon,x1:learning() ? trainSize : horizon,y0:0,y1:1,yref:'paper',line:{color:css('--muted'),width:1,dash:'dot'}}] : [],
-    annotations:hasResults ? [] : [{text:emptyResults().replace(' learning curves', '<br>learning curves').replace('. Reload', '.<br>Reload'),xref:'paper',yref:'paper',x:.5,y:.5,showarrow:false}]
+    annotations:hasResults ? [] : [{text:emptyResults().split(' ').reduce((lines, word) => { if (lines.at(-1).length + word.length > 34) lines.push(word); else lines[lines.length - 1] += `${lines.at(-1) ? ' ' : ''}${word}`; return lines; }, ['']).join('<br>'),xref:'paper',yref:'paper',x:.5,y:.5,xanchor:'center',yanchor:'middle',showarrow:false}]
   };
   plot.setAttribute('aria-label', `${label(dataset)}: ${mse ? 'position mean squared error' : 'Poisson’s ratio R squared'} against ${learning() ? `training networks, scored at rollout step ${horizon}` : 'rollout steps'}. Values are available in the downloaded CSV.`);
   const sameTraces = plot.data && plot.data.length === traces.length && traces.every((trace,i) => trace.uid === plot.data[i].uid);
@@ -442,7 +466,8 @@ function setTheme(dark) {
 }
 setTheme(document.body.dataset.defaultTheme === 'dark');
 $('theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
-Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataURL(path),{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(([payload, learningPayload])=>{
+Promise.all(['results.json','learning-curves.json','sweep-status.json'].map(path => fetch(dataURL(path),{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(([payload, learningPayload, status])=>{
+  sweepStatus=status;
   studies={rollouts:{...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')}, learning:learningPayload};
   data=studies.rollouts;
   if(!data.runs.length){$('notice').textContent='No completed runs have been published yet.';return;}
@@ -450,11 +475,12 @@ Promise.all(['results.json','learning-curves.json'].map(path => fetch(dataURL(pa
   for(const key of datasets()) $('datasets').append(new Option(label(key),key));
   $('datasets').onchange=()=>setDataset($('datasets').value);
   for (const [view, payload] of Object.entries(studies)) for(const key of datasets()){
-    for (const distribution of ['normal', 'ood']) for (const training of ['one_step', 'multi_step']) cohorts[`${view}:${key}:${distribution}:${training}`]=payload.runs.find(run=>run.dataset===key && (run.mode ?? 'normal') === distribution && (run.training_mode ?? 'one_step') === training)?.comparison_id;
+    for (const distribution of ['normal', 'ood']) for (const training of ['one_step', 'multi_step']) for (const physics of [false,true]) cohorts[`${view}:${key}:${distribution}:${training}:${physics}`]=payload.runs.find(run=>run.dataset===key && (run.mode ?? 'normal') === distribution && (run.training_mode ?? 'one_step') === training && Boolean(run.barostat) === physics)?.comparison_id;
   }
   for (const button of $('studies').children) button.onclick=()=>setStudy(button.dataset.study);
   for (const button of $('modes').children) button.onclick=()=>{mode=button.dataset.mode;setDataset(dataset);};
   for (const button of $('training-modes').children) button.onclick=()=>{trainingMode=button.dataset.training;setDataset(dataset);};
+  $('barostat').onchange=()=>{barostat=$('barostat').checked;setDataset(dataset);};
   for(const model of [...enabled].sort((a,b)=>MODELS.indexOf(a)-MODELS.indexOf(b))){
     const button=node('button'),dot=node('i',modelStyle(model).glyph,'swatch');dot.style.color=color(model);button.dataset.model=model;button.title=DESCRIPTIONS[model] ?? model;
     button.append(dot,node('span',model),node('span',undefined,'model-parameters'));button.onclick=()=>{topModels=false;enabled.has(model)?enabled.delete(model):enabled.add(model);render();};$('legend').append(button);

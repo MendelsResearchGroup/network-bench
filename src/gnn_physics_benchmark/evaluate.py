@@ -19,6 +19,12 @@ def evaluate_model(model, trajectories, config, *, split: str = "test", steps: i
     entry = registry.get(config.dataset)
     potential = potential_for(config.graph, entry)
     graph_spec = config.graph
+    barostat = None
+    if config.barostat is not None:
+        from .barostat import Barostat
+        if not config.barostat:
+            raise ValueError("Evaluation requires frozen barostat parameters; calibrate on training data first.")
+        barostat = Barostat(entry, potential, config.barostat)
     steps = steps or config.train.val_rollout_steps
 
     errors, entries, rollouts = [], [], 0
@@ -34,10 +40,12 @@ def evaluate_model(model, trajectories, config, *, split: str = "test", steps: i
             potential,
             box_mode=config.train.box_mode,
             device=config.train.device,
+            barostat=barostat,
         )
         errors.append(
             metrics.rollout_errors(
-                predicted, trajectory, graph_spec.history, driven_axis=entry.driven_axis
+                predicted, trajectory, graph_spec.history, driven_axis=entry.driven_axis,
+                poisson_method=config.poisson_method,
             )
         )
         # Off unless asked for: they need the dataset's force field and cost a
@@ -62,4 +70,6 @@ def evaluate_model(model, trajectories, config, *, split: str = "test", steps: i
         summary["prediction_stride"] = graph_spec.prediction_stride
         summary["model_steps"] = (steps + graph_spec.prediction_stride - 1) // graph_spec.prediction_stride
     summary["parameters"] = sum(p.numel() for p in model.parameters())
+    summary["barostat"] = config.barostat is not None
+    summary["poisson_method"] = config.poisson_method
     return summary

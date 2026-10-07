@@ -22,9 +22,10 @@ from .training.loss import fit_target_scale
 __all__ = ["run", "select_epoch"]
 
 
-def select_epoch(history: dict, key: str) -> dict:
+def select_epoch(history: dict, key: str, start_epoch: int = 1) -> dict:
     """The validation entry of `history` that scored best on `key`."""
-    scored = [entry for entry in history["epochs"] if math.isfinite(entry.get(key, float("nan")))]
+    scored = [entry for entry in history["epochs"] if entry["epoch"] >= start_epoch
+              and math.isfinite(entry.get(key, float("nan")))]
     lower = "loss" in key or "mse" in key
     return (min if lower else max)(scored, key=lambda entry: entry[key])
 
@@ -50,6 +51,19 @@ def run(
         entry, explicit=spec.explicit, manifest=spec.manifest, ratios=spec.ratios,
         sizes=spec.sizes, seed=spec.seed, limit=spec.limit,
     )
+    barostat = None
+    if config.barostat is not None:
+        from .barostat import Barostat, fit, box_error
+        potential = potential_for(config.graph, entry)
+        if potential is None:
+            raise ValueError(f"{config.dataset} has no verified force field for a barostat.")
+        if not config.barostat:
+            sample = load_data(config, resolved["train"][:10])
+            params = fit(entry, potential, sample, config.graph.window_length)
+            config = replace(config, barostat=params)
+            print(f"[barostat] first {len(sample)} TRAIN trajectories: {params}; "
+                  f"relative box error {box_error(Barostat(entry, potential, params), sample, config.graph.window_length):.4f}")
+        barostat = Barostat(entry, potential, config.barostat)
     directory = cache.run_dir(config, resolved, root)
     if resume and (directory / "metrics.json").is_file():
         if verbose:
@@ -70,10 +84,11 @@ def run(
         model.eval()
         with torch.no_grad():
             validate_raw_frame(model(graph.to(config.train.device)), entry.schema, name=f"{config.model} output")
-        history = train(model, data, config, scale, save_dir=directory / "checkpoints", verbose=verbose)
+        history = train(model, data, config, scale, save_dir=directory / "checkpoints", verbose=verbose,
+                        barostat=barostat)
         selection = config.train.selection_metric
         if selection is not None:
-            selected = select_epoch(history, selection)
+            selected = select_epoch(history, selection, config.train.selection_start_epoch)
             state, _, _ = load_checkpoint(directory / "checkpoints" / f"epoch_{selected['epoch']:04d}.pt")
             model.load_state_dict(state)
         measured = evaluate_model(model, data[split], config, split=split)

@@ -74,7 +74,16 @@ def position_poisson_ratio(reference: Data, frame: Data, *, driven_axis: int = 0
     return -sum(strains) / len(strains) / axial
 
 
-def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, driven_axis: int = 0) -> dict:
+def box_poisson_ratio(reference: Data, frame: Data, *, driven_axis: int = 0) -> float:
+    strain = (frame.box_tensor - reference.box_tensor) / reference.box_tensor
+    if abs(float(strain[driven_axis])) < 1e-12:
+        return float("nan")
+    free = [axis for axis in range(len(strain)) if axis != driven_axis]
+    return float(-strain[free].mean() / strain[driven_axis])
+
+
+def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, driven_axis: int = 0,
+                   poisson_method: str = "affine") -> dict:
     """Position errors of one rolled-out trajectory against the ground truth.
 
     `predicted` includes the seed frames, so it indexes like `truth`. The frozen
@@ -91,6 +100,10 @@ def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, dr
         for axis in range(seed.box_tensor.numel()) if axis != driven_axis
     )
     nu, mse = {}, {}
+    side_indices = None
+    if poisson_method == "sides":
+        from .sides import directional_side_indices_from_box
+        side_indices = directional_side_indices_from_box(predicted[history])
     for step in range(POISSON_EVERY, reached - history, POISSON_EVERY):
         target = truth[history + step].pos
         mse[step] = (
@@ -100,10 +113,20 @@ def rollout_errors(predicted: list[Data], truth: list[Data], history: int, *, dr
         if clamped:
             nu[step] = (float("nan"), float("nan"))
             continue
-        nu[step] = (
-            position_poisson_ratio(seed, truth[history + step], driven_axis=driven_axis),
-            position_poisson_ratio(predicted[history], predicted[history + step], driven_axis=driven_axis),
-        )
+        if poisson_method == "affine":
+            nu[step] = (
+                position_poisson_ratio(seed, truth[history + step], driven_axis=driven_axis),
+                position_poisson_ratio(predicted[history], predicted[history + step], driven_axis=driven_axis),
+            )
+        else:
+            target_nu = box_poisson_ratio(seed, truth[history + step], driven_axis=driven_axis)
+            if poisson_method == "box":
+                estimate = box_poisson_ratio(predicted[history], predicted[history + step], driven_axis=driven_axis)
+            else:
+                from .sides import calc_p_ratio_rollout_sides
+                estimate = calc_p_ratio_rollout_sides([predicted[history], predicted[history + step]],
+                                                     side_idx=side_indices)
+            nu[step] = (target_nu, estimate)
     return {
         "position_mse": float(torch.nn.functional.mse_loss(predicted[-1].pos, last_true)),
         "frozen_mse": float(torch.nn.functional.mse_loss(predicted[history].pos, last_true)),

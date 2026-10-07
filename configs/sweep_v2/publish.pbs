@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N publish-bench-v2
+#PBS -q mendels_q
+#PBS -l select=1:ncpus=1:mem=4gb
+#PBS -l walltime=01:00:00
+#PBS -j oe
+set -e
+cd "$PBS_O_WORKDIR"
+exec >results/sweep-v2/logs/publish.log 2>&1
+export PATH=/home/alexander.z/miniconda3/bin:$PATH
+export GNN_BENCH_DATA_ROOT=/rg/mendels_prj/s.sergey/data_bench
+export PYTHONPATH="$PBS_O_WORKDIR/results/sweep-v2/source/src"
+checkout="$PBS_O_WORKDIR/results/sweep-v2/publication"
+git clone --depth 1 git@github.com:MendelsResearchGroup/network-bench.git "$checkout"
+.venv/bin/python results/sweep-v2/source/configs/sweep_v2/export.py "$checkout/docs"
+.venv/bin/python - "$checkout" <<'PY'
+import json, subprocess, sys
+from pathlib import Path
+author = json.loads(Path('results/sweep-v2/author.json').read_text())
+for key, value in author.items():
+    subprocess.run(['git', '-C', sys.argv[1], 'config', f'user.{key}', value], check=True)
+PY
+cd "$checkout"
+git add docs/learning-curves.json docs/results.json docs/sweep-status.json
+git commit -m 'Publish detached MST and barostat sweep results'
+git push origin HEAD:main

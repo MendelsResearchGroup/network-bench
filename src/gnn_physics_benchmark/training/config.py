@@ -54,6 +54,7 @@ class TrainSpec:
     device: str = "cpu"
     seed: int = 0
     cache_windows: bool = True
+    selection_start_epoch: int = 1  # One-based; MST sweep selects only the final curriculum stage.
 
     @property
     def max_rollout_steps(self) -> int:
@@ -74,9 +75,17 @@ class RunConfig:
     graph: InputGraphSpec = field(default_factory=InputGraphSpec)
     split: SplitSpec = field(default_factory=SplitSpec)
     train: TrainSpec = field(default_factory=TrainSpec)
+    barostat: dict | None = None  # None: off; {}: fit on TRAIN; populated: frozen parameters.
+    poisson_method: str = "affine"  # affine (legacy), sides, box; sides/box compare to GT box strain.
 
     def to_dict(self) -> dict:
         payload = asdict(self)
+        if self.barostat is None:
+            payload.pop("barostat")
+        if self.poisson_method == "affine":
+            payload.pop("poisson_method")
+        if self.train.selection_start_epoch == 1:
+            payload["train"].pop("selection_start_epoch")
         # Preserve the cache keys of existing normal runs.
         if self.graph.prediction_stride == 1:
             payload["graph"].pop("prediction_stride")

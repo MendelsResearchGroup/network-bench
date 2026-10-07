@@ -25,7 +25,7 @@ from ..interfaces.model import SimulatorModel
 from ..normalization import Normalizer
 from .edge_mlp import EdgeMLP, DeltaEdgeMLP
 from .attention_mlp import AttentionEdgeMLP
-from .frozen import Frozen
+from .frozen import Frozen, ZeroAcceleration
 from .gns import GNS
 from .linear_floor import LinearFloor
 from .mlp import NodeMLP
@@ -37,6 +37,7 @@ MODELS: dict[str, type[SimulatorModel]] = {
     "gns": GNS,
     "mlp": NodeMLP,
     "frozen": Frozen,
+    "zero_acceleration": ZeroAcceleration,
     "linear_floor": LinearFloor,
     "tiny_mlp": TinyVelocityMLP,
     "edge_mlp": EdgeMLP,
