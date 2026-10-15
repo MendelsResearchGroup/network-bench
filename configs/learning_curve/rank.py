@@ -8,7 +8,7 @@ import sys
 import torch
 
 from gnn_physics_benchmark.data import registry
-from gnn_physics_benchmark.data.ood import prepare_ood
+from gnn_physics_benchmark.data.ranking import rank_networks
 from gnn_physics_benchmark.training import RunConfig
 
 
@@ -17,13 +17,13 @@ def main():
     repo = Path(__file__).resolve().parents[2]
     dataset = ['noisy_lj', 'node_optimized', 'stiff_optimized'][int(sys.argv[1])]
     config = replace(RunConfig.from_json(repo / 'configs' / 'networks.json'), dataset=dataset)
-    _, measured = prepare_ood(config)
+    ranking = rank_networks(config)
     systems = registry.get(dataset).systems()
     audit = {'dataset': dataset, 'ranking_steps': 100, 'history_frames': 4,
              'first_frame': 0, 'frame_stride': 1,
              'data_directory': str(registry.get(dataset).root()),
              'roster_sha256': hashlib.sha256(json.dumps(systems).encode()).hexdigest(),
-             'ranking': measured['ranking']}
+             'ranking': ranking}
     directory = repo / 'configs' / 'learning_curve' / 'ood_rankings'
     directory.mkdir(parents=True, exist_ok=True)
     (directory / f'{dataset}.json').write_text(json.dumps(audit, indent=1) + '\n')

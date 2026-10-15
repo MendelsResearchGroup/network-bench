@@ -13,10 +13,7 @@ harmonic convention, `E = K (r - l0)^2` and so a bond force of `2K (r - l0)`,
 because the registered coupling and damping were fitted with it. The kinetic
 pressure is left out: at the datasets' temperature of 1e-7 it is negligible.
 
-Parameters are per dataset and must reproduce its box. `resolve` checks them
-before a run by driving the barostat with ground-truth positions and comparing
-the transverse box with the true one; a dataset without parameters gets them
-fitted by a grid search over the same check.
+Parameters are calibrated on training trajectories and frozen for evaluation.
 """
 
 from __future__ import annotations
@@ -30,7 +27,7 @@ from torch_geometric.data import Data
 
 from .graph.build import minimum_image
 
-__all__ = ["Barostat", "BoxDriver", "box_error", "fit", "resolve", "TOLERANCE"]
+__all__ = ["Barostat", "BoxDriver", "box_error", "fit", "TOLERANCE"]
 
 #: Largest relative box error, with ground-truth positions, accepted for a run.
 #: The registered parameters sit at 0.02-0.05 and recover Poisson's ratio with
@@ -139,40 +136,3 @@ def fit(entry, potential, trajectories: list[list[Data]], window: int, *, dt: fl
     lc, ld = math.log10(coupling), math.log10(damping)
     coupling, damping = search(decades(lc - 0.5, lc + 0.5, 9), decades(ld - 0.5, ld + 0.5, 9))
     return {"coupling": coupling, "damping": damping, "dt": dt}
-
-
-def resolve(entry, potential, trajectories: list[list[Data]], window: int, *, systems: int = 10) -> tuple[Barostat, float]:
-    """The dataset's barostat, checked against ground truth before it is trusted.
-
-    Uses the first `systems` trajectories, every frame they have. Over a short
-    stretch the error is dominated by the estimated initial box velocity, so check
-    over at least the rollout horizon. Registered parameters that miss the
-    true box by more than `TOLERANCE` stop the run. A dataset without registered
-    parameters says so and has them fitted here; register the printed values so
-    the next run does not search again.
-    """
-    if not entry.free_axes:
-        return Barostat(entry, potential, None), 0.0
-    if potential is None:
-        raise ValueError(
-            f"dataset {entry.key!r} has a free box axis but declares no force field, "
-            "so the barostat has no pressure to follow."
-        )
-    sample = trajectories[:systems]
-    params = entry.barostat
-    if params is None:
-        print(f"[barostat] no barostat parameters are registered for {entry.key!r}; "
-              f"fitting them on {len(sample)} ground-truth trajectories.", flush=True)
-        params = fit(entry, potential, sample, window)
-        print(f"[barostat] fitted {params}; add them as `barostat=` to the {entry.key!r} "
-              "registry entry.", flush=True)
-    barostat = Barostat(entry, potential, params)
-    error = box_error(barostat, sample, window)
-    print(f"[barostat] {entry.key}: relative box error {error:.4f} over {len(sample[0]) - window} steps "
-          f"with ground-truth positions (tolerance {TOLERANCE}).", flush=True)
-    if error > TOLERANCE:
-        raise ValueError(
-            f"the barostat parameters {params} do not reproduce the {entry.key!r} box: relative "
-            f"error {error:.4f} > {TOLERANCE}. Refit them with `gnn-bench barostat {entry.key} --fit`."
-        )
-    return barostat, error

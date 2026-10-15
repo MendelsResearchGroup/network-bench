@@ -44,7 +44,7 @@ resolved system list, results on the two never collide.
 | `affine_target_share` | 0.653 | 0.674 | 0.510 | 0.000 |
 | `noise_over_signal` | 0.221 | 0.257 | 0.178 | 0.044 |
 
-(`gnn-bench difficulty <key> --systems 60 --history 3 --count 20 --max-frames 28`,
+(`python -m analysis.difficulty <key> --systems 60 --history 3 --count 20 --max-frames 28`,
 with `--manifest ""` for the 2D sets and `clean` for the Kremer-Grest one. The
 `node_optimized` and `stiff_optimized` columns are measured on the mini release.)
 
@@ -185,7 +185,7 @@ through it instead — deliberately off the shared scale.
 
 ## Metrics
 
-**Dataset difficulty** (`gnn-bench difficulty`) needs no model. Read `floor_model`
+**Dataset difficulty** (`python -m analysis.difficulty`) needs no model. Read `floor_model`
 first — the linear floor matched to what a model is actually fed — then
 `r2_ceiling` beside it, because a floor only means something relative to how much
 of the target is signal at all. Positions are stored in float32 at order 3 sigma

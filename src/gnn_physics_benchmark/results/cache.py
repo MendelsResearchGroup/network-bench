@@ -15,7 +15,6 @@ from ..training.config import RunConfig
 
 __all__ = [
     "results_root",
-    "difficulty_path",
     "run_dir",
     "write_result",
     "read_result",
@@ -31,10 +30,6 @@ def results_root(root: str | Path | None = None) -> Path:
         return Path(root).expanduser()
     # src/gnn_physics_benchmark/results/cache.py -> repository root
     return Path(__file__).resolve().parents[3] / "results"
-
-
-def difficulty_path(dataset: str, root: str | Path | None = None) -> Path:
-    return results_root(root) / dataset / "difficulty.json"
 
 
 def run_hash(config: RunConfig, split: dict[str, list[str]]) -> str:

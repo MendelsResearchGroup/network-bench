@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from . import metrics
 from .data import registry
 from .graph.features import potential_for
-from .training.rollout import rollout
+from .training.scoring import score_rollouts
 
 
 def evaluate_model(model, trajectories, config, *, split: str = "test", steps: int | None = None, sample_stride: int = 5) -> dict:
@@ -27,45 +26,22 @@ def evaluate_model(model, trajectories, config, *, split: str = "test", steps: i
         barostat = Barostat(entry, potential, config.barostat)
     steps = steps or config.train.val_rollout_steps
 
-    errors, entries, rollouts = [], [], 0
-    for trajectory in trajectories:
-        available = len(trajectory) - graph_spec.window_length
-        if available < 1:
-            continue
-        predicted = rollout(
-            model,
-            trajectory[: graph_spec.window_length],
-            min(steps, available),
-            graph_spec,
-            potential,
-            box_mode=config.train.box_mode,
-            device=config.train.device,
-            barostat=barostat,
-        )
-        errors.append(
-            metrics.rollout_errors(
-                predicted, trajectory, graph_spec.history, driven_axis=entry.driven_axis,
-                poisson_method=config.poisson_method,
-            )
-        )
-        # Off unless asked for: they need the dataset's force field and cost a
-        # virial per sampled frame.
-        if config.train.stress_metrics and potential is not None:
-            entries.append(
-                metrics.stress_entry(
-                    predicted,
-                    trajectory,
-                    potential,
-                    history=graph_spec.history,
-                    sample_stride=sample_stride,
-                    device=config.train.device,
-                )
-            )
-        rollouts += 1
+    entries = []
+    observe = None
+    if config.train.stress_metrics and potential is not None:
+        from .analysis.stress import stress_entry, summarise_stress
 
-    summary = {"split": split, "systems": rollouts, "requested_steps": steps}
-    summary.update(metrics.summarise_rollouts(errors, steps))
-    summary.update(metrics.summarise_stress(entries))
+        def observe(predicted, trajectory):
+            entries.append(stress_entry(predicted, trajectory, potential,
+                                       history=graph_spec.history, sample_stride=sample_stride,
+                                       device=config.train.device))
+
+    summary = {"split": split, "requested_steps": steps}
+    summary.update(score_rollouts(model, trajectories, graph_spec, potential, config.train,
+                                  steps=steps, driven_axis=entry.driven_axis, barostat=barostat,
+                                  poisson_method=config.poisson_method, observe=observe))
+    if observe is not None:
+        summary.update(summarise_stress(entries))
     if graph_spec.prediction_stride != 1:
         summary["prediction_stride"] = graph_spec.prediction_stride
         summary["model_steps"] = (steps + graph_spec.prediction_stride - 1) // graph_spec.prediction_stride

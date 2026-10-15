@@ -1,7 +1,6 @@
 """Dataset difficulty: how hard a dataset is before any model touches it.
 
-Kept apart from training and evaluation, which never import it. `gnn-bench
-difficulty <dataset>` runs `measure_difficulty` and caches the result as
+Kept apart from training and evaluation, which never import it. `python -m analysis.difficulty <dataset>` runs `measure_difficulty` and caches the result as
 `results/<dataset>/difficulty.json`, which `notebooks/dataset_metrics.ipynb` reads.
 """
 
@@ -9,7 +8,7 @@ from __future__ import annotations
 
 import statistics
 
-from ..data import loading, registry
+from gnn_physics_benchmark.data import loading, registry
 from .ladder import Samples, best_linear, linear_ladder, position_errors, r2_uncentred
 from .measures import (
     alpha_from_positions,

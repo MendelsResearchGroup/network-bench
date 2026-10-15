@@ -73,9 +73,9 @@ The default device is CPU. For a single CPU PBS job:
 qsub -v CONFIG=configs/networks.json,MODEL=gns,SET=train.seed=0 train.pbs
 ```
 
-The generic job also exports local results to `docs/results.json`; use the
-sweep-specific export workflow when publishing sweep-v2, so recipes stay
-consistent. Completed runs are cached; `--force` reruns them.
+Training jobs save runs without changing the website. Export explicitly with
+`gnn-bench export --out /path/to/results.json`; use the sweep-specific export
+for the published two-view website. Completed runs are cached; `--force` reruns them.
 
 ## Repository layout
 
@@ -87,7 +87,7 @@ consistent. Completed runs are cached; `--force` reruns them.
 | `configs/` | Configuration index, examples and historical experiments |
 | `docs/` | Static website and published result JSON |
 | `scripts/build_website.py` | Version website assets for deployment |
-| `notebooks/` | Dataset analysis |
+| `analysis/`, `notebooks/` | Optional dataset analysis, outside the training package |
 | `results/` | Local runs, checkpoints and logs; ignored by Git |
 
 ## Add a model

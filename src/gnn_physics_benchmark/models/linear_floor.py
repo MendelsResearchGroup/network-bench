@@ -6,7 +6,7 @@ appears as a row in the same results table as everything else. It predicts
     a = sum_k w_k * v_{t-k}
 
 with one scalar weight per history step, shared across the three spatial axes --
-exactly the family that `metrics.ladder.linear_ladder` fits in closed form. Fitted
+exactly the family that `analysis.difficulty.ladder.linear_ladder` fits in closed form. Fitted
 by gradient descent here rather than by least squares, so it goes through the same
 training loop as every other model and its number is comparable for the same
 reasons.

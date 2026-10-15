@@ -22,10 +22,10 @@ import torch
 from torch_geometric.data import Data
 
 from ..graph.features import build_input_graph, potential_for, prepare_window
-from ..metrics.rollout import rollout_errors, summarise_rollouts
 from .config import RunConfig, TrainSpec
 from .loss import prediction_loss
-from .rollout import diverged, prediction_frames, rollout
+from .rollout import diverged, prediction_frames
+from .scoring import score_rollouts
 from .windows import WindowCache, target_positions, window_starts
 
 __all__ = ["train", "validate_one_step", "validate_rollout"]
@@ -88,24 +88,8 @@ def validate_rollout(model, trajectories, graph_spec, potential, spec: TrainSpec
     steps = spec.val_rollout_steps
     shortest = min((len(t) for t in trajectories), default=graph_spec.window_length)
     requested = min(steps, max(1, shortest - graph_spec.window_length))
-    errors = []
-    for trajectory in trajectories:
-        available = len(trajectory) - graph_spec.window_length
-        if available < 1:
-            continue
-        predicted = rollout(
-            model,
-            trajectory[: graph_spec.window_length],
-            min(steps, available),
-            graph_spec,
-            potential,
-            box_mode=spec.box_mode,
-            device=spec.device,
-            barostat=barostat,
-        )
-        errors.append(rollout_errors(predicted, trajectory, graph_spec.history, driven_axis=driven_axis,
-                                     poisson_method=poisson_method))
-    return summarise_rollouts(errors, requested)
+    return score_rollouts(model, trajectories, graph_spec, potential, spec, steps=steps, requested_steps=requested,
+                          driven_axis=driven_axis, barostat=barostat, poisson_method=poisson_method)
 
 
 def _report(epoch: int, spec: TrainSpec, train_loss: float, metrics: dict, seconds: float) -> str:

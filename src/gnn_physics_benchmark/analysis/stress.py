@@ -27,7 +27,7 @@ from torch_geometric.data import Data
 
 from ..graph.build import prepare_frames
 from .. import physics
-from .rollout import r2_centred
+from ..metrics.rollout import r2_centred
 
 __all__ = ["slope", "stress_along", "stress_entry", "summarise_stress", "stress_dim"]
 

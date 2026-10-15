@@ -3,13 +3,11 @@
     gnn-bench datasets                     what is registered, and what it is
     gnn-bench schema                       the raw frame schema and the input graph
     gnn-bench models                       registered models and their defaults
-    gnn-bench difficulty <dataset>         measure a dataset before training on it
-    gnn-bench ood-config <config.json>     prepare a highest-30% Poisson split
     gnn-bench learning-curve-config <config.json>  prepare nested training subsets
     gnn-bench train <config.json>          train and score models across seeds
     gnn-bench evaluate <run_dir>           re-evaluate a cached run from its checkpoint
     gnn-bench report <dataset>             compare every cached run, side by side
-    gnn-bench export                       write every run to docs/results.json for the results page
+    gnn-bench export --out <file.json>      export finished runs explicitly
 """
 
 from __future__ import annotations
@@ -104,35 +102,6 @@ def cmd_models(args) -> None:
         print(f"{key:14s} {models.defaults(key)}")
 
 
-def cmd_difficulty(args) -> None:
-    from . import difficulty
-
-    result = difficulty.measure_difficulty(
-        args.dataset,
-        systems=args.systems,
-        manifest=args.manifest,
-        history=args.history,
-        count=args.count,
-        max_frames=args.max_frames,
-    )
-    path = cache.difficulty_path(args.dataset, args.root)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(result, indent=1))
-
-    median = result["median"]
-    print(f"{args.dataset}: {result['systems']} systems, manifest {result['manifest']!r}\n")
-    print("Read floor_model first, then r2_ceiling beside it: a floor only means")
-    print("something relative to how much of the target is signal at all.\n")
-    headline = [
-        "floor_model", "r2_ceiling", "floor_share_of_ceiling", "floor_kinematic", "floor_affine",
-        "affine_target_share", "target_rms", "frozen_position_rms", "velocity_position_rms",
-        "drift_over_windows", "mean_persistence", "alpha_over_speed", "noise_over_signal",
-    ]
-    for key in headline:
-        print(f"  {key:24s} {median[key]:,.6g}")
-    print(f"\nfull per-system rows written to {path}")
-
-
 def cmd_train(args) -> None:
     config = RunConfig.from_json(args.config)
     # One config can serve every dataset and model: these swap them in. A model
@@ -162,21 +131,6 @@ def cmd_train(args) -> None:
             print(f"\n{run_config.dataset} / {model} / seed {seed}", flush=True)
             result = benchmark.run(run_config, root=args.root, resume=not args.force, split=args.split)
             print(json.dumps(result.get("metrics", {}), indent=1))
-
-
-def cmd_ood_config(args) -> None:
-    from .data.ood import prepare_ood
-
-    config = RunConfig.from_json(args.config)
-    if args.dataset:
-        config = replace(config, dataset=args.dataset)
-    torch.set_num_threads(args.threads)
-    config, audit = prepare_ood(config, args.train_networks)
-    path = Path(args.out)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    config.to_json(path)
-    path.with_suffix(".ranking.json").write_text(json.dumps(audit, indent=1))
-    print(f"{config.dataset}: {audit['counts']} -> {path}")
 
 
 def cmd_learning_curve_config(args) -> None:
@@ -267,15 +221,6 @@ def main(argv: list[str] | None = None) -> None:
     schema.set_defaults(func=cmd_schema)
     sub.add_parser("models", help="registered models").set_defaults(func=cmd_models)
 
-    difficulty = sub.add_parser("difficulty", help="measure a dataset's difficulty")
-    difficulty.add_argument("dataset")
-    difficulty.add_argument("--systems", type=int, default=20)
-    difficulty.add_argument("--manifest", default="clean")
-    difficulty.add_argument("--history", type=int, default=3)
-    difficulty.add_argument("--count", type=int, default=15)
-    difficulty.add_argument("--max-frames", type=int, default=None, dest="max_frames")
-    difficulty.set_defaults(func=cmd_difficulty)
-
     train = sub.add_parser("train", help="train and score models across training seeds")
     train.add_argument("config")
     train.add_argument("--split", default="test")
@@ -286,13 +231,6 @@ def main(argv: list[str] | None = None) -> None:
                        help="change one config field, e.g. train.epochs=80; repeatable")
     train.add_argument("--force", action="store_true", help="rerun even if already cached")
     train.set_defaults(func=cmd_train)
-
-    ood = sub.add_parser("ood-config", help="prepare an explicit highest-30%% Poisson train/validation split")
-    ood.add_argument("config")
-    ood.add_argument("--dataset", help="override the config's dataset")
-    ood.add_argument("--train-networks", type=int, default=30, help="training networks from the upper pool (default: 30)")
-    ood.add_argument("--out", required=True, help="output config; also writes a .ranking.json audit")
-    ood.set_defaults(func=cmd_ood_config)
 
     curve = sub.add_parser('learning-curve-config', help='prepare seed-specific splits and nested training sizes')
     curve.add_argument('config')
@@ -308,7 +246,7 @@ def main(argv: list[str] | None = None) -> None:
     evaluate.set_defaults(func=cmd_evaluate)
 
     export = sub.add_parser("export", help="write every finished run to the results page's JSON")
-    export.add_argument("--out", default=str(Path(__file__).resolve().parents[2] / "docs" / "results.json"))
+    export.add_argument("--out", required=True, help="destination JSON file")
     export.set_defaults(func=cmd_export)
 
     report = sub.add_parser("report", help="compare cached runs for one dataset")

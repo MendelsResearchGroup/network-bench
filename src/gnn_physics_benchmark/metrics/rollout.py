@@ -37,7 +37,7 @@ def r2_centred(truth: list[float], predicted: list[float]) -> float:
     Centred: the denominator is the variance of the true values across systems.
     This is the right convention for comparing one scalar per system -- a
     Poisson's ratio, a stress slope -- and it is *not* the convention used for
-    the acceleration floors in `metrics.ladder`, which are uncentred because
+    the acceleration floors in `analysis.difficulty.ladder`, which are uncentred because
     there the target's mean is physically zero.
     """
     values = [value for value in zip(truth, predicted) if all(v == v for v in value)]
