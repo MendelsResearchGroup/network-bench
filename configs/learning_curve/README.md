@@ -1,5 +1,9 @@
 # Learning curves with seed-specific splits
 
+> Historical training recipes; exact split files remain inputs to the
+> [published sweep-v2](../sweep_v2/README.md). Use sweep-v2 for the current
+> detached MST schedule, checkpoint selection, and barostat variants.
+
 Each dataset is evaluated at training sizes **10, 20, …, 100**, with **70
 validation networks and 70 test networks**. Seeds **0, 1, 2** change both split
 membership and training randomness. The experiment reads the shared
