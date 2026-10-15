@@ -5,7 +5,7 @@ from pathlib import Path
 
 import torch
 
-from gnn_physics_benchmark.training import RunConfig
+from network_bench.training import RunConfig
 
 
 def normal_mst(repo, base_jobs):

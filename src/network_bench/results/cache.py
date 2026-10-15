@@ -28,7 +28,7 @@ def results_root(root: str | Path | None = None) -> Path:
     """Where results live: `root` if given, else `results/` beside the repository."""
     if root is not None:
         return Path(root).expanduser()
-    # src/gnn_physics_benchmark/results/cache.py -> repository root
+    # src/network_bench/results/cache.py -> repository root
     return Path(__file__).resolve().parents[3] / "results"
 
 

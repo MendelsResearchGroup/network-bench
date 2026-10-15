@@ -9,7 +9,7 @@ Two steps, kept apart because the training loop caches the first one:
 * `build_input_graph` folds that window into the single `Data` the model sees.
 
 The split between affine and residual velocity is the substantive part. See
-`gnn_physics_benchmark.interfaces.graph` for what the two mean and why the run,
+`network_bench.interfaces.graph` for what the two mean and why the run,
 not the model, chooses between them.
 """
 

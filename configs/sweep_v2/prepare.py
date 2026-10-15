@@ -1,8 +1,8 @@
 """Fresh full sweep, preserving the published membership exactly."""
 import json
 from pathlib import Path
-from gnn_physics_benchmark import models
-from gnn_physics_benchmark.data import registry
+from network_bench import models
+from network_bench.data import registry
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parents[1]

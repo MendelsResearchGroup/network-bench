@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import statistics
 
-from gnn_physics_benchmark.data import loading, registry
+from network_bench.data import loading, registry
 from .ladder import Samples, best_linear, linear_ladder, position_errors, r2_uncentred
 from .measures import (
     alpha_from_positions,

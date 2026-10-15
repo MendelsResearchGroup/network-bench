@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from gnn_physics_benchmark.results.website import learning_payload
+from network_bench.results.website import learning_payload
 
 
 def main():

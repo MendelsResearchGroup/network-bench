@@ -133,8 +133,8 @@ Subclass `SimulatorModel` and implement one method:
 
 ```python
 import torch
-from gnn_physics_benchmark.interfaces import SimulatorModel
-from gnn_physics_benchmark.models import register
+from network_bench.interfaces import SimulatorModel
+from network_bench.models import register
 
 class MyModel(SimulatorModel):
     def __init__(self, spec, target_scale, *, hidden_size: int = 64):

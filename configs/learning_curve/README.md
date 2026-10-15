@@ -83,7 +83,7 @@ dataset, model and training size, so variants are never averaged together.
 
 The current published sweep uses `../sweep_v2/prepare.py` and preserves these
 memberships. To generate a new normal split explicitly, call
-`gnn_physics_benchmark.data.learning_curve.write_configs(config, directory)`
+`network_bench.data.learning_curve.write_configs(config, directory)`
 from Python. Run an individual saved configuration with
 `python scripts/run.py configs/learning_curve/noisy_lj/seed-0_train-010.json`.
 

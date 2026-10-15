@@ -4,10 +4,10 @@ import sys
 from dataclasses import replace
 from pathlib import Path
 import torch
-from gnn_physics_benchmark import benchmark, barostat
-from gnn_physics_benchmark.data import registry
-from gnn_physics_benchmark.graph.features import potential_for
-from gnn_physics_benchmark.training import RunConfig
+from network_bench import benchmark, barostat
+from network_bench.data import registry
+from network_bench.graph.features import potential_for
+from network_bench.training import RunConfig
 
 torch.set_num_threads(1)
 repo = Path.cwd()

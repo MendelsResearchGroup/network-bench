@@ -9,8 +9,8 @@ import json
 import sys
 from pathlib import Path
 import torch
-from gnn_physics_benchmark import benchmark
-from gnn_physics_benchmark.training import RunConfig
+from network_bench import benchmark
+from network_bench.training import RunConfig
 
 if __name__ == "__main__":
     torch.set_num_threads(4)

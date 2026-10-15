@@ -234,7 +234,7 @@ COMMON_FIELDS: tuple[FieldSpec, ...] = (
               "non-bonded pair appears at all. The input-graph builder symmetrises it and may add a pair "
               "neighbour list; a model never sees this raw edge set.", shared=True),
     FieldSpec("edge_attr", "[E, W]", "Per-bond features; see the dataset's edge columns below."),
-    FieldSpec("box", "-", "A `gnn_physics_benchmark.interfaces.box.Box`: the periodic bounds. Pickled "
+    FieldSpec("box", "-", "A `network_bench.interfaces.box.Box`: the periodic bounds. Pickled "
               "into the file, so the class must be importable to load a trajectory."),
     FieldSpec("box_tensor", "[dim]", "The box edge lengths as a tensor that can move to a device. This is "
               "the field all periodic-boundary and strain code uses. Deformation is imposed by changing it.",

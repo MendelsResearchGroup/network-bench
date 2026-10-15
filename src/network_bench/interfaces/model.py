@@ -1,6 +1,6 @@
 """The model interface: subclass `SimulatorModel` to be benchmarked.
 
-    from gnn_physics_benchmark.interfaces import SimulatorModel
+    from network_bench.interfaces import SimulatorModel
 
     class MyModel(SimulatorModel):
         def __init__(self, spec, target_scale, *, hidden_size: int = 64):

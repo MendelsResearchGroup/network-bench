@@ -14,7 +14,7 @@ normaliser the benchmark fitted for this dataset.
 
 A model does not have to live in this repository. Register one from anywhere:
 
-    from gnn_physics_benchmark.models import register
+    from network_bench.models import register
     register("my_model", MyModel)
 """
 
@@ -49,7 +49,7 @@ MODELS: dict[str, type[SimulatorModel]] = {
 def register(key: str, model: type[SimulatorModel], *, overwrite: bool = False) -> None:
     """Make a model available under `key`."""
     if not (isinstance(model, type) and issubclass(model, SimulatorModel)):
-        raise TypeError(f"{model!r} is not a subclass of gnn_physics_benchmark.interfaces.SimulatorModel.")
+        raise TypeError(f"{model!r} is not a subclass of network_bench.interfaces.SimulatorModel.")
     if key in MODELS and not overwrite:
         raise KeyError(f"model key {key!r} is already registered; pass overwrite=True to replace it.")
     MODELS[key] = model

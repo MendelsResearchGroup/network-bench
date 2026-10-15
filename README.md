@@ -60,8 +60,8 @@ There is no installed command-line interface. Use Python functions directly:
 
 ```python
 from dataclasses import replace
-from gnn_physics_benchmark import benchmark
-from gnn_physics_benchmark.training import RunConfig
+from network_bench import benchmark
+from network_bench.training import RunConfig
 
 base = RunConfig.from_json("configs/networks.json")
 for seed in (0, 1, 2):
@@ -96,7 +96,7 @@ resume=False)` reruns them.
 
 | Path | Purpose |
 |---|---|
-| `src/gnn_physics_benchmark/` | Importable data/model interfaces, training and evaluation |
+| `src/network_bench/` | Importable data/model interfaces, training and evaluation |
 | `configs/sweep_v2/` | Published training recipe and job manifests |
 | `configs/learning_curve/` | Exact split inputs and historical learning-curve recipes |
 | `configs/` | Configuration index, examples and historical experiments |
@@ -111,8 +111,8 @@ Implement `SimulatorModel.predict_acceleration(graph)` and register the class:
 
 ```python
 import torch
-from gnn_physics_benchmark.interfaces import SimulatorModel
-from gnn_physics_benchmark.models import register
+from network_bench.interfaces import SimulatorModel
+from network_bench.models import register
 
 class MyModel(SimulatorModel):
     def __init__(self, spec, target_scale):

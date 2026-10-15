@@ -2,8 +2,8 @@
 
 This subpackage is what an external user imports:
 
-    pip install git+https://github.com/<org>/gnn_physics_benchmark
-    from gnn_physics_benchmark.interfaces import SimulatorModel, integrate_acceleration
+    pip install git+https://github.com/<org>/network_bench
+    from network_bench.interfaces import SimulatorModel, integrate_acceleration
 
 It deliberately imports nothing beyond `torch` and `torch_geometric`, so a model
 author can read and satisfy the contract without pulling in the training harness,

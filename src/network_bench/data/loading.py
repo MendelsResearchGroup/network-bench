@@ -6,7 +6,7 @@ First, the stored frames pickle a `Box` instance from whichever module the
 generating code lived in -- `network_minimal` for the Kremer-Grest sets,
 `network` for the older two-dimensional ones. Rather than ask every user to keep
 those files on their path, `_install_pickle_alias` points the name the dataset
-declares at `gnn_physics_benchmark.interfaces.box`, so `torch.load` resolves it.
+declares at `network_bench.interfaces.box`, so `torch.load` resolves it.
 `weights_only=False` is unavoidable for the same reason, which does mean loading
 a trajectory executes pickle from the dataset directory.
 
@@ -51,7 +51,7 @@ def _install_pickle_alias(module: str) -> None:
         return
     shim = types.ModuleType(module)
     shim.Box = Box
-    shim.__doc__ = "Compatibility alias for gnn_physics_benchmark.interfaces.box."
+    shim.__doc__ = "Compatibility alias for network_bench.interfaces.box."
     sys.modules[module] = shim
 
 

@@ -839,7 +839,7 @@ wheels = [
 ]
 
 [[package]]
-name = "gnn-physics-benchmark"
+name = "network-bench"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

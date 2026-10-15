@@ -7,9 +7,9 @@ import sys
 
 import torch
 
-from gnn_physics_benchmark.data import registry
-from gnn_physics_benchmark.data.ranking import rank_networks
-from gnn_physics_benchmark.training import RunConfig
+from network_bench.data import registry
+from network_bench.data.ranking import rank_networks
+from network_bench.training import RunConfig
 
 
 def main():
