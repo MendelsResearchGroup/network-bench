@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 from snapshot import create_snapshot
+from extend_seeds import extend_seeds
 from network_bench import models
 from network_bench.data import registry
 
@@ -13,10 +14,13 @@ SCHEDULE = [[0,1],[10,2],[20,3],[30,5],[40,8],[50,10]]
 
 
 def main():
+    extend_seeds(REPO)
+    previous_jobs = json.loads((ROOT / "jobs.json").read_text())
+    previous_calibrations = json.loads((ROOT / "calibrations.json").read_text())
     jobs, blocked, calibrations = [], [], []
     for dataset in DATASETS:
         for mode in ('normal', 'ood'):
-            for seed in (0,1,2):
+            for seed in (0,1,2,3,4):
                 calibration = f'{dataset}-{mode}-seed{seed}'
                 calibration_config = None
                 for training in ('one_step','multi_step'):
@@ -59,13 +63,24 @@ def main():
                                         hyperparameters={}))
                 if registry.get(dataset).potential is not None:
                     calibrations.append(dict(name=calibration,config=calibration_config))
+    # Append new cells: existing array indices and completion records remain valid.
+    generated = {(job['config'], job['model']): job for job in jobs}
+    for job in previous_jobs:
+        if generated.pop((job['config'], job['model'])) != job:
+            raise ValueError('An existing manifest job changed; use a separate experiment root.')
+    jobs = previous_jobs + list(generated.values())
+    pending = {job['name']: job for job in calibrations}
+    for job in previous_calibrations:
+        if pending.pop(job['name']) != job:
+            raise ValueError('An existing calibration changed.')
+    calibrations = previous_calibrations + list(pending.values())
     (ROOT/'jobs.json').write_text('[\n'+',\n'.join(json.dumps(row) for row in jobs)+'\n]\n')
     (ROOT/'calibrations.json').write_text(json.dumps(calibrations,indent=1)+'\n')
     (ROOT/'blocked.json').write_text('[\n'+',\n'.join(json.dumps(row) for row in blocked)+'\n]\n')
     result = REPO/'results/sweep-v2'
     for folder in ('logs','done','failed','calibration'):
         (result/folder).mkdir(parents=True,exist_ok=True)
-    protocol = dict(recipe='sweep-v2',datasets=list(DATASETS),models=list(MODELS),seeds=[0,1,2],
+    protocol = dict(recipe='sweep-v2',datasets=list(DATASETS),models=list(MODELS),seeds=[0,1,2,3,4],
         train_sizes=list(range(10,101,10)),validation=70,test=70,
         training_jobs=sum(j['kind']=='train' for j in jobs),control_jobs=sum(j['kind']=='control' for j in jobs),
         blocked_training_jobs=len(blocked)*len(MODELS),gns_message_passing=2,

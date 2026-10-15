@@ -52,3 +52,19 @@ Completion counts are exported alongside scores; survivor-only values remain
 explicitly labeled in JSON. For previously saved runs with no intermediate
 counts, those horizons are conservatively unverified when final divergence is
 nonzero. Re-evaluation can recover their exact intermediate coverage.
+
+## Additional seeds 3 and 4
+
+The manifest now appends 2,800 training cells and 400 controls for seeds 3–4,
+keeping all 4,800 original indices intact. The full five-seed experiment contains
+7,000 training runs and 1,000 controls. Website results remain the completed
+three-seed study until the additional runs finish and are explicitly published.
+
+Normal seeds use the same saved roster and shuffle rule. OOD training remains
+the highest N; seeds change the held-out shuffle and training randomness.
+All held-out splits remain 70 validation / 70 test. Noisy LJ barostat stays blocked.
+
+PBS submissions must pass the path printed by preparation using
+`qsub -v SNAPSHOT=/absolute/path/to/snapshot ...`; it is pinned for each array.
+Submission IDs and queue caps for this extension are recorded locally in
+`results/sweep-v2/seeds34-submissions.json`.

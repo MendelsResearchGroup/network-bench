@@ -17,7 +17,9 @@
  "seeds": [
   0,
   1,
-  2
+  2,
+  3,
+  4
  ],
  "train_sizes": [
   10,
@@ -33,9 +35,9 @@
  ],
  "validation": 70,
  "test": 70,
- "training_jobs": 4200,
- "control_jobs": 600,
- "blocked_training_jobs": 840,
+ "training_jobs": 7000,
+ "control_jobs": 1000,
+ "blocked_training_jobs": 1400,
  "gns_message_passing": 2,
  "mst": {
   "epochs": 100,
