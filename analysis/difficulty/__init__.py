@@ -1,7 +1,7 @@
 """Dataset difficulty: how hard a dataset is before any model touches it.
 
 Kept apart from training and evaluation, which never import it. `python -m analysis.difficulty <dataset>` runs `measure_difficulty` and caches the result as
-`results/<dataset>/difficulty.json`, which `notebooks/dataset_metrics.ipynb` reads.
+`results/<dataset>/difficulty.json` for inspection or analysis in Python.
 """
 
 from __future__ import annotations

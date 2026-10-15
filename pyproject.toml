@@ -10,16 +10,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Only the notebooks and ad-hoc plotting need these. The benchmark itself, and
+# Only ad-hoc plotting needs these. The benchmark itself, and
 # in particular `network_bench.interfaces`, must import without them.
 analysis = [
     "matplotlib>=3.11.1",
     "pandas>=3.0.5",
-]
-
-[dependency-groups]
-dev = [
-    "ipykernel>=7.3.0",
 ]
 
 [build-system]

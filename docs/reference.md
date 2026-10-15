@@ -47,11 +47,8 @@ resolved system list, results on the two never collide.
 with `--manifest ""` for the 2D sets and `clean` for the Kremer-Grest one. The
 `node_optimized` and `stiff_optimized` columns are measured on the mini release.)
 
-`notebooks/dataset_metrics.ipynb` puts every measured dataset side by side --
-tables, one distribution panel per metric, the floor against its ceiling -- from
-the cached `difficulty.json` files alone. Open it in VS Code with this project's
-`.venv` as the kernel, or run
-`uv run --extra analysis --group dev --with jupyterlab jupyter lab`.
+Difficulty measurements are saved as `results/<dataset>/difficulty.json`
+and can be read directly from Python.
 
 Nothing derived is stored: velocities, forces, stress, strain and Poisson's ratio
 are all computed.

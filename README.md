@@ -102,7 +102,7 @@ resume=False)` reruns them.
 | `configs/` | Configuration index, examples and historical experiments |
 | `docs/` | Static website and published result JSON |
 | `scripts/build_website.py` | Version website assets for deployment |
-| `analysis/`, `notebooks/` | Optional dataset analysis, outside the training package |
+| `analysis/` | Optional dataset analysis, outside the training package |
 | `results/` | Local runs, checkpoints and logs; ignored by Git |
 
 ## Add a model
