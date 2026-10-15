@@ -111,7 +111,7 @@ class FrameSchema:
     """Module the `Box` instances in the `.pt` files were pickled from."""
 
     column_docs: dict = field(default_factory=dict)
-    """Optional prose per edge column, for `gnn-bench schema`."""
+    """Optional prose per edge column, for schema inspection."""
 
     def __post_init__(self) -> None:
         columns = self.edge_columns

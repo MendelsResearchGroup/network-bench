@@ -19,7 +19,7 @@ from .training.config import RunConfig
 from .training.loop import load_checkpoint, train
 from .training.loss import fit_target_scale
 
-__all__ = ["run", "select_epoch"]
+__all__ = ["run", "evaluate_run", "select_epoch"]
 
 
 def select_epoch(history: dict, key: str, start_epoch: int = 1) -> dict:
@@ -113,3 +113,22 @@ def load_data(config: RunConfig, systems: list[str]) -> list[list]:
         registry.get(config.dataset), systems, first_frame=spec.first_frame,
         frame_stride=spec.frame_stride, max_frames=spec.max_frames,
     )
+
+
+def evaluate_run(directory: str | Path, *, split: str = "test", steps: int | None = None) -> dict:
+    """Evaluate the selected checkpoint using the run's saved network membership."""
+    from .normalization import Normalizer
+
+    directory = Path(directory)
+    saved = cache.read_result(directory)
+    selected = saved["metrics"].get("selected_epoch")
+    checkpoint = (directory / "checkpoints" / f"epoch_{selected:04d}.pt" if selected
+                  else sorted((directory / "checkpoints").glob("epoch_*.pt"))[-1])
+    state, scale_state, config = load_checkpoint(checkpoint)
+    scale = Normalizer(config.graph.dim)
+    scale.load_state_dict(scale_state)
+    model = models.build(config.model, config.graph, scale,
+                         **config.model_hyperparameters).to(config.train.device)
+    model.load_state_dict(state)
+    return evaluate_model(model, load_data(config, saved["split"][split]), config,
+                          split=split, steps=steps)

@@ -3,7 +3,7 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from gnn_physics_benchmark.results.cache import export_results
+from gnn_physics_benchmark.results.website import learning_payload
 
 
 def main():
@@ -15,18 +15,10 @@ def main():
     if missing:
         (root/'incomplete.json').write_text(json.dumps(dict(missing_jobs=missing),indent=1)+'\n')
         raise RuntimeError(f'{len(missing)} sweep cells unfinished; existing website results retained.')
-    payload=export_results(root/'runs')
+    payload=learning_payload(root/'runs', source/'configs/learning_curve/ood_rankings', recipe='sweep-v2')
     if len(payload['runs']) != len(jobs):
         raise RuntimeError('Finished result count differs from manifest; existing website results retained.')
     generated=datetime.now(timezone.utc).isoformat(timespec='seconds')
-    for run in payload['runs']:
-        run.update(recipe='sweep-v2',split_id=run['comparison_id'],train_networks=run['split']['train'])
-        run['split_seed']=payload['splits'][run['split_id']]['seed']
-        if run['mode']=='ood':
-            ranking=json.loads((source/'configs/learning_curve/ood_rankings'/f"{run['dataset']}.json").read_text())['ranking']
-            payload['splits'][run['split_id']].update(rule='highest_n',training_pool_size=100,
-                ranking_steps=100,validation_distribution='lower_ratio',
-                cutoff_poisson_ratio=ranking[run['train_networks']-1]['poisson_ratio'])
     controls=[r for r in payload['runs'] if r['model'] in ('frozen','zero_acceleration')]
     payload['runs'].extend(dict(r,training_mode='multi_step') for r in controls)
     for run in payload['runs']:

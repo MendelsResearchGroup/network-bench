@@ -81,20 +81,11 @@ one-step sweep; 630–1259 are normal MST, 1260–1889 OOD one-step, and 1890–
 OOD MST. `report.py` groups by distribution and training objective as well as
 dataset, model and training size, so variants are never averaged together.
 
-Generate the configs from the repository root:
-
-```bash
-.venv/bin/gnn-bench learning-curve-config configs/networks.json \
-  --dataset noisy_lj node_optimized stiff_optimized \
-  --seeds 0 1 2 --out configs/learning_curve
-```
-
-Run one cell normally, without overriding its already specified training seed:
-
-```bash
-.venv/bin/gnn-bench --root results/learning-curve/runs --threads 4 train \
-  configs/learning_curve/noisy_lj/seed-0_train-010.json --model gns
-```
+The current published sweep uses `../sweep_v2/prepare.py` and preserves these
+memberships. To generate a new normal split explicitly, call
+`gnn_physics_benchmark.data.learning_curve.write_configs(config, directory)`
+from Python. Run an individual saved configuration with
+`python scripts/run.py configs/learning_curve/noisy_lj/seed-0_train-010.json`.
 
 `jobs.json` lists the cells for all prepared variants. The CPU-only PBS script runs an array index
 through `run.py`; results live in `results/learning-curve/runs/`, with individual

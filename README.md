@@ -48,34 +48,49 @@ retain negative R² values.
 ```bash
 pip install -e .
 export GNN_BENCH_DATA_ROOT=/path/to/data_bench
-
-gnn-bench train configs/networks.json --model gns mlp --seeds 0 1 2
-gnn-bench report node_optimized --seeds
+python scripts/run.py configs/networks.json
 ```
 
-`configs/networks.json` is a small standalone example, **not the full published
-sweep**. Use [sweep-v2](configs/sweep_v2/README.md) to reproduce the website's
-training protocol. The [configuration guide](configs/README.md) distinguishes
-current, historical, and exploratory recipes.
+`configs/networks.json` is a small standalone example, not the full published
+sweep. The default data root is `/rg/mendels_prj/s.sergey/data_bench`.
+Trajectories remain outside Git. The [configuration guide](configs/README.md)
+distinguishes current and historical recipes.
 
-The default data root is `/rg/mendels_prj/s.sergey/data_bench`, containing
-`node_optimized/`, `stiff_optimized/`, and
-`data_LJ_noisy_eps0.01_sigma1.0_cutoff1.122/`. Trajectories remain outside Git.
-Changing the available file roster can change newly generated splits; saved
-explicit memberships preserve existing comparisons.
+There is no installed command-line interface. Use Python functions directly:
 
-Model overrides use `--set`, for example
-`--model gns --set model_hyperparameters.hidden_size=64`.
-`gnn-bench datasets`, `models`, and `schema` describe the available interfaces.
-The default device is CPU. For a single CPU PBS job:
+```python
+from dataclasses import replace
+from gnn_physics_benchmark import benchmark
+from gnn_physics_benchmark.training import RunConfig
 
-```bash
-qsub -v CONFIG=configs/networks.json,MODEL=gns,SET=train.seed=0 train.pbs
+base = RunConfig.from_json("configs/networks.json")
+for seed in (0, 1, 2):
+    config = replace(base, model="gns", model_hyperparameters={"n_layers": 2},
+                     train=replace(base.train, seed=seed))
+    result = benchmark.run(config)
+
+scores = benchmark.evaluate_run(result["directory"])
 ```
 
-Training jobs save runs without changing the website. Export explicitly with
-`gnn-bench export --out /path/to/results.json`; use the sweep-specific export
-for the published two-view website. Completed runs are cached; `--force` reruns them.
+The routine workflow is:
+
+1. Prepare the published sweep with `python configs/sweep_v2/prepare.py`,
+   using saved exact split memberships. For new random memberships, call
+   `data.learning_curve.write_configs` explicitly; it is not required to
+   rerun the published sweep.
+2. Train/evaluate a config with `python scripts/run.py <config.json>` or
+   re-evaluate a checkpoint with `python scripts/run.py <run-directory>`.
+   Submit a single configured CPU job with
+   `qsub -v CONFIG=configs/networks.json train.pbs`; sweep arrays use
+   `configs/sweep_v2/train.pbs`.
+3. Export both website views with `python configs/sweep_v2/export.py docs`.
+   Publication is explicit, separate from training. Commit and push the
+   exported website files to deploy them.
+
+Inspect available datasets and models through `data.registry` and `models`.
+Use `results.cache.load_results` and `results.summary.summarize_seeds` for
+programmatic reports. Completed runs are cached; `benchmark.run(...,
+resume=False)` reruns them.
 
 ## Repository layout
 
@@ -118,8 +133,8 @@ into the next frame.
 ## Results and website
 
 Each run saves its configuration, exact split, training history, metrics, and
-checkpoints under `results/`. `gnn-bench evaluate <run-directory>` evaluates
-the selected checkpoint on its saved split. `report --seeds` aggregates runs
+checkpoints under `results/`. `benchmark.evaluate_run(directory)` evaluates
+the selected checkpoint on its saved split. `results.summary.summarize_seeds` aggregates runs
 with identical membership; the learning-curve export handles differing splits.
 
 The website is static; no backend is needed. Preview it with:

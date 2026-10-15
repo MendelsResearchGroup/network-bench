@@ -5,8 +5,7 @@
 A dataset is a directory of `.pt` files, one per simulated system, each a plain
 `list[Data]` in time order. Datasets differ in what they store, so the layout is
 not a constant: each one registers a `FrameSchema`, and everything downstream
-reads that rather than a hard-coded dimension or column order. `gnn-bench schema
-<dataset>` prints the full table.
+reads that rather than a hard-coded dimension or column order. `interfaces.raw.describe_schema(data.registry.get(dataset).schema)` returns the full table.
 
 Two datasets ship registered:
 
@@ -26,7 +25,7 @@ Poisson's ratio), `stiff_optimized` (per-bond stiffnesses optimised) and
 `noisy_dump200` (stiffnesses 1/l0 with noise). They differ in what the stiffness
 column holds -- exactly 1/l0, optimised and unrelated to l0, or 1/l0 with 13%
 noise -- so every harmonic set reads it from the column and none reconstructs it
-from the rest length. `gnn-bench datasets` has the details.
+from the rest length. `data.registry.get(dataset)` exposes the details.
 
 `node_optimized` and `stiff_optimized` are registered against the mini release on
 Zenodo ([doi:10.5281/zenodo.20181262](https://doi.org/10.5281/zenodo.20181262)):
@@ -192,7 +191,7 @@ of the target is signal at all. Positions are stored in float32 at order 3 sigma
 while the target is order 3e-6, so the stored precision puts real noise into the
 target; `r2_ceiling` is the best R² any predictor could reach.
 
-**Model performance** (`gnn-bench report`):
+**Model performance** (`results.cache.load_results` and `results.summary.summarize_seeds`):
 
 - `position_mse` — raw position MSE at the last rollout frame reached.
 - `frozen_mse` — the same error for beads frozen at the last seed frame.

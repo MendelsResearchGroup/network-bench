@@ -17,9 +17,6 @@ analysis = [
     "pandas>=3.0.5",
 ]
 
-[project.scripts]
-gnn-bench = "gnn_physics_benchmark.cli:main"
-
 [dependency-groups]
 dev = [
     "ipykernel>=7.3.0",
