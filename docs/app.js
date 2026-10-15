@@ -83,6 +83,7 @@ function groups(runs, metric = 'poisson_r2', trainingAxis = false) {
 }
 function setStudy(value, resetModels = true) {
   study = value;
+  $('horizon-control').hidden = !learning();
   data = studies[study];
   $('train-size-label').hidden = !learning();
   $('split-seed-label').hidden = !learning();
