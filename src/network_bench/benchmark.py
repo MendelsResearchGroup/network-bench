@@ -26,6 +26,8 @@ def select_epoch(history: dict, key: str, start_epoch: int = 1) -> dict:
     """The validation entry of `history` that scored best on `key`."""
     scored = [entry for entry in history["epochs"] if entry["epoch"] >= start_epoch
               and math.isfinite(entry.get(key, float("nan")))]
+    if not scored:
+        raise ValueError(f"No finite validation {key} after epoch {start_epoch}; no checkpoint selected.")
     lower = "loss" in key or "mse" in key
     return (min if lower else max)(scored, key=lambda entry: entry[key])
 
@@ -121,6 +123,12 @@ def evaluate_run(directory: str | Path, *, split: str = "test", steps: int | Non
 
     directory = Path(directory)
     saved = cache.read_result(directory)
+    config = RunConfig.from_dict(saved['config'])
+    if config.model in ('frozen', 'zero_acceleration'):
+        model = models.build(config.model, config.graph, Normalizer(config.graph.dim),
+                             **config.model_hyperparameters).to(config.train.device)
+        return evaluate_model(model, load_data(config, saved['split'][split]), config,
+                              split=split, steps=steps)
     selected = saved["metrics"].get("selected_epoch")
     checkpoint = (directory / "checkpoints" / f"epoch_{selected:04d}.pt" if selected
                   else sorted((directory / "checkpoints").glob("epoch_*.pt"))[-1])

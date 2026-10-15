@@ -1,6 +1,7 @@
 """Fresh full sweep, preserving the published membership exactly."""
 import json
 from pathlib import Path
+from snapshot import create_snapshot
 from network_bench import models
 from network_bench.data import registry
 
@@ -77,6 +78,7 @@ def main():
         splits='Original exact learning_curve split membership. OOD reserves ranks1-100; trainN uses highestN; heldout shuffled ranks101 onward. Train-pool remainder unused.',
         data_root='/rg/mendels_prj/s.sergey/data_bench')
     (ROOT/'protocol.json').write_text(json.dumps(protocol,indent=1)+'\n')
+    print('Snapshot:', create_snapshot(REPO))
     print(json.dumps(protocol,indent=1))
 
 

@@ -55,6 +55,7 @@ function node(tag, text, className) {
   return element;
 }
 function stats(values) {
+  if (values.some(value => !finite(value))) return {mean:null, sd:null, n:values.filter(finite).length};
   values = values.filter(finite);
   if (!values.length) return {mean: null, sd: null, n: 0};
   const mean = values.reduce((a, b) => a + b, 0) / values.length;
@@ -207,6 +208,10 @@ function renderSplit() {
 }
 function render(animate = true, animateMSE = false) {
   const runs = selectedRuns(), grouped = groups(runs);
+  const incomplete = modeRuns().filter(run => (run.incomplete_horizons || []).length);
+  $('completion-note').hidden = !incomplete.length;
+  $('completion-note').textContent = `${incomplete.length} runs have incomplete or unverified rollout coverage. Their affected scores are hidden; seed means require every selected seed. Older runs lack intermediate completion counts. Original survivor-only scores remain in JSON.`;
+
   $('sweep-note').hidden = !sweepStatus || runs.some(run => run.recipe === 'sweep-v2') || barostat;
   $('sweep-note').textContent = sweepStatus?.state === 'complete'
     ? '' : 'Retraining is in progress. These existing results use the previous training recipe.';
@@ -315,7 +320,7 @@ function renderChart(animate, metric = 'poisson_r2') {
       }
     } else {
       const points = x.map(step => group?.points[step] ?? stats([]));
-      const band = sign => points.map(point => $('bands').checked && point.n > 1 ? plottedScore(point.mean + sign * point.sd) : null);
+      const band = sign => points.map(point => $('bands').checked && finite(point.mean) && point.n > 1 ? plottedScore(point.mean + sign * point.sd) : null);
       traces.push({...base,uid:`${uid}-lower`,y:band(-1),mode:'lines',line:{width:0,simplify:false},hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-upper`,y:band(1),mode:'lines',line:{width:0,simplify:false},fill:'tonexty',fillcolor:rgba(c,.12),hoverinfo:'skip',showlegend:false},
         {...base,uid:`${uid}-mean`,y:points.map(point => plottedScore(point.mean)),mode:'lines+markers',name:template.model,
@@ -401,6 +406,7 @@ const COLUMNS = [
   {key:'mse',label:'Position MSE ↓',value:run=>metricValues(run,'position_mse_by_step')[horizon]},
   {key:'relative',label:'Relative MSE ↓',value:run=>metricValues(run,'relative_mse_by_step')[horizon]},
   {key:'r2',label:'Test R² ↑',value:run=>run.poisson_r2[horizon]},
+  {key:'completed',label:'Completed at step',value:run=>`${run.completion_by_step?.[horizon] ?? '?'} / ${run.evaluation_systems ?? run.split.test}`},
   {key:'diverged',label:'Diverged',value:run=>run.diverged}
 ];
 function renderTable() {
@@ -450,9 +456,9 @@ function renderTable() {
   updateURL();
 }
 function downloadCSV() {
-  const columns=['dataset','mode','training_mode','rollout_schedule','detach_rollout','comparison_id','model','seed',...(learning() ? ['split_seed','train_networks','split_id'] : []),'hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged',`poisson_r2_${horizon}`,`position_mse_${horizon}`,`relative_mse_${horizon}`];
+  const columns=['dataset','mode','training_mode','rollout_schedule','detach_rollout','comparison_id','model','seed',...(learning() ? ['split_seed','train_networks','split_id'] : []),'hyperparameters','parameters','epochs','trained_epochs','early_stopped','early_stopping_patience','selected_epoch','select_by','val_score','relative_mse','position_mse','diverged','completed_trajectories','evaluation_systems',`poisson_r2_${horizon}`,`position_mse_${horizon}`,`relative_mse_${horizon}`];
   const quote=value=>'"'+String(value ?? '').replaceAll('"','""')+'"';
-  const rows=tableRuns().map(run=>columns.map(key=>quote(['hyperparameters','rollout_schedule'].includes(key)?JSON.stringify(run[key]):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:key.startsWith('position_mse_')?metricValues(run,'position_mse_by_step')[horizon]:key.startsWith('relative_mse_')?metricValues(run,'relative_mse_by_step')[horizon]:run[key])).join(','));
+  const rows=tableRuns().map(run=>columns.map(key=>quote(key==='completed_trajectories'?run.completion_by_step?.[horizon]:['hyperparameters','rollout_schedule'].includes(key)?JSON.stringify(run[key]):key.startsWith('poisson_r2_')?run.poisson_r2[horizon]:key.startsWith('position_mse_')?metricValues(run,'position_mse_by_step')[horizon]:key.startsWith('relative_mse_')?metricValues(run,'relative_mse_by_step')[horizon]:run[key])).join(','));
   const url=URL.createObjectURL(new Blob([[columns.join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'}));
   const link=node('a');link.href=url;link.download='network-bench-results.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }

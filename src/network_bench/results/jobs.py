@@ -5,12 +5,37 @@ import traceback
 from . import cache
 
 
+def completed_job(config, job, index, root):
+    """Return a completion only when its job, saved config and metrics still match."""
+    from pathlib import Path
+    from ..training.config import RunConfig
+
+    path = root / 'done' / f'{index}.json'
+    if not path.exists():
+        return None
+    record = json.loads(path.read_text())
+    if any(record.get(key) != value for key, value in job.items()):
+        return None
+    directory = Path(record['directory'])
+    if not (directory / 'config.json').exists() or not (directory / 'metrics.json').exists():
+        return None
+    saved = RunConfig.from_json(directory / 'config.json')
+    canonical = lambda value: json.dumps(value.to_dict(), sort_keys=True)
+    if canonical(saved) != canonical(config):
+        return None
+    return record
+
+
 def run_job(config, job, index, root):
     from .. import benchmark, models
     from ..evaluate import evaluate_model
     from ..normalization import Normalizer
 
     done = root / 'done' / f'{index}.json'
+    existing = completed_job(config, job, index, root)
+    if existing is not None:
+        return existing
+    done.unlink(missing_ok=True)
     started = time.monotonic()
     try:
         if job.get('kind', 'train') == 'train':

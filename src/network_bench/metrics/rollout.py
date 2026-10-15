@@ -165,4 +165,19 @@ def summarise_rollouts(errors: list[dict], requested_steps: int) -> dict:
         summary[f"position_mse_{step}"] = position
         summary[f"frozen_mse_{step}"] = frozen
         summary[f"relative_mse_{step}"] = position / frozen if frozen > 0 else float("nan")
+    summary['completion_by_step'] = {
+        step: sum(error['steps_completed'] >= step for error in errors)
+        for step in range(POISSON_EVERY, requested_steps + 1, POISSON_EVERY)
+    }
+    summary['survivor_metrics'] = {}
+    for step, completed in summary['completion_by_step'].items():
+        if completed < len(errors):
+            for prefix in ('poisson_r2', 'position_mse', 'frozen_mse', 'relative_mse'):
+                key = f'{prefix}_{step}'
+                summary['survivor_metrics'][key] = summary[key]
+                summary[key] = float('nan')
+    if summary['diverged']:
+        for key in ('position_mse', 'frozen_mse', 'relative_mse'):
+            summary['survivor_metrics'][key] = summary[key]
+            summary[key] = float('nan')
     return summary

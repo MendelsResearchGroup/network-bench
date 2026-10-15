@@ -11,8 +11,9 @@ from network_bench.training import RunConfig
 
 torch.set_num_threads(1)
 repo = Path.cwd()
-job = json.loads((repo/'configs/sweep_v2/calibrations.json').read_text())[int(sys.argv[1])]
-config = RunConfig.from_json(repo/job['config'])
+source = Path(__file__).resolve().parents[2]
+job = json.loads((source/'configs/sweep_v2/calibrations.json').read_text())[int(sys.argv[1])]
+config = RunConfig.from_json(source/job['config'])
 entry = registry.get(config.dataset)
 config = replace(config,graph=config.graph.resolved(entry.schema))
 names = config.split.explicit['train'][:10]

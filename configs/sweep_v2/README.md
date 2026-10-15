@@ -31,7 +31,7 @@ that archived dataset has no verified force field/rest lengths. No spring-only
 approximation is published as a verified Noisy LJ barostat.
 
 `calibrate.pbs` runs the 12 train-only calibrations. `train.pbs` uses an immutable
-source snapshot at `results/sweep-v2/source`; each array index runs one manifest
+source snapshot created by `prepare.py` under `results/sweep-v2/snapshots/<hash>`; each array index runs one manifest
 cell. All old results remain untouched. `publish.pbs` runs after the arrays,
 checks that every eligible cell completed, and commits/pushes only the three
 website JSON files from an isolated checkout. Incomplete sweeps are not exported.
@@ -41,3 +41,14 @@ website JSON files from an isolated checkout. Incomplete sweeps are not exported
 qsub -J 0-11 configs/sweep_v2/calibrate.pbs
 # Submit training arrays only after calibration and pilot checks pass.
 ```
+
+Preparation writes `results/sweep-v2/snapshot.json`; calibration, training and
+publication all use that frozen source/config snapshot. Existing snapshots are
+never overwritten. Completion markers are checked against the current job and
+saved run configuration before reuse or publication.
+
+Full-population scores are unavailable at horizons where any trajectory failed.
+Completion counts are exported alongside scores; survivor-only values remain
+explicitly labeled in JSON. For previously saved runs with no intermediate
+counts, those horizons are conservatively unverified when final divergence is
+nonzero. Re-evaluation can recover their exact intermediate coverage.

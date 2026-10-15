@@ -9,5 +9,7 @@ set -e
 cd "$PBS_O_WORKDIR"
 export GNN_BENCH_DATA_ROOT=/rg/mendels_prj/s.sergey/data_bench
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+snapshot=$(.venv/bin/python -c 'import json; print(json.load(open("results/sweep-v2/snapshot.json"))["path"])')
+export PYTHONPATH="$snapshot/src"
 exec >"results/sweep-v2/logs/calibration-$PBS_ARRAY_INDEX.log" 2>&1
-.venv/bin/python configs/sweep_v2/calibrate.py "$PBS_ARRAY_INDEX"
+.venv/bin/python "$snapshot/configs/sweep_v2/calibrate.py" "$PBS_ARRAY_INDEX"

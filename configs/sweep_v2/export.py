@@ -4,6 +4,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from network_bench.results.website import learning_payload
+from network_bench.results.jobs import completed_job
+from common import job_config
 
 
 def main():
@@ -11,11 +13,17 @@ def main():
     source=Path(__file__).resolve().parents[2]
     destination=Path(sys.argv[1]) if len(sys.argv)>1 else repo/'docs'
     jobs=json.loads((source/'configs/sweep_v2/jobs.json').read_text())
-    missing=[i for i in range(len(jobs)) if not (root/'done'/f'{i}.json').exists()]
+    completed=[completed_job(job_config(job, source, root), job, i, root)
+               for i, job in enumerate(jobs)]
+    missing=[i for i, record in enumerate(completed) if record is None]
     if missing:
         (root/'incomplete.json').write_text(json.dumps(dict(missing_jobs=missing),indent=1)+'\n')
         raise RuntimeError(f'{len(missing)} sweep cells unfinished; existing website results retained.')
     payload=learning_payload(root/'runs', source/'configs/learning_curve/ood_rankings', recipe='sweep-v2')
+    current={(job['dataset'], job['model'], Path(record['directory']).name)
+             for job, record in zip(jobs, completed)}
+    payload['runs']=[run for run in payload['runs']
+                     if (run['dataset'], run['model'], run['name']) in current]
     if len(payload['runs']) != len(jobs):
         raise RuntimeError('Finished result count differs from manifest; existing website results retained.')
     generated=datetime.now(timezone.utc).isoformat(timespec='seconds')

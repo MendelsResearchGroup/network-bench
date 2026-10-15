@@ -166,6 +166,8 @@ def export_results(root: str | Path | None = None) -> dict:
                 if key.startswith("relative_mse_")
             },
             "diverged": measured.get("diverged"),
+            "completion_by_step": measured.get("completion_by_step", {}),
+            "survivor_metrics": measured.get("survivor_metrics", {}),
             "poisson_r2": {
                 int(key.rsplit("_", 1)[1]): value
                 for key, value in measured.items()
