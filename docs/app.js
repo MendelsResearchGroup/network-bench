@@ -471,8 +471,12 @@ function setTheme(dark) {
     : `Switch to ${dark ? 'light' : 'dark'} theme`;
   if(data && !document.body.classList.contains('is-loading')) render(false);
 }
-setTheme(document.body.dataset.defaultTheme === 'dark');
-$('theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
+setTheme(document.documentElement.dataset.theme === 'dark');
+$('theme').onclick=()=>{
+  setTheme(document.documentElement.dataset.theme!=='dark');
+  // Theme switching still works if browser storage is unavailable.
+  try { localStorage.setItem('network-bench-theme', document.documentElement.dataset.theme); } catch {}
+};
 Promise.all(['results.json','learning-curves.json','sweep-status.json'].map(path => fetch(dataURL(path),{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(async ([payload, learningPayload, status])=>{
   sweepStatus=status;
   studies={rollouts:{...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')}, learning:learningPayload};

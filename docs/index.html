@@ -8,6 +8,14 @@
 <meta name="description" content="Compare learned simulators on spring-network compression. Explore rollout accuracy, learning curves, model parameters and exact benchmark splits.">
 <title>Network Bench — Results</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script>
+// Restore the theme before styles load to avoid a flash of the wrong palette.
+try {
+  document.documentElement.dataset.theme = localStorage.getItem('network-bench-theme') === 'dark' ? 'dark' : 'light';
+} catch {
+  document.documentElement.dataset.theme = 'light';
+}
+</script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="studio.css">
 <script src="https://cdn.plot.ly/plotly-4.1.1.min.js" defer>
