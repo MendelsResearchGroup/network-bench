@@ -1,5 +1,5 @@
 {
- "state": "queued",
+ "state": "complete",
  "recipe": "sweep-v2",
  "training_jobs": 4200,
  "control_jobs": 600,
@@ -141,5 +141,7 @@
   "mendels_comb_q": 200
  },
  "total_concurrency": 400,
- "concurrency_updated": "2026-10-07T11:47:54+00:00"
+ "concurrency_updated": "2026-10-07T11:47:54+00:00",
+ "completed_jobs": 4800,
+ "published": "2026-10-15T10:59:03+00:00"
 }
