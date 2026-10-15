@@ -12,7 +12,6 @@ defaults for new benchmark runs.
 | `smoke_*.json` | Small development configurations |
 | `mst/` | Historical MST with the earlier schedule and full rollout backpropagation |
 | `ood/` | Historical highest-30% OOD splits; not the current highest-N protocol |
-| `noisy_lj_stride/` | Archived stride experiments and their comparison artifacts |
 
 Keep `learning_curve/` in place: `sweep_v2/prepare.py` reads those files to
 preserve the published network assignments. Do not regenerate splits merely
