@@ -15,21 +15,20 @@
 <script src="app.js" defer>
 </script>
 </head>
-<body class="design studio" data-default-view="rollouts" data-click-inspection="true" >
+<body class="design studio is-loading" data-default-view="rollouts" data-click-inspection="true" >
 <header class="design-header">
 <a class="identity" href="./"><svg width="29" height="29" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25L16 5L27 25Z"/><circle cx="5" cy="25" r="3"/><circle cx="16" cy="5" r="3"/><circle cx="27" cy="25" r="3"/></svg><span class="identity-name">network<span>bench</span></span>
 </a>
 <div class="downloads">
-<button id="download">CSV ↓</button>
+<button id="download" disabled>CSV ↓</button>
 <a id="json-download" href="results.json" download>JSON ↓</a>
 <button id="theme" title="Change theme">◐</button>
 </div>
 </header>
 <main class="design-main">
-<div id="notice" class="notice">Loading benchmark results…</div>
-<div id="dashboard" hidden>
+<div id="dashboard">
 <div class="studio-layout">
-<aside id="explore" class="instrument">
+<aside id="explore" class="instrument" inert>
 <div class="control-block dataset-control">
 <label class="control-label" for="datasets">Dataset</label>
 <select id="datasets"></select>
@@ -111,6 +110,11 @@
 </details>
 </aside>
 <div class="workspace">
+<div id="notice" class="results-loader" role="status">
+<svg class="loading-network" width="72" height="72" viewBox="0 0 32 32" aria-hidden="true"><g><path d="M5 25L16 5L27 25Z"/><circle cx="5" cy="25" r="3"/><circle cx="16" cy="5" r="3"/><circle cx="27" cy="25" r="3"/></g></svg>
+<span>Loading benchmark results…</span>
+</div>
+<div id="results-content" hidden>
 <div class="selection-summary">
 <span id="selection-note">
 </span>
@@ -172,6 +176,7 @@
 <div id="split-membership" class="split-membership">
 </div>
 </details>
+</div>
 </div>
 </div>
 </div>

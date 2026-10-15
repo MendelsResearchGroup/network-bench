@@ -368,7 +368,7 @@ function renderChart(animate, metric = 'poisson_r2') {
     if (mse) Plotly.relayout(plot, layout).then(animateCurves);
     else animateCurves();
   } else {
-    Plotly.react(plot,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,displayModeBar:true,
+    plot.renderPromise=Plotly.react(plot,traces,layout,{responsive:true,displaylogo:false,scrollZoom:false,displayModeBar:true,
       modeBarButtonsToRemove:['select2d','lasso2d','zoomIn2d','zoomOut2d','autoScale2d'],
       toImageButtonOptions:{format:'svg',filename:mse ? 'network-bench-mse' : 'network-bench-r2',width:1100,height:550}}).then(() => {
         if (document.body.dataset.clickInspection && !plot.inspectionBound) {
@@ -469,11 +469,11 @@ function setTheme(dark) {
   $('theme').title = document.body.classList.contains('studio')
     ? `Switch to Tokyo Night ${dark ? 'Light' : 'Storm'}`
     : `Switch to ${dark ? 'light' : 'dark'} theme`;
-  if(data) render(false);
+  if(data && !document.body.classList.contains('is-loading')) render(false);
 }
 setTheme(document.body.dataset.defaultTheme === 'dark');
 $('theme').onclick=()=>setTheme(document.documentElement.dataset.theme!=='dark');
-Promise.all(['results.json','learning-curves.json','sweep-status.json'].map(path => fetch(dataURL(path),{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(([payload, learningPayload, status])=>{
+Promise.all(['results.json','learning-curves.json','sweep-status.json'].map(path => fetch(dataURL(path),{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(async ([payload, learningPayload, status])=>{
   sweepStatus=status;
   studies={rollouts:{...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')}, learning:learningPayload};
   data=studies.rollouts;
@@ -503,5 +503,13 @@ Promise.all(['results.json','learning-curves.json','sweep-status.json'].map(path
   if ($('search')) $('search').oninput=renderTable;
   if ($('seed')) $('seed').onchange=renderTable;
   $('download').onclick=downloadCSV;
-  $('notice').hidden=true;$('dashboard').hidden=false;restoreURL();
-}).catch(error=>{$('notice').hidden=false;$('notice').textContent=`Results could not be loaded (${error.message}). Please reload, or download the JSON from the link above.`;});
+  $('results-content').hidden=false;
+  restoreURL();
+  await Promise.all([$('plot').renderPromise, $('mse-plot').renderPromise]);
+  // Paint the completed plots at zero opacity before starting the crossfade.
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.body.classList.remove('is-loading');
+    $('explore').inert=false;
+    $('download').disabled=false;
+  }));
+}).catch(error=>{$('results-content').hidden=true;$('notice').hidden=false;$('notice').textContent=`Results could not be loaded (${error.message}). Please reload, or download the JSON from the link above.`;});
