@@ -116,16 +116,20 @@
  :root { --plot-height:390; }
 }
 
+/* Reserve the scrollbar space before the full results appear. */
+html { scrollbar-gutter:stable; }
+
 /* Keep the controls visible while the result files and plots load. */
 .workspace { position:relative; min-width:0; min-height:420px; }
 .results-loader { position:absolute; inset:0 0 auto; min-height:420px; display:flex; align-items:center; justify-content:center; gap:22px; padding:24px; color:var(--muted); font-size:20px; transition:opacity .35s ease, visibility .35s; }
+.results-loader .identity-name { color:var(--ink); font-size:30px; font-weight:700; letter-spacing:-.7px; }
 .loading-network { flex:none; overflow:visible; stroke:var(--green); fill:var(--surface); stroke-width:1.5; }
 .loading-network g { transform-origin:16px 18.33px; animation:network-spin 5s linear infinite; }
 @keyframes network-spin { to { transform:rotate(360deg); } }
 #results-content { opacity:1; transition:opacity .45s ease; }
 .is-loading #results-content { opacity:0; pointer-events:none; }
 body:not(.is-loading) .results-loader { opacity:0; visibility:hidden; pointer-events:none; }
-body:not(.is-loading) .loading-network g { animation:none; }
+body:not(.is-loading) .loading-network g { animation-play-state:paused; }
 .instrument[inert] { opacity:.65; }
 @media(max-width:550px) {
  .results-loader { gap:16px; font-size:18px; min-height:280px; }
