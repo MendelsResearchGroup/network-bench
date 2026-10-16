@@ -116,7 +116,7 @@ function restoreURL() {
   study = (params.get('view') ?? document.body.dataset.defaultView) === 'learning' ? 'learning' : 'rollouts';
   data = studies[study];
   trainSize = Number(params.get('train') ?? 100);
-  $('split-seed').value = ['0','1','2'].includes(params.get('split_seed')) ? params.get('split_seed') : '0';
+  $('split-seed').value = [...$('split-seed').options].some(option=>option.value===params.get('split_seed')) ? params.get('split_seed') : '0';
   dataset = datasets().includes(params.get('dataset')) ? params.get('dataset') : datasets()[0];
   mode = params.get('mode') === 'ood' ? 'ood' : 'normal';
   trainingMode = params.get('training') === 'mst' ? 'multi_step' : 'one_step';
@@ -192,7 +192,7 @@ function renderSplit() {
     : 'No matching results';
   $('split-note').textContent = split
     ? learningProtocol
-      ? `Showing split and training seed ${split.seed} at ${activeSize} training networks. ${mode === 'ood' ? `Training uses the highest ${activeSize} networks by Poisson’s ratio at 100 steps, from frame 3 to 103; ties are ordered by network ID. The lowest training ratio is ${number(split.cutoff_poisson_ratio, 6)}. Validation and test come from ranks 101 onward, below the reserved top-100 pool. All three seeds use the same top-N training IDs.` : `Training uses the first ${activeSize} of this seed's shuffled 100-network pool.`} The same 70 validation and 70 test networks are used at every training size and for every model within this seed. Other seeds have different held-out memberships, which can overlap across seeds. One-step and MST share these exact memberships. Unused IDs include the unselected part of the training pool. Bands show sample SD of per-seed scores, including split and training variation; they are not confidence intervals. Checkpoints are selected using validation R² at 100 steps. IDs below match the saved runs exactly.`
+      ? `Showing split and training seed ${split.seed} at ${activeSize} training networks. ${mode === 'ood' ? `Training uses the highest ${activeSize} networks by Poisson’s ratio at 100 steps, from frame 3 to 103; ties are ordered by network ID. The lowest training ratio is ${number(split.cutoff_poisson_ratio, 6)}. Validation and test come from ranks 101 onward, below the reserved top-100 pool. All seeds use the same top-N training IDs.` : `Training uses the first ${activeSize} of this seed's shuffled 100-network pool.`} The same 70 validation and 70 test networks are used at every training size and for every model within this seed. Other seeds have different held-out memberships, which can overlap across seeds. One-step and MST share these exact memberships. Unused IDs include the unselected part of the training pool. Bands show sample SD of per-seed scores, including split and training variation; they are not confidence intervals. Checkpoints are selected using validation R² at 100 steps. IDs below match the saved runs exactly.`
       : mode === 'ood'
       ? `The upper 30% is rounded up, then shuffled with seed ${split.seed}. Its first ${split.systems.train.length} networks are training; the remaining ${split.systems.val.length} are validation. The lower 70% is shuffled using the same generator; its first ${split.systems.test.length} networks are test, and the rest are unused. Ranking uses the benchmark’s position-based ratio from initial frame 3 to frame 103; equal ratios are ordered by network ID. Checkpoints are selected only on high-ratio validation networks. Sample counts differ from Normal; R² uses this mode’s own test population. Network IDs below match the saved run exactly.`
       : `Data-split seed ${split.seed}: ${split.systems.train.length} training, ${split.systems.val.length} validation and ${split.systems.test.length} test networks; remaining networks are unused. Training seeds change model initialization, while these network assignments stay fixed. Network IDs below match the saved run exactly.`
@@ -217,6 +217,11 @@ function render(animate = true, animateMSE = false) {
   $('sweep-note').textContent = sweepStatus?.state === 'complete'
     ? '' : 'Retraining is in progress. These existing results use the previous training recipe.';
   if (sweepStatus?.state === 'complete') $('sweep-note').hidden = true;
+  const pendingScope=sweepStatus?.pending_scopes?.some(scope=>scope.dataset===dataset && scope.mode===mode && scope.training_mode===trainingMode && scope.barostat===barostat);
+  if(pendingScope){
+    $('sweep-note').hidden=false;
+    $('sweep-note').textContent='This comparison retains seeds 0–2. Seeds 3–4 failed checkpoint selection because validation scores were non-finite; their results are not included.';
+  }
   renderSplit();
   if ($('ranking-note')) $('ranking-note').textContent = $('plot-seed').value === 'all' ? 'Mean R² ± sample SD' : 'R²';
   $('legend-note').textContent = `Top 4 by R² at step ${horizon}${learning() ? ` with ${trainSize} training networks` : ''}. Model counts are parameters. Click a plotted point to inspect its scores and split.`;
@@ -496,7 +501,8 @@ Promise.all(['results.json','learning-curves.json','sweep-status.json'].map(path
     const button=node('button'),dot=node('i',modelStyle(model).glyph,'swatch');dot.style.color=color(model);button.dataset.model=model;button.title=DESCRIPTIONS[model] ?? model;
     button.append(dot,node('span',model),node('span',undefined,'model-parameters'));button.onclick=()=>{topModels=false;enabled.has(model)?enabled.delete(model):enabled.add(model);render();};$('legend').append(button);
   }
-  for(const seed of [...new Set(data.runs.map(run=>run.seed))].sort((a,b)=>a-b)) for(const id of ['plot-seed','seed']) if ($(id)) $(id).append(new Option(`Seed ${seed}`,String(seed)));
+  $('split-seed').replaceChildren();
+  for(const seed of [...new Set(data.runs.map(run=>run.seed))].sort((a,b)=>a-b)) for(const id of ['plot-seed','seed','split-seed']) if ($(id)) $(id).append(new Option(`Seed ${seed}`,String(seed)));
   $('cohort').onchange=()=>{cohorts[cohortKey()]=$('cohort').value;topModels=true;render();};
   $('train-size').onchange=()=>{trainSize=Number($('train-size').value);render();};
   $('split-seed').onchange=()=>{renderSplit();updateURL();};

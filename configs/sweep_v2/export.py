@@ -1,4 +1,4 @@
-"""Replace the completed sweep atomically; never mix training recipes."""
+"""Publish complete comparisons; keep previous results for unfinished scopes."""
 import json
 import sys
 from datetime import datetime, timezone
@@ -15,20 +15,25 @@ def main():
     jobs=json.loads((source/'configs/sweep_v2/jobs.json').read_text())
     completed=[completed_job(job_config(job, source, root), job, i, root)
                for i, job in enumerate(jobs)]
+    scope=lambda job: (job['dataset'],job['mode'],job['training_mode'],bool(job['barostat']))
     missing=[i for i, record in enumerate(completed) if record is None]
+    pending={scope(jobs[i]) for i in missing}
     if missing:
         (root/'incomplete.json').write_text(json.dumps(dict(missing_jobs=missing),indent=1)+'\n')
-        raise RuntimeError(f'{len(missing)} sweep cells unfinished; existing website results retained.')
+        if '--completed-scopes' not in sys.argv:
+            raise RuntimeError(f'{len(missing)} sweep cells unfinished; existing website results retained.')
+    publish=[(job,record) for job,record in zip(jobs,completed) if scope(job) not in pending]
     payload=learning_payload(root/'runs', source/'configs/learning_curve/ood_rankings', recipe='sweep-v2')
     current={(job['dataset'], job['model'], Path(record['directory']).name)
-             for job, record in zip(jobs, completed)}
+             for job, record in publish}
     payload['runs']=[run for run in payload['runs']
                      if (run['dataset'], run['model'], run['name']) in current]
-    if len(payload['runs']) != len(jobs):
+    if len(payload['runs']) != len(publish):
         raise RuntimeError('Finished result count differs from manifest; existing website results retained.')
     generated=datetime.now(timezone.utc).isoformat(timespec='seconds')
     controls=[r for r in payload['runs'] if r['model'] in ('frozen','zero_acceleration')]
-    payload['runs'].extend(dict(r,training_mode='multi_step') for r in controls)
+    payload['runs'].extend(dict(r,training_mode='multi_step') for r in controls
+                           if scope(dict(r,training_mode='multi_step')) not in pending)
     for run in payload['runs']:
         run['comparison_id']=f"learning-v2-{run['dataset']}-{run['mode']}-{run['training_mode']}-barostat{int(run['barostat'])}"
     previous=json.loads((destination/'learning-curves.json').read_text())
@@ -45,7 +50,14 @@ def main():
         temporary.write_text(json.dumps(value,indent=1)+'\n')
         temporary.replace(destination/name)
     status=json.loads((destination/'sweep-status.json').read_text())
-    status.update(state='complete',completed_jobs=len(jobs),published=generated)
+    protocol=json.loads((source/'configs/sweep_v2/protocol.json').read_text())
+    status.update(state='partial' if missing else 'complete',
+                  completed_jobs=len(jobs)-len(missing), published=generated,
+                  protocol=protocol,
+                  **{key:protocol[key] for key in ('training_jobs','control_jobs','blocked_training_jobs')},
+                  pending_scopes=[dict(zip(('dataset','mode','training_mode','barostat'), key))
+                                  for key in sorted(pending)],
+                  pending_jobs=missing)
     (destination/'sweep-status.json').write_text(json.dumps(status,indent=1)+'\n')
     print('EXPORTED',len(payload['runs']),'new scores; blocked Noisy LJ barostat cells excluded.')
 

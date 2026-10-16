@@ -68,3 +68,9 @@ PBS submissions must pass the path printed by preparation using
 `qsub -v SNAPSHOT=/absolute/path/to/snapshot ...`; it is pinned for each array.
 Submission IDs and queue caps for this extension are recorded locally in
 `results/sweep-v2/seeds34-submissions.json`.
+
+To publish newly completed comparisons while retaining previous results for
+unfinished dataset/distribution/training/barostat combinations, run
+`python configs/sweep_v2/export.py docs --completed-scopes`. The status JSON
+records the withheld scopes and missing jobs; the default still requires the
+entire sweep to finish.
