@@ -485,13 +485,14 @@ $('theme').onclick=()=>{
   // Theme switching still works if browser storage is unavailable.
   try { localStorage.setItem('network-bench-theme', document.documentElement.dataset.theme); } catch {}
 };
-// Easter egg: five quick clicks on the logo mark toggle a monogram background.
-let monogramClicks=0, monogramTimer;
-document.querySelector('.identity svg').addEventListener('click',event=>{
+// Easter egg: three quick clicks on the logo toggle a monogram background; one click still goes home.
+let logoClicks=0, logoTimer;
+const logo=document.querySelector('.design-header .identity');
+logo.addEventListener('click',event=>{
   event.preventDefault();
-  clearTimeout(monogramTimer);
-  monogramTimer=setTimeout(()=>{monogramClicks=0;},800);
-  if(++monogramClicks===5){monogramClicks=0;document.body.classList.toggle('monogram');}
+  clearTimeout(logoTimer);
+  if(++logoClicks===3){logoClicks=0;document.body.classList.toggle('monogram');return;}
+  logoTimer=setTimeout(()=>{if(logoClicks===1)location.href=logo.href;logoClicks=0;},400);
 });
 Promise.all(['results.json','learning-curves.json','sweep-status.json'].map(path => fetch(dataURL(path),{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(async ([payload, learningPayload, status])=>{
   sweepStatus=status;
