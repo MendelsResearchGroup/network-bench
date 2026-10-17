@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+<!-- Easter-egg leather: pebbled grain lit as a bump map, plus fine pores. -->
+<defs>
+<filter id="pebble" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.11" numOctaves="3" seed="7" stitchTiles="stitch" result="bumps"/>
+<feDiffuseLighting in="bumps" surfaceScale="2.6" diffuseConstant="1.05" lighting-color="#fff" result="light">
+<feDistantLight azimuth="235" elevation="52"/>
+</feDiffuseLighting>
+<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="3" stitchTiles="stitch" result="pores"/>
+<feColorMatrix in="pores" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.15" result="poreShade"/>
+<feComposite in="light" in2="poreShade" operator="arithmetic" k1="1" result="grain"/>
+<feComposite in="SourceGraphic" in2="grain" operator="arithmetic" k1="1.12" result="leather"/>
+</filter>
+</defs>
+<rect width="300" height="300" fill="#6c442a" filter="url(#pebble)"/>
+</svg>

@@ -1,41 +1,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-<!-- Easter-egg canvas: coated-canvas brown, grain, and gold motifs in staggered rows. -->
+<!-- Easter-egg monogram: metallic gold motifs with a lit bevel and cast shadow, in staggered rows.
+     Transparent, so it sits on top of leather.svg. -->
 <defs>
 <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0" stop-color="#e6c88c"/><stop offset="1" stop-color="#b98f4e"/>
+<stop offset="0" stop-color="#f4dfa6"/><stop offset=".35" stop-color="#c99e57"/>
+<stop offset=".6" stop-color="#e9c983"/><stop offset="1" stop-color="#9c7334"/>
 </linearGradient>
-<filter id="grain" x="0" y="0" width="100%" height="100%">
-<feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" stitchTiles="stitch"/>
-<feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.12 0"/>
-</filter>
-<filter id="emboss" x="-20%" y="-20%" width="140%" height="140%">
-<feDropShadow dx="0" dy="0.8" stdDeviation="0.4" flood-color="#2a170c" flood-opacity="0.7"/>
+<filter id="gilt" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+<feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="bevel"/>
+<feSpecularLighting in="bevel" surfaceScale="3.2" specularConstant="1.15" specularExponent="16" lighting-color="#fff3d2" result="shine">
+<feDistantLight azimuth="235" elevation="42"/>
+</feSpecularLighting>
+<feComposite in="shine" in2="SourceAlpha" operator="in" result="shineInside"/>
+<feComposite in="SourceGraphic" in2="shineInside" operator="arithmetic" k2="1" k3="0.85" result="lit"/>
+<feGaussianBlur in="SourceAlpha" stdDeviation="0.9" result="soft"/>
+<feOffset in="soft" dx="0.6" dy="1.4" result="drop"/>
+<feFlood flood-color="#1c0d04" flood-opacity="0.85"/>
+<feComposite in2="drop" operator="in" result="shadow"/>
+<feMerge><feMergeNode in="shadow"/><feMergeNode in="lit"/></feMerge>
 </filter>
 <g id="nb" font-family="Didot, 'Bodoni 72', 'Playfair Display', Georgia, 'DejaVu Serif', serif" font-size="38" text-anchor="middle">
 <text x="-6" y="13">N</text>
 <text x="7" y="5" transform="skewX(-10)">B</text>
 </g>
-<g id="quatrefoil">
+<mask id="quatrefoil-cut"><rect x="-25" y="-25" width="50" height="50" fill="#fff"/>
+<path d="M0-9Q2-2 9 0Q2 2 0 9Q-2 2-9 0Q-2-2 0-9Z" fill="#000"/><circle r="1.6" fill="#fff"/></mask>
+<g id="quatrefoil" mask="url(#quatrefoil-cut)">
 <circle cx="-9" r="10.5"/><circle cx="9" r="10.5"/><circle cy="-9" r="10.5"/><circle cy="9" r="10.5"/>
-<path d="M0-9Q2-2 9 0Q2 2 0 9Q-2 2-9 0Q-2-2 0-9Z" fill="#553621"/>
-<circle r="1.6"/>
 </g>
-<g id="flower">
-<circle r="19"/>
-<g fill="#553621">
-<ellipse cy="-8" rx="4.6" ry="7.5"/><ellipse cy="8" rx="4.6" ry="7.5"/>
-<ellipse cx="-8" rx="7.5" ry="4.6"/><ellipse cx="8" rx="7.5" ry="4.6"/>
-</g>
-<circle r="3"/>
-</g>
-<g id="star">
-<path d="M0-21Q3-3 21 0Q3 3 0 21Q-3 3-21 0Q-3-3 0-21Z"/>
-<path d="M0-4Q.6-.6 4 0Q.6 .6 0 4Q-.6 .6-4 0Q-.6-.6 0-4Z" fill="#553621"/>
-</g>
+<mask id="flower-cut"><rect x="-25" y="-25" width="50" height="50" fill="#fff"/>
+<g fill="#000"><ellipse cy="-8" rx="4.6" ry="7.5"/><ellipse cy="8" rx="4.6" ry="7.5"/>
+<ellipse cx="-8" rx="7.5" ry="4.6"/><ellipse cx="8" rx="7.5" ry="4.6"/></g><circle r="3" fill="#fff"/></mask>
+<circle id="flower" r="19" mask="url(#flower-cut)"/>
+<mask id="star-cut"><rect x="-25" y="-25" width="50" height="50" fill="#fff"/>
+<path d="M0-4Q.6-.6 4 0Q.6 .6 0 4Q-.6 .6-4 0Q-.6-.6 0-4Z" fill="#000"/></mask>
+<path id="star" d="M0-21Q3-3 21 0Q3 3 0 21Q-3 3-21 0Q-3-3 0-21Z" mask="url(#star-cut)"/>
 </defs>
-<rect width="200" height="200" fill="#553621"/>
-<rect width="200" height="200" filter="url(#grain)"/>
-<g fill="url(#gold)" filter="url(#emboss)">
+<g fill="url(#gold)" filter="url(#gilt)">
 <use href="#nb" x="50" y="50"/>
 <use href="#quatrefoil" x="150" y="50"/>
 <use href="#star" x="100" y="150"/>

@@ -494,6 +494,11 @@ logo.addEventListener('click',event=>{
   if(++logoClicks===3){logoClicks=0;document.body.classList.toggle('monogram');return;}
   logoTimer=setTimeout(()=>{if(logoClicks===1)location.href=logo.href;logoClicks=0;},400);
 });
+addEventListener('pointermove',event=>{
+  if(!document.body.classList.contains('monogram'))return;
+  document.body.style.setProperty('--light-x',`${event.clientX}px`);
+  document.body.style.setProperty('--light-y',`${event.clientY}px`);
+},{passive:true});
 Promise.all(['results.json','learning-curves.json','sweep-status.json'].map(path => fetch(dataURL(path),{cache:'no-cache'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}))).then(async ([payload, learningPayload, status])=>{
   sweepStatus=status;
   studies={rollouts:{...payload, runs:payload.runs.filter(run=>run.model!=='tiny_mlp')}, learning:learningPayload};
