@@ -16,13 +16,15 @@ def main():
     completed=[completed_job(job_config(job, source, root), job, i, root)
                for i, job in enumerate(jobs)]
     scope=lambda job: (job['dataset'],job['mode'],job['training_mode'],bool(job['barostat']))
-    missing=[i for i, record in enumerate(completed) if record is None]
+    # A job with a failure marker is final; its comparison is published as failed.
+    failed=[i for i, record in enumerate(completed) if record is None and (root/'failed'/f'{i}.txt').is_file()]
+    missing=[i for i, record in enumerate(completed) if record is None and i not in failed]
     pending={scope(jobs[i]) for i in missing}
     if missing:
         (root/'incomplete.json').write_text(json.dumps(dict(missing_jobs=missing),indent=1)+'\n')
         if '--completed-scopes' not in sys.argv:
             raise RuntimeError(f'{len(missing)} sweep cells unfinished; existing website results retained.')
-    publish=[(job,record) for job,record in zip(jobs,completed) if scope(job) not in pending]
+    publish=[(job,record) for job,record in zip(jobs,completed) if record and scope(job) not in pending]
     payload=learning_payload(root/'runs', source/'configs/learning_curve/ood_rankings', recipe='sweep-v2')
     current={(job['dataset'], job['model'], Path(record['directory']).name)
              for job, record in publish}
@@ -52,12 +54,15 @@ def main():
     status=json.loads((destination/'sweep-status.json').read_text())
     protocol=json.loads((source/'configs/sweep_v2/protocol.json').read_text())
     status.update(state='partial' if missing else 'complete',
-                  completed_jobs=len(jobs)-len(missing), published=generated,
+                  completed_jobs=len(jobs)-len(missing)-len(failed), published=generated,
                   protocol=protocol,
                   **{key:protocol[key] for key in ('training_jobs','control_jobs','blocked_training_jobs')},
                   pending_scopes=[dict(zip(('dataset','mode','training_mode','barostat'), key))
                                   for key in sorted(pending)],
-                  pending_jobs=missing)
+                  pending_jobs=missing,
+                  failed_scopes=[dict(zip(('dataset','mode','training_mode','barostat'), key))
+                                 for key in sorted({scope(jobs[i]) for i in failed})],
+                  failed_jobs=failed)
     (destination/'sweep-status.json').write_text(json.dumps(status,indent=1)+'\n')
     print('EXPORTED',len(payload['runs']),'new scores; blocked Noisy LJ barostat cells excluded.')
 

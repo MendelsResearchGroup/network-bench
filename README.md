@@ -10,9 +10,9 @@ training splits and held-out evaluation.
 
 ## Published benchmark
 
-The website uses the completed **sweep-v2** recipe: 4,200 trained runs and
-600 untrained controls. It compares seven trainable models on Node optimized,
-Stiffness optimized, and Noisy LJ, using training sizes 10–100 and seeds 0–2.
+The website uses the **sweep-v2** recipe: 7,000 trained runs and 1,000
+untrained controls. It compares seven trainable models on Node optimized,
+Stiffness optimized, and Noisy LJ, using training sizes 10–100 and seeds 0–4.
 Each split has 70 validation and 70 test networks. Rollouts observe frames
 0–3 and predict frames 4–103. No ITPO or simulator bootstrap is used.
 
@@ -31,7 +31,9 @@ highest N, and validation/test come from outside that pool. Exact membership
 is retained in the [learning-curve configs](configs/learning_curve/README.md).
 
 Noisy LJ has **no barostat-on results** because its force field and rest lengths
-have not been verified. For the optimized datasets, the Barostat sidebar
+have not been verified. Stiffness optimized OOD with the barostat on has **no
+scores**: its calibrated barostat is unstable on held-out networks (see the
+[sweep notes](configs/sweep_v2/README.md)). For the optimized datasets, the Barostat sidebar
 checkbox selects the corresponding runs in both plots and learning curves.
 With barostat on, predicted Poisson ratio uses box strain; with it off, it
 uses the side-node estimator. Ground truth uses box strain in both cases.

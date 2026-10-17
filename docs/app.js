@@ -217,10 +217,13 @@ function render(animate = true, animateMSE = false) {
   $('sweep-note').textContent = sweepStatus?.state === 'complete'
     ? '' : 'Retraining is in progress. These existing results use the previous training recipe.';
   if (sweepStatus?.state === 'complete') $('sweep-note').hidden = true;
-  const pendingScope=sweepStatus?.pending_scopes?.some(scope=>scope.dataset===dataset && scope.mode===mode && scope.training_mode===trainingMode && scope.barostat===barostat);
-  if(pendingScope){
+  const inScope=scopes=>scopes?.some(scope=>scope.dataset===dataset && scope.mode===mode && scope.training_mode===trainingMode && scope.barostat===barostat);
+  if(inScope(sweepStatus?.failed_scopes)){
     $('sweep-note').hidden=false;
-    $('sweep-note').textContent='This comparison retains seeds 0–2. Seeds 3–4 failed checkpoint selection because validation scores were non-finite; their results are not included.';
+    $('sweep-note').textContent='Failed: the calibrated barostat diverges on held-out networks, so no model has a score for this comparison.';
+  }else if(inScope(sweepStatus?.pending_scopes)){
+    $('sweep-note').hidden=false;
+    $('sweep-note').textContent='This comparison is still training; it shows earlier results.';
   }
   renderSplit();
   if ($('ranking-note')) $('ranking-note').textContent = $('plot-seed').value === 'all' ? 'Mean R² ± sample SD' : 'R²';

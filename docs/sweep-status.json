@@ -1,5 +1,5 @@
 {
- "state": "partial",
+ "state": "complete",
  "recipe": "sweep-v2",
  "training_jobs": 7000,
  "control_jobs": 1000,
@@ -145,8 +145,10 @@
  "total_concurrency": 400,
  "concurrency_updated": "2026-10-07T11:47:54+00:00",
  "completed_jobs": 7720,
- "published": "2026-10-16T14:14:44+00:00",
- "pending_scopes": [
+ "published": "2026-10-17T13:44:15+00:00",
+ "pending_scopes": [],
+ "pending_jobs": [],
+ "failed_scopes": [
   {
    "dataset": "stiff_optimized",
    "mode": "ood",
@@ -160,7 +162,7 @@
    "barostat": true
   }
  ],
- "pending_jobs": [
+ "failed_jobs": [
   6729,
   6730,
   6731,
