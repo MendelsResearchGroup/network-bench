@@ -46,9 +46,9 @@ retain negative R² values.
 ## Run a comparison
 
 ```bash
-pip install -e .
+uv sync
 export GNN_BENCH_DATA_ROOT=/path/to/data_bench
-python scripts/run.py configs/networks.json
+uv run python scripts/run.py configs/networks.json
 ```
 
 `configs/networks.json` is a small standalone example, not the full published
